@@ -1,7 +1,7 @@
 /* Generates an age range from start age to end age */
-function ageRange(start: number, end: number) {
+const ageRange = (start: number, end: number) => {
   return new Array(end - start + 1).fill(undefined).map((d, i) => i + start);
-}
+};
 
 /* Age range : < 18, 18-80, >80 
   <18 is represented by 0

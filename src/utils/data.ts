@@ -105,22 +105,15 @@ export const data = {
 
   /* Quiz Page */
   quizPage: {
-    firstAssociationInstruction: `Enter a word that comes to your mind`,
-    secondAssociationInstruction: `Enter a word that comes to your mind`,
-    thirdAssociationInstruction: `Enter a word that comes to your mind`,
+    instruction: `Enter a word that comes to your mind`,
     progress: `Progress`,
-    needHelpButtonDescription: `Need Help?`,
-    buttonDescription: `continue`,
-    instructionReminder: `How it works...
-      On the top of the screen a Singapore English word will appear. Enter the first word that comes to 
-      mind when reading this word. Press Enter to add a second and third word or proceed to the next 
-      word if you can't think of any. If you don't know the word at all, you can just proceed to the 
-      next word.
+    needHelpButton: `Need Help?`,
+    continueButton: `continue`,
+    help: `<b>How it works...</b>
+      On the top of the screen a Singapore English word will appear. Enter the first word that comes to mind when reading this word. Press Enter to add a second and third word or proceed to the next word if you can't think of any. If you don't know the word at all, you can just proceed to the next word.
       
-      Some tips
-      Only give associations to the word on top of the screen (not to your previous responses!)
-      Try to avoid full sentences or long phrases as responses.
-      Simply type a word and press Enter to go to the next one.`,
+      <b>Some tips</b>
+      Only give associations to the word on top of the screen (not to your previous responses!) Try to avoid full sentences or long phrases as responses. Simply type a word and press Enter to go to the next one.`,
   },
 
   /* Email Page */

@@ -12,7 +12,8 @@ code {
     monospace;
 }
 
-p {
+p,
+h3 {
   white-space: pre-line;
   text-align: justify;
   align-self: center;

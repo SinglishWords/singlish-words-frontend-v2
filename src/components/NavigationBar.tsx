@@ -7,15 +7,11 @@ import {
   Container,
   IconButton,
   Menu,
-  MenuItem,
   Toolbar,
-  Typography,
 } from "@mui/material";
 
 import { NavigationButton } from "src/components/NavigationButton";
 import { NavigationBarRoutes } from "src/routes/nav.routes";
-
-const pages = ["Products", "Pricing", "Blog"];
 
 export const NavigationBar = () => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
@@ -59,10 +55,21 @@ export const NavigationBar = () => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
+              {NavigationBarRoutes.map(({ path, label }) => (
+                <NavLink
+                  key={label}
+                  to={path}
+                  style={{ textDecoration: "none" }}
+                >
+                  {({ isActive }) => {
+                    return (
+                      <NavigationButton
+                        selected={isActive}
+                        buttonDescription={label}
+                      />
+                    );
+                  }}
+                </NavLink>
               ))}
             </Menu>
           </Box>
@@ -70,7 +77,7 @@ export const NavigationBar = () => {
           {/* Web Navigation Bar */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {NavigationBarRoutes.map(({ path, label }) => (
-              <NavLink key={label} to={path}>
+              <NavLink key={label} to={path} style={{ textDecoration: "none" }}>
                 {({ isActive }) => {
                   return (
                     <NavigationButton

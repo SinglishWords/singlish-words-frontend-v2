@@ -12,7 +12,7 @@ type NavigationRouteObject = RouteObject & {
 
 export const routes = [
   {
-    path: "home",
+    path: "",
     element: <HomePage />,
     label: "HOME",
   },

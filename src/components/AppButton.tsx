@@ -4,11 +4,12 @@ import parse from "html-react-parser";
 
 type AppButtonProps = {
   name: string;
+  buttonRef?: React.RefObject<HTMLButtonElement>;
 };
 
-export const AppButton = ({ name }: AppButtonProps) => {
+export const AppButton = ({ name, buttonRef }: AppButtonProps) => {
   return (
-    <Button variant="outlined" sx={{ fontWeight: "bold" }}>
+    <Button variant="outlined" ref={buttonRef} sx={{ fontWeight: "bold" }}>
       {parse(DOMPurify.sanitize(name))}
     </Button>
   );
