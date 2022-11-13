@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, Stack, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
@@ -5,8 +6,15 @@ import parse from "html-react-parser";
 import { AppButton } from "src/components/AppButton";
 import { Footer } from "src/components/Footer";
 import { data } from "src/utils/data";
+import { Form } from "src/utils/types";
 
-export const EmailPage = () => {
+type EmailPageProps = {
+  values: Form;
+};
+
+export const EmailPage = ({ values }: EmailPageProps) => {
+  const [copied, setCopied] = useState<boolean>(false);
+
   return (
     <Stack spacing={5} sx={{ minHeight: "100vh" }}>
       <Typography variant="h3" sx={{ py: 4 }}>
@@ -54,11 +62,17 @@ export const EmailPage = () => {
               DOMPurify.sanitize(data.emailPage.secondParagraph.enterCode)
             )}
           </Typography>
-          <Stack spacing={7} direction="row" sx={{ border: "2px solid", p: 5 }}>
+          <Stack spacing={7} direction="row" sx={{ border: "2px solid", p: 4 }}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              swow-23b46130-1c0c-438d-8bbf-d89575e9b311
+              {values.uuid}
             </Typography>
-            <AppButton name={"COPY"} />
+            <AppButton
+              name={copied ? "COPIED!" : "COPY"}
+              onClick={() => {
+                setCopied(true);
+                navigator.clipboard.writeText(values.uuid);
+              }}
+            />
           </Stack>
           <Typography variant="body1">
             {parse(

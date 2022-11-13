@@ -3,7 +3,7 @@ import { FormControl, InputLabel, NativeSelect } from "@mui/material";
 type DropdownProps = {
   required: boolean;
   inputLabel: string;
-  value: string;
+  value: string | string[];
   name: string;
   listData: string[] | number[];
   handleChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;

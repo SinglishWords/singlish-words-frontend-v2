@@ -16,6 +16,128 @@ export const QuizPage = ({ nextStep }: QuizPageProps) => {
   const secondAssociationRef = useRef<HTMLInputElement | null>(null);
   const thirdAssociationRef = useRef<HTMLInputElement | null>(null);
   const continueButtonRef = useRef<HTMLButtonElement | null>(null);
+  const questions = [
+    {
+      id: 2976,
+      word: "pala otak mak kau",
+      enable: 1,
+      count: 6,
+    },
+    {
+      id: 2155,
+      word: "kuih lompang",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 3896,
+      word: "super ring",
+      enable: 1,
+      count: 6,
+    },
+    {
+      id: 3568,
+      word: "senju",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 3480,
+      word: "sarong party girl",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 546,
+      word: "bodoh macam biskut",
+      enable: 1,
+      count: 6,
+    },
+    {
+      id: 1244,
+      word: "gek sim",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 2067,
+      word: "kool",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 1742,
+      word: "kaki menyampuk",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 604,
+      word: "buay hoo",
+      enable: 1,
+      count: 6,
+    },
+    {
+      id: 2960,
+      word: "pakat",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 3602,
+      word: "shiling",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 3762,
+      word: "staple your mouth",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 3607,
+      word: "shit face",
+      enable: 1,
+      count: 4,
+    },
+    {
+      id: 1424,
+      word: "hati berat",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 2521,
+      word: "manja",
+      enable: 1,
+      count: 4,
+    },
+    {
+      id: 2819,
+      word: "not hensem act hensem",
+      enable: 1,
+      count: 4,
+    },
+    {
+      id: 2161,
+      word: "kuih pancong",
+      enable: 1,
+      count: 6,
+    },
+    {
+      id: 2756,
+      word: "nbab",
+      enable: 1,
+      count: 5,
+    },
+    {
+      id: 3495,
+      word: "save yourself",
+      enable: 1,
+      count: 5,
+    },
+  ];
 
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLDivElement>,

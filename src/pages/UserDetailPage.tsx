@@ -1,4 +1,11 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
+  Typography,
+} from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 
@@ -15,12 +22,19 @@ import { Form } from "src/utils/types";
 type UserDetailPageProps = {
   nextStep: () => void;
   handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleAddElementToArray: (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    array: string[]
+  ) => void;
+  handleArrayReset: React.MouseEventHandler<HTMLButtonElement>;
   values: Form;
 };
 
 export const UserDetailPage = ({
   nextStep,
   handleChange,
+  handleAddElementToArray,
+  handleArrayReset,
   values,
 }: UserDetailPageProps) => {
   /* The below block of code disables/enables the "Continue" button.
@@ -119,6 +133,52 @@ export const UserDetailPage = ({
           listData={data.userDetailPage.yesNoList}
           handleChange={handleChange}
         />
+
+        {/* Other Languages Spoken */}
+        <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+          <Stack spacing={2} sx={{ width: 360, justifyContent: "center" }}>
+            {/* If "The `value` prop supplied to <select> must be a scalar value if `multiple` is false."
+            error appears in console, ignore it. State should not be array if Dropdown
+            component is used. However, Material-UI Multi-Select is buggy. Hence a normal
+            Select component is used in Dropdown instead of Multi-Select */}
+            <Dropdown
+              required={false}
+              inputLabel={data.userDetailPage.languages}
+              value={values.languagesSpoken}
+              name={"languagesSpoken"}
+              listData={data.userDetailPage.languagesSpokenList}
+              handleChange={(event) =>
+                handleAddElementToArray(event, values.languagesSpoken)
+              }
+            />
+            <AppButton
+              id="languagesSpoken"
+              name={"Reset Chosen Languages"}
+              onClick={handleArrayReset}
+            />
+          </Stack>
+          <Stack
+            sx={{
+              width: 360,
+              alignItems: "center",
+              maxHeight: "150px",
+              overflow: "auto",
+            }}
+          >
+            <Typography variant="button" sx={{ fontWeight: "bold" }}>
+              Languages Chosen
+            </Typography>
+            <List dense={true}>
+              {values.languagesSpoken.map((language) => {
+                return (
+                  <ListItem key={language}>
+                    <ListItemText primary={language} />
+                  </ListItem>
+                );
+              })}
+            </List>
+          </Stack>
+        </Stack>
 
         <Stack direction="row" sx={{ justifyContent: "center" }}>
           <AppButton
