@@ -26,6 +26,7 @@ export const NavigationButton = ({
           "& .MuiTypography-root": {
             fontWeight: "bold",
           },
+          "&:hover": { color: "secondary.main" },
         }}
         primary={buttonDescription}
       />

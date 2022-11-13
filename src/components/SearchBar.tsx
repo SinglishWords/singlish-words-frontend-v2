@@ -52,6 +52,7 @@ export const SearchBar = ({ page }: SearchBarProps) => {
                     <Stack spacing={2}>
                       <Typography variant="body2">Relation Type</Typography>
                       <Dropdown
+                        required={true}
                         inputLabel={"Select a relation type"}
                         value={""}
                         name={"relation_type"}
@@ -67,6 +68,7 @@ export const SearchBar = ({ page }: SearchBarProps) => {
                         Visualisation Type
                       </Typography>
                       <Dropdown
+                        required={true}
                         inputLabel={"Select a visualisation type"}
                         value={""}
                         name={"visualisation_type"}

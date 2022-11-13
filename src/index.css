@@ -13,7 +13,8 @@ code {
 }
 
 p,
-h3 {
+h3,
+h4 {
   white-space: pre-line;
   text-align: justify;
   align-self: center;

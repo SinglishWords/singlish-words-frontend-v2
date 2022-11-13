@@ -7,7 +7,11 @@ import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 
-export const QuizPage = () => {
+type QuizPageProps = {
+  nextPage: () => void;
+};
+
+export const QuizPage = ({ nextPage }: QuizPageProps) => {
   const firstAssociationRef = useRef<HTMLInputElement | null>(null);
   const secondAssociationRef = useRef<HTMLInputElement | null>(null);
   const thirdAssociationRef = useRef<HTMLInputElement | null>(null);
@@ -31,11 +35,11 @@ export const QuizPage = () => {
   };
 
   return (
-    <Stack>
+    <Stack sx={{ alignItems: "center", pb: 10 }}>
       <Typography variant="h3" sx={{ py: 6 }}>
         word
       </Typography>
-      <Stack spacing={6} sx={{ alignSelf: "center", width: 500 }}>
+      <Stack spacing={6} sx={{ width: 500 }}>
         <Stack spacing={6}>
           {/* First Association */}
           <TextField
@@ -80,6 +84,7 @@ export const QuizPage = () => {
           <AppButton
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
+            onClick={nextPage}
           />
         </Stack>
       </Stack>

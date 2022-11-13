@@ -1,13 +1,17 @@
-import { Box, Link, Stack, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Box, Stack, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 
+import NUS_Logo from "src/assets/images/NUS_Logo.png";
 import { AppButton } from "src/components/AppButton";
+import { Footer } from "src/components/Footer";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
-import NUS_Logo from "src/assets/images/NUS_Logo.png";
 
 export const HomePage = () => {
+  const navigate = useNavigate();
+
   return (
     <Stack spacing={5} sx={{ minHeight: "100vh" }}>
       <Stack sx={{ width: "60%", alignSelf: "center", flex: 1 }}>
@@ -47,40 +51,15 @@ export const HomePage = () => {
               name={data.introductionPage.luckyDrawButton}
               description={data.introductionPage.luckyDrawDescription}
             />
-            <AppButton name={data.introductionPage.continueButton} />
+            <AppButton
+              name={data.introductionPage.continueButton}
+              onClick={() => navigate("/form")}
+            />
           </Stack>
         </Stack>
       </Stack>
 
-      {/* Footer */}
-      <Stack
-        sx={{
-          bgcolor: "primary.main",
-          "& .MuiTypography-root": {
-            color: "white",
-          },
-          minHeight: "150px",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Stack spacing={2}>
-          <Typography variant="body2">
-            {parse(DOMPurify.sanitize(data.introductionPage.footerTop))}
-          </Typography>
-          <Typography variant="body2">
-            {parse(DOMPurify.sanitize(data.introductionPage.footerBottom))}
-            <Link
-              sx={{ cursor: "pointer" }}
-              onClick={() =>
-                window.open(data.introductionPage.urlLink, "_blank")
-              }
-            >
-              {parse(DOMPurify.sanitize(data.introductionPage.urlHtml))}
-            </Link>
-          </Typography>
-        </Stack>
-      </Stack>
+      <Footer />
     </Stack>
   );
 };

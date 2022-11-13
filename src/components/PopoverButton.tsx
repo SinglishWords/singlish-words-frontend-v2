@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Button, Popover, Typography } from "@mui/material";
+import { Button, Popover, Stack, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 
@@ -23,9 +23,9 @@ export const PopoverButton = ({ name, description }: PopoverProps) => {
   const open = Boolean(anchorEl);
 
   return (
-    <div>
+    <Stack>
       <Button
-        variant="contained"
+        variant="outlined"
         onClick={handleClick}
         sx={{ fontWeight: "bold" }}
       >
@@ -49,6 +49,6 @@ export const PopoverButton = ({ name, description }: PopoverProps) => {
           {parse(DOMPurify.sanitize(description))}
         </Typography>
       </Popover>
-    </div>
+    </Stack>
   );
 };

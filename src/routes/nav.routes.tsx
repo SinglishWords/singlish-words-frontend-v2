@@ -10,7 +10,7 @@ type NavigationRouteObject = RouteObject & {
   children?: NavigationRouteObject[];
 };
 
-export const routes = [
+const routes = [
   {
     path: "",
     element: <HomePage />,

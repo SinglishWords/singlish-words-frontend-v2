@@ -7,10 +7,10 @@ export const ExplorePage = () => {
   const panels = ["Forward Associations", "Backward Associations"];
 
   return (
-    <Stack sx={{ width: "60%", alignSelf: "center" }}>
+    <Stack sx={{ width: "60%", alignSelf: "center", pb: 10 }}>
       <SearchBar page="Explore" />
       {panels.map((title) => (
-        <ExpansionPanel title={title} />
+        <ExpansionPanel key={title} title={title} />
       ))}
     </Stack>
   );
