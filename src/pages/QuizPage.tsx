@@ -8,10 +8,10 @@ import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 
 type QuizPageProps = {
-  nextPage: () => void;
+  nextStep: () => void;
 };
 
-export const QuizPage = ({ nextPage }: QuizPageProps) => {
+export const QuizPage = ({ nextStep }: QuizPageProps) => {
   const firstAssociationRef = useRef<HTMLInputElement | null>(null);
   const secondAssociationRef = useRef<HTMLInputElement | null>(null);
   const thirdAssociationRef = useRef<HTMLInputElement | null>(null);
@@ -84,7 +84,7 @@ export const QuizPage = ({ nextPage }: QuizPageProps) => {
           <AppButton
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
-            onClick={nextPage}
+            onClick={nextStep}
           />
         </Stack>
       </Stack>

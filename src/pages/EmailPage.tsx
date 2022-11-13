@@ -43,12 +43,10 @@ export const EmailPage = () => {
             <Link
               sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
               onClick={() =>
-                window.open(data.emailPage.secondParagraph.emailLink, "_blank")
+                window.open(data.email.link.singlishwords, "_blank")
               }
             >
-              {parse(
-                DOMPurify.sanitize(data.emailPage.secondParagraph.emailHtml)
-              )}
+              {parse(DOMPurify.sanitize(data.email.html.singlishwords))}
             </Link>
           </Typography>
           <Typography variant="body1">
@@ -91,12 +89,10 @@ export const EmailPage = () => {
             <Link
               sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
               onClick={() =>
-                window.open(data.emailPage.fourthParagraph.emailLink, "_blank")
+                window.open(data.email.link.singlishwords, "_blank")
               }
             >
-              {parse(
-                DOMPurify.sanitize(data.emailPage.fourthParagraph.emailHtml)
-              )}
+              {parse(DOMPurify.sanitize(data.email.html.singlishwords))}
             </Link>
           </Typography>
           <Typography variant="body1">
@@ -105,13 +101,9 @@ export const EmailPage = () => {
             )}
             <Link
               sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
-              onClick={() =>
-                window.open(data.emailPage.fourthParagraph.emailLink2, "_blank")
-              }
+              onClick={() => window.open(data.email.link.professor, "_blank")}
             >
-              {parse(
-                DOMPurify.sanitize(data.emailPage.fourthParagraph.emailHtml2)
-              )}
+              {parse(DOMPurify.sanitize(data.email.html.professor))}
             </Link>
           </Typography>
         </Stack>
@@ -122,18 +114,12 @@ export const EmailPage = () => {
             {parse(DOMPurify.sanitize(data.emailPage.fifthHeader))}
           </Typography>
           <Typography variant="body1">
-            {parse(
-              DOMPurify.sanitize(data.emailPage.fifthParagraph.description1)
-            )}
+            {parse(DOMPurify.sanitize(data.emailPage.fifthParagraph))}
             <Link
               sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
-              onClick={() =>
-                window.open(data.emailPage.fifthParagraph.emailLink, "_blank")
-              }
+              onClick={() => window.open(data.url.link.singlishwords, "_blank")}
             >
-              {parse(
-                DOMPurify.sanitize(data.emailPage.fifthParagraph.emailHtml)
-              )}
+              {parse(DOMPurify.sanitize(data.url.html.singlishwords))}
             </Link>
           </Typography>
         </Stack>

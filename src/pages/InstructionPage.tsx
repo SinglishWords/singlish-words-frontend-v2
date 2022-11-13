@@ -6,10 +6,10 @@ import { AppButton } from "src/components/AppButton";
 import { data } from "src/utils/data";
 
 type InstructionPageProps = {
-  nextPage: () => void;
+  nextStep: () => void;
 };
 
-export const InstructionPage = ({ nextPage }: InstructionPageProps) => {
+export const InstructionPage = ({ nextStep }: InstructionPageProps) => {
   return (
     <Stack spacing={5} sx={{ alignItems: "center", pb: 10 }}>
       <Typography variant="h4" sx={{ py: 4 }}>
@@ -39,7 +39,7 @@ export const InstructionPage = ({ nextPage }: InstructionPageProps) => {
       <Stack direction="row" sx={{ justifyContent: "center" }}>
         <AppButton
           name={data.instructionPage.continueButton}
-          onClick={nextPage}
+          onClick={nextStep}
         />
       </Stack>
     </Stack>

@@ -25,9 +25,11 @@ export const Footer = () => {
           {parse(DOMPurify.sanitize(data.footer.footerBottom))}
           <Link
             sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
-            onClick={() => window.open(data.footer.urlLink, "_blank")}
+            onClick={() =>
+              window.open(data.url.link.smallworldofwords, "_blank")
+            }
           >
-            {parse(DOMPurify.sanitize(data.footer.urlHtml))}
+            {parse(DOMPurify.sanitize(data.url.html.smallworldofwords))}
           </Link>
         </Typography>
       </Stack>

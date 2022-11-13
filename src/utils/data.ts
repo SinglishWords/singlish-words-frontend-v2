@@ -115,8 +115,7 @@ export const data = {
     secondHeader: `<b>If you would like to take part in the lucky draw or receive updates about this research</b>`,
     secondParagraph: {
       description1: `Please email the following code to `,
-      emailHtml: `<b><u>singlishwords@nus.edu.sg</u></b>.`,
-      emailLink: `mailto:singlishwords@nus.edu.sg`,
+     
       enterCode: `<b>Your code is:</b>`,
       description2: `Note that your contact information is never connected to the data you provided previously. Your responses remain confidential and anonymous.`,
     },
@@ -129,29 +128,40 @@ export const data = {
     fourthHeader: `<b>Get in touch</b>`,
     fourthParagraph: {
       description1: `If you have any concerns or questions regarding this research, please do not hesitate to contact the project team at: `,
-      emailHtml: `<b><u>singlishwords@nus.edu.sg</u></b>`,
-      emailLink: `mailto:singlishwords@nus.edu.sg`,
       description2: `<b>Principal Investigator: Dr. Cynthia Siew
         Department of Psychology, National University of Singapore.
         Email: </b>`,
-      emailHtml2: `<b><u>cynthia@nus.edu.sg</u></b>`,
-      emailLink2: `mailto:cynthia@nus.edu.sg`,
     },
 
     fifthHeader: `<b>Share the study</b>`,
-    fifthParagraph: {
-      description1: `To get enough words and make the mental dictionary useful, we need many helping hands. If you want to help, just share the study with family and friends or come back some other time for new words! - `,
-      emailHtml: `<b><u>singlishwords@nus.edu.sg</u></b>`,
-      emailLink: `mailto:singlishwords@nus.edu.sg`,
-    },
+    fifthParagraph: `To get enough words and make the mental dictionary useful, we need many helping hands. If you want to help, just share the study with family and friends or come back some other time for new words! - `,
   },
 
   footer: {
     footerTop: `This project was inspired by the Small World of Words project. We thank the creators for giving us permission to expand this work into the words that make up the Singaporean lexicon.`,
     footerBottom: `Small World of Words - `,
-    urlHtml: `<b><u>https://smallworldofwords.org/</u></b>`,
-    urlLink: `https://smallworldofwords.org/`,
   },
+
+  email: {
+    html: {
+      singlishwords: `<b><u>singlishwords@nus.edu.sg</u></b>`,
+      professor: `<b><u>cynthia@nus.edu.sg</u></b>`,
+    },
+    link: {
+      singlishwords: `mailto:singlishwords@nus.edu.sg`,
+      professor: `mailto:cynthia@nus.edu.sg`,
+    },
+  },
+
+  url: {
+    html: {
+      smallworldofwords: `<b><u>https://smallworldofwords.org/</u></b>`,
+      singlishwords: `<b><u>https://singlishwords.nus.edu.sg/</u></b>`,
+    }, link: {
+      smallworldofwords: `https://smallworldofwords.org/`,
+      singlishwords: `https://singlishwords.nus.edu.sg/`,
+    }
+  }
 
   // /* Email Page (Student) */
   // emailPageStudent: {
