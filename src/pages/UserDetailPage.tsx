@@ -20,32 +20,56 @@ import {
 import { Form } from "src/utils/types";
 
 type UserDetailPageProps = {
+  form: Form;
+  setForm: React.Dispatch<React.SetStateAction<Form>>;
   nextStep: () => void;
-  handleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  handleAddElementToArray: (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    array: string[]
-  ) => void;
-  handleArrayReset: React.MouseEventHandler<HTMLButtonElement>;
-  values: Form;
 };
 
 export const UserDetailPage = ({
+  form,
+  setForm,
   nextStep,
-  handleChange,
-  handleAddElementToArray,
-  handleArrayReset,
-  values,
 }: UserDetailPageProps) => {
   /* The below block of code disables/enables the "Continue" button.
     Firstly, check that all compulsory fields (Age, Gender, Education, Birth Country, 
     Residence Country, Native Speaker) are filled.
     Secondly, if participant is a Singaporean, check that Ethnicity Field is filled. */
-  const compusloryFieldsFilled = checkCompulsoryFieldsForNonSingaporean(values);
-  const isSingaporean = checkCountryOfBirthSingapore(values);
+  const compusloryFieldsFilled = checkCompulsoryFieldsForNonSingaporean(form);
+  const isSingaporean = checkCountryOfBirthSingapore(form);
   const isEnabled = isSingaporean
-    ? compusloryFieldsFilled && checkEthnicityFieldFilled(values)
+    ? compusloryFieldsFilled && checkEthnicityFieldFilled(form)
     : compusloryFieldsFilled;
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    {
+      /* If user changes to another country of birth, 
+          then we should clear the ethnicity field because default country of birth is Singapore*/
+    }
+    event.target.name === "countryOfBirth"
+      ? setForm({
+          ...form,
+          ethnicity: "",
+          [event.target.name]: event.target.value,
+        })
+      : setForm({ ...form, [event.target.name]: event.target.value });
+  };
+
+  const handleAddElementToArray = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+    array: string[]
+  ) => {
+    {
+      /* Duplicate elements not allowed */
+    }
+    if (!array.includes(event.target.value)) {
+      array.push(event.target.value);
+    }
+    setForm({ ...form, [event.target.name]: array });
+  };
+
+  const handleArrayReset = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setForm({ ...form, [event.currentTarget.id]: [] });
+  };
 
   return (
     <Stack sx={{ alignItems: "center", pb: 10 }}>
@@ -66,7 +90,7 @@ export const UserDetailPage = ({
         <Dropdown
           required={true}
           inputLabel={data.userDetailPage.age}
-          value={values.age}
+          value={form.age}
           name={"age"}
           listData={data.userDetailPage.agesList}
           handleChange={handleChange}
@@ -76,7 +100,7 @@ export const UserDetailPage = ({
         <Dropdown
           required={true}
           inputLabel={data.userDetailPage.gender}
-          value={values.gender}
+          value={form.gender}
           name={"gender"}
           listData={data.userDetailPage.genderList}
           handleChange={handleChange}
@@ -86,7 +110,7 @@ export const UserDetailPage = ({
         <Dropdown
           required={true}
           inputLabel={data.userDetailPage.education}
-          value={values.education}
+          value={form.education}
           name={"education"}
           listData={data.userDetailPage.educationLevelList}
           handleChange={handleChange}
@@ -96,7 +120,7 @@ export const UserDetailPage = ({
         <Dropdown
           required={true}
           inputLabel={data.userDetailPage.birthCountry}
-          value={values.countryOfBirth}
+          value={form.countryOfBirth}
           name={"countryOfBirth"}
           listData={data.userDetailPage.countriesList}
           handleChange={handleChange}
@@ -107,7 +131,7 @@ export const UserDetailPage = ({
           <Dropdown
             required={true}
             inputLabel={data.userDetailPage.ethnicity}
-            value={values.ethnicity}
+            value={form.ethnicity}
             name={"ethnicity"}
             listData={data.userDetailPage.ethicGroupList}
             handleChange={handleChange}
@@ -118,7 +142,7 @@ export const UserDetailPage = ({
         <Dropdown
           required={true}
           inputLabel={data.userDetailPage.residenceCountry}
-          value={values.countryOfResidence}
+          value={form.countryOfResidence}
           name={"countryOfResidence"}
           listData={data.userDetailPage.countriesList}
           handleChange={handleChange}
@@ -128,7 +152,7 @@ export const UserDetailPage = ({
         <Dropdown
           required={true}
           inputLabel={data.userDetailPage.native}
-          value={values.isNative}
+          value={form.isNative}
           name={"isNative"}
           listData={data.userDetailPage.yesNoList}
           handleChange={handleChange}
@@ -144,11 +168,11 @@ export const UserDetailPage = ({
             <Dropdown
               required={false}
               inputLabel={data.userDetailPage.languages}
-              value={values.languagesSpoken}
+              value={form.languagesSpoken}
               name={"languagesSpoken"}
               listData={data.userDetailPage.languagesSpokenList}
               handleChange={(event) =>
-                handleAddElementToArray(event, values.languagesSpoken)
+                handleAddElementToArray(event, form.languagesSpoken)
               }
             />
             <AppButton
@@ -169,7 +193,7 @@ export const UserDetailPage = ({
               Languages Chosen
             </Typography>
             <List dense={true}>
-              {values.languagesSpoken.map((language) => {
+              {form.languagesSpoken.map((language) => {
                 return (
                   <ListItem key={language}>
                     <ListItemText primary={language} />

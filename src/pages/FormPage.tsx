@@ -25,65 +25,26 @@ export const FormPage = () => {
     data: [],
   });
 
+  const { step } = form;
+
   const nextStep = () => {
     setForm({ ...form, step: step + 1 });
   };
-
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    {
-      /* If user changes to another country of birth, 
-        then we should clear the ethnicity field because default country of birth is Singapore*/
-    }
-    event.target.name === "countryOfBirth"
-      ? setForm({
-          ...form,
-          ethnicity: "",
-          [event.target.name]: event.target.value,
-        })
-      : setForm({ ...form, [event.target.name]: event.target.value });
-  };
-
-  const handleAddElementToArray = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-    array: string[]
-  ) => {
-    {
-      /* Duplicate elements not allowed */
-    }
-    if (!array.includes(event.target.value)) {
-      array.push(event.target.value);
-    }
-    setForm({ ...form, [event.target.name]: array });
-  };
-
-  {
-    /* Requirement - Button should have an id that corresponds to a field in state 
-       in order to clear that state*/
-  }
-  const handleArrayReset = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setForm({ ...form, [event.currentTarget.id]: [] });
-  };
-
-  const { step } = form;
 
   switch (step) {
     default:
       return <h1>Something went wrong!</h1>;
     case 1:
       return (
-        <UserDetailPage
-          nextStep={nextStep}
-          handleChange={handleChange}
-          handleAddElementToArray={handleAddElementToArray}
-          handleArrayReset={handleArrayReset}
-          values={form}
-        />
+        <UserDetailPage form={form} setForm={setForm} nextStep={nextStep} />
       );
     case 2:
-      return <InstructionPage nextStep={nextStep} />;
+      return (
+        <InstructionPage form={form} setForm={setForm} nextStep={nextStep} />
+      );
     case 3:
-      return <QuizPage nextStep={nextStep} />;
+      return <QuizPage form={form} setForm={setForm} nextStep={nextStep} />;
     case 4:
-      return <EmailPage values={form} />;
+      return <EmailPage form={form} />;
   }
 };

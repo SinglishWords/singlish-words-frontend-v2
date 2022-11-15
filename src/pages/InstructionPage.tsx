@@ -4,12 +4,19 @@ import parse from "html-react-parser";
 
 import { AppButton } from "src/components/AppButton";
 import { data } from "src/utils/data";
+import { Form } from "src/utils/types";
 
 type InstructionPageProps = {
+  form: Form;
+  setForm: React.Dispatch<React.SetStateAction<Form>>;
   nextStep: () => void;
 };
 
-export const InstructionPage = ({ nextStep }: InstructionPageProps) => {
+export const InstructionPage = ({
+  form,
+  setForm,
+  nextStep,
+}: InstructionPageProps) => {
   return (
     <Stack spacing={5} sx={{ alignItems: "center", pb: 10 }}>
       <Typography variant="h4" sx={{ py: 4 }}>

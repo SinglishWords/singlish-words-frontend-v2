@@ -9,10 +9,10 @@ import { data } from "src/utils/data";
 import { Form } from "src/utils/types";
 
 type EmailPageProps = {
-  values: Form;
+  form: Form;
 };
 
-export const EmailPage = ({ values }: EmailPageProps) => {
+export const EmailPage = ({ form }: EmailPageProps) => {
   const [copied, setCopied] = useState<boolean>(false);
 
   return (
@@ -64,13 +64,13 @@ export const EmailPage = ({ values }: EmailPageProps) => {
           </Typography>
           <Stack spacing={7} direction="row" sx={{ border: "2px solid", p: 4 }}>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              {values.uuid}
+              {form.uuid}
             </Typography>
             <AppButton
               name={copied ? "COPIED!" : "COPY"}
               onClick={() => {
                 setCopied(true);
-                navigator.clipboard.writeText(values.uuid);
+                navigator.clipboard.writeText(form.uuid);
               }}
             />
           </Stack>
