@@ -7,6 +7,7 @@ import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 import { Form } from "src/utils/types";
+import { startTimer, endTimer } from "src/utils/logic/timeLogic";
 
 type QuizPageProps = {
   form: Form;
@@ -14,7 +15,7 @@ type QuizPageProps = {
   nextStep: () => void;
 };
 
-const questions = [
+const words = [
   {
     id: 2976,
     word: "pala otak mak kau",
@@ -138,22 +139,32 @@ const questions = [
 ];
 
 export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
-  const firstAssociationRef = useRef<HTMLInputElement | null>(null);
-  const secondAssociationRef = useRef<HTMLInputElement | null>(null);
-  const thirdAssociationRef = useRef<HTMLInputElement | null>(null);
+  const firstResponseRef = useRef<HTMLInputElement | null>(null);
+  const secondResponseRef = useRef<HTMLInputElement | null>(null);
+  const thirdResponseRef = useRef<HTMLInputElement | null>(null);
   const continueButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [firstResponse, setFirstResponse] = useState<string>("");
+  const [secondResponse, setSecondResponse] = useState<string>("");
+  const [thirdResponse, setThirdResponse] = useState<string>("");
   const [wordIndex, setWordIndex] = useState<number>(0);
-  const numberOfQuestions = questions.length;
+  const [startTime, setStartTime] = useState<number>(0);
+  const numberOfWords = words.length;
+  const wordId = words[wordIndex].id;
+  const currentWord = words[wordIndex].word;
 
-  useEffect(() => {
-    /* Once user clicks the "Continue" button, reset all test fields and reset
+  /* Once user clicks the "Continue" button, reset all test fields and reset
     cursor back to the first association textfield */
-    if (firstAssociationRef.current) {
-      firstAssociationRef.current.value = "";
-      firstAssociationRef.current.focus();
+  useEffect(() => {
+    setStartTime(startTimer());
+    setFirstResponse("");
+    setSecondResponse("");
+    setThirdResponse("");
+    if (firstResponseRef.current) {
+      firstResponseRef.current.value = "";
+      firstResponseRef.current.focus();
     }
-    if (secondAssociationRef.current) secondAssociationRef.current.value = "";
-    if (thirdAssociationRef.current) thirdAssociationRef.current.value = "";
+    if (secondResponseRef.current) secondResponseRef.current.value = "";
+    if (thirdResponseRef.current) thirdResponseRef.current.value = "";
   }, [wordIndex]);
 
   const handleKeyPress = (
@@ -163,11 +174,9 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   ) => {
     if (ref && ref.current && event.key === "Enter") {
       if (type === "text") {
-        console.log("text");
         ref.current.focus();
       }
       if (type === "button") {
-        console.log("button");
         ref.current.click();
       }
     }
@@ -175,10 +184,31 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
 
   const nextWord = () => setWordIndex(wordIndex + 1);
 
+  const handleClick = () => {
+    /* Update form state */
+    const data = form.data;
+    data.push({
+      question: {
+        id: wordId,
+        progress: wordIndex + 1,
+        word: currentWord,
+      },
+      response: [firstResponse, secondResponse, thirdResponse],
+      timeOnPage: Math.round((endTimer() - startTime) / 1000),
+    });
+    setForm({ ...form, data: data });
+
+    if (wordIndex < numberOfWords - 1) {
+      nextWord();
+    } else {
+      nextStep();
+    }
+  };
+
   return (
     <Stack sx={{ alignItems: "center", pb: 10 }}>
       <Typography variant="h3" sx={{ py: 6 }}>
-        {questions[wordIndex].word}
+        {currentWord}
       </Typography>
       <Stack spacing={6} sx={{ width: 500 }}>
         <Stack spacing={6}>
@@ -186,29 +216,31 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
           <TextField
             label={parse(DOMPurify.sanitize(data.quizPage.instruction))}
             variant="standard"
-            inputRef={firstAssociationRef}
+            inputRef={firstResponseRef}
             onKeyPress={(event) =>
-              handleKeyPress(event, secondAssociationRef, "text")
+              handleKeyPress(event, secondResponseRef, "text")
             }
+            onChange={(event) => setFirstResponse(event.target.value)}
           />
           {/* Second Association */}
           <TextField
             label={parse(DOMPurify.sanitize(data.quizPage.instruction))}
             variant="standard"
-            inputRef={secondAssociationRef}
+            inputRef={secondResponseRef}
             onKeyPress={(event) =>
-              handleKeyPress(event, thirdAssociationRef, "text")
+              handleKeyPress(event, thirdResponseRef, "text")
             }
+            onChange={(event) => setSecondResponse(event.target.value)}
           />
-
           {/* Third Association */}
           <TextField
             label={parse(DOMPurify.sanitize(data.quizPage.instruction))}
             variant="standard"
-            inputRef={thirdAssociationRef}
+            inputRef={thirdResponseRef}
             onKeyPress={(event) =>
               handleKeyPress(event, continueButtonRef, "button")
             }
+            onChange={(event) => setThirdResponse(event.target.value)}
           />
         </Stack>
         <Stack>
@@ -218,7 +250,7 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
           <LinearProgress
             className="progress"
             variant="determinate"
-            value={(100 / numberOfQuestions) * wordIndex}
+            value={(100 / numberOfWords) * wordIndex}
           />
         </Stack>
         <Stack direction="row" sx={{ justifyContent: "space-evenly" }}>
@@ -229,8 +261,7 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
           <AppButton
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
-            /* Move to the next step only when all the questions are completed */
-            onClick={wordIndex < numberOfQuestions - 1 ? nextWord : nextStep}
+            onClick={handleClick}
           />
         </Stack>
       </Stack>

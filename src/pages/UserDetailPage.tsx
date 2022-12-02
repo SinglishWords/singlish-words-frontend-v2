@@ -41,10 +41,7 @@ export const UserDetailPage = ({
     : compusloryFieldsFilled;
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    {
-      /* If user changes to another country of birth, 
-          then we should clear the ethnicity field because default country of birth is Singapore*/
-    }
+    /* If user changes to another country of birth, then we should clear the ethnicity field because default country of birth is Singapore*/
     event.target.name === "countryOfBirth"
       ? setForm({
           ...form,
@@ -58,9 +55,7 @@ export const UserDetailPage = ({
     event: React.ChangeEvent<HTMLSelectElement>,
     array: string[]
   ) => {
-    {
-      /* Duplicate elements not allowed */
-    }
+    /* Duplicate elements not allowed */
     if (!array.includes(event.target.value)) {
       array.push(event.target.value);
     }

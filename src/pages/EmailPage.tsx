@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Stack, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
@@ -7,13 +7,19 @@ import { AppButton } from "src/components/AppButton";
 import { Footer } from "src/components/Footer";
 import { data } from "src/utils/data";
 import { Form } from "src/utils/types";
+import { currentDateTime } from "src/utils/logic/timeLogic";
 
 type EmailPageProps = {
   form: Form;
+  setForm: React.Dispatch<React.SetStateAction<Form>>;
 };
 
-export const EmailPage = ({ form }: EmailPageProps) => {
+export const EmailPage = ({ form, setForm }: EmailPageProps) => {
   const [copied, setCopied] = useState<boolean>(false);
+
+  useEffect(() => {
+    setForm({ ...form, endTime: currentDateTime() });
+  }, []);
 
   return (
     <Stack spacing={5} sx={{ minHeight: "100vh" }}>
