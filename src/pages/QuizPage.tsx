@@ -7,7 +7,11 @@ import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 import { Form } from "src/utils/types";
-import { startTimer, endTimer } from "src/utils/logic/timeLogic";
+import {
+  startTimer,
+  endTimer,
+  currentDateTime,
+} from "src/utils/logic/timeLogic";
 
 type QuizPageProps = {
   form: Form;
@@ -146,11 +150,11 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const [firstResponse, setFirstResponse] = useState<string>("");
   const [secondResponse, setSecondResponse] = useState<string>("");
   const [thirdResponse, setThirdResponse] = useState<string>("");
-  const [wordIndex, setWordIndex] = useState<number>(0);
+  const [wordIndex, setWordIndex] = useState<number>(form.data.length);
   const [startTime, setStartTime] = useState<number>(0);
-  const numberOfWords = words.length;
-  const wordId = words[wordIndex].id;
-  const currentWord = words[wordIndex].word;
+  const numberOfWords = words?.length;
+  const wordId = words[wordIndex]?.id;
+  const currentWord = words[wordIndex]?.word;
 
   /* Once user clicks the "Continue" button, reset all test fields and reset
     cursor back to the first association textfield */
@@ -196,8 +200,9 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
       response: [firstResponse, secondResponse, thirdResponse],
       timeOnPage: Math.round((endTimer() - startTime) / 1000),
     });
-    setForm({ ...form, data: data });
+    setForm({ ...form, endTime: currentDateTime(), data: data });
 
+    /* Move either to the next word or the next page */
     if (wordIndex < numberOfWords - 1) {
       nextWord();
     } else {

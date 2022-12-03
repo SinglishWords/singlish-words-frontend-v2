@@ -7,18 +7,17 @@ import { AppButton } from "src/components/AppButton";
 import { Footer } from "src/components/Footer";
 import { data } from "src/utils/data";
 import { Form } from "src/utils/types";
-import { currentDateTime } from "src/utils/logic/timeLogic";
 
 type EmailPageProps = {
   form: Form;
-  setForm: React.Dispatch<React.SetStateAction<Form>>;
 };
 
-export const EmailPage = ({ form, setForm }: EmailPageProps) => {
+export const EmailPage = ({ form }: EmailPageProps) => {
   const [copied, setCopied] = useState<boolean>(false);
 
+  /* Remove saved state from local storage */
   useEffect(() => {
-    setForm({ ...form, endTime: currentDateTime() });
+    localStorage.removeItem("formState");
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { UserDetailPage } from "src/pages/UserDetailPage";
@@ -9,27 +9,38 @@ import { Form } from "src/utils/types";
 import { currentDateTime } from "src/utils/logic/timeLogic";
 
 export const FormPage = () => {
-  const [form, setForm] = useState<Form>({
-    step: 1,
-    age: "",
-    gender: "",
-    education: "",
-    countryOfBirth: "Singapore",
-    countryOfResidence: "Singapore",
-    ethnicity: "",
-    isNative: "",
-    languagesSpoken: [],
-    startTime: currentDateTime(),
-    endTime: "",
-    uuid: "swow-" + uuidv4(),
-    data: [],
-  });
+  const checkForStorageData = () => {
+    const storage = localStorage.getItem("formState");
+    return storage !== null
+      ? JSON.parse(storage)
+      : {
+          step: 1,
+          age: "",
+          gender: "",
+          education: "",
+          countryOfBirth: "Singapore",
+          countryOfResidence: "Singapore",
+          ethnicity: "",
+          isNative: "",
+          languagesSpoken: [],
+          startTime: currentDateTime(),
+          endTime: "",
+          uuid: "swow-" + uuidv4(),
+          data: [],
+        };
+  };
 
+  const [form, setForm] = useState<Form>(checkForStorageData());
   const { step } = form;
 
   const nextStep = () => {
     setForm({ ...form, step: step + 1 });
   };
+
+  /* Save state in localStorage when there is an update in the form state */
+  useEffect(() => {
+    localStorage.setItem("formState", JSON.stringify(form));
+  }, [form]);
 
   switch (step) {
     default:
@@ -45,6 +56,6 @@ export const FormPage = () => {
     case 3:
       return <QuizPage form={form} setForm={setForm} nextStep={nextStep} />;
     case 4:
-      return <EmailPage form={form} setForm={setForm} />;
+      return <EmailPage form={form} />;
   }
 };
