@@ -4,7 +4,7 @@ import { NavigationBar } from "src/components/NavigationBar";
 
 export const TopbarLayout = () => {
   return (
-    <Stack spacing={8}>
+    <Stack spacing={{ xs: 3, sm: 8 }}>
       <NavigationBar />
       <Outlet />
     </Stack>

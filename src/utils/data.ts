@@ -115,7 +115,7 @@ export const data = {
     secondHeader: `<b>If you would like to take part in the lucky draw or receive updates about this research</b>`,
     secondParagraph: {
       description1: `Please email the following code to `,
-     
+
       enterCode: `<b>Your code is:</b>`,
       description2: `Note that your contact information is never connected to the data you provided previously. Your responses remain confidential and anonymous.`,
     },
@@ -157,11 +157,12 @@ export const data = {
     html: {
       smallworldofwords: `<b><u>https://smallworldofwords.org/</u></b>`,
       singlishwords: `<b><u>https://singlishwords.nus.edu.sg/</u></b>`,
-    }, link: {
+    },
+    link: {
       smallworldofwords: `https://smallworldofwords.org/`,
       singlishwords: `https://singlishwords.nus.edu.sg/`,
-    }
-  }
+    },
+  },
 
   // /* Email Page (Student) */
   // emailPageStudent: {

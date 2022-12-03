@@ -17,7 +17,7 @@ export const Footer = () => {
         alignItems: "center",
       }}
     >
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ px: { xs: 2, sm: 0 } }}>
         <Typography variant="body2">
           {parse(DOMPurify.sanitize(data.footer.footerTop))}
         </Typography>

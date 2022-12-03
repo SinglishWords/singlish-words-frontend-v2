@@ -228,11 +228,20 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   };
 
   return (
-    <Stack sx={{ alignItems: "center", pb: 10 }}>
+    <Stack
+      sx={{
+        width: { xs: "80%", sm: "60%" },
+        margin: "auto",
+        pb: { xs: 25, sm: 10 },
+      }}
+    >
       <Typography variant="h3" sx={{ py: 6 }}>
         {currentWord}
       </Typography>
-      <Stack spacing={6} sx={{ width: 500 }}>
+      <Stack
+        spacing={6}
+        sx={{ alignSelf: "center", width: { xs: "100%", sm: "50%" } }}
+      >
         <Stack spacing={6}>
           {/* First Association */}
           <TextField

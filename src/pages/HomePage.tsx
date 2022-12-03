@@ -14,13 +14,22 @@ export const HomePage = () => {
 
   return (
     <Stack spacing={5} sx={{ minHeight: "100vh" }}>
-      <Stack sx={{ width: "60%", alignSelf: "center", flex: 1 }}>
+      <Stack
+        spacing={{ xs: 3, sm: 0 }}
+        sx={{ width: { xs: "80%", sm: "60%" }, alignSelf: "center", flex: 1 }}
+      >
         {/* Title */}
-        <Stack direction="row" sx={{ justifyContent: "center" }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          sx={{ justifyContent: "center" }}
+        >
           <Box
             component="img"
             src={NUS_Logo}
-            sx={{ width: "30%", height: "50%" }}
+            sx={{
+              width: { sm: "30%" },
+              height: { sm: "50%" },
+            }}
           />
           <Stack
             spacing={1}
@@ -32,10 +41,11 @@ export const HomePage = () => {
               justifyContent: "center",
             }}
           >
-            <Typography variant="h2" sx={{ fontSize: 31 }}>
+            {/* good to have - refactor to theme breakpoints https://github.com/mui/material-ui/issues/30484 */}
+            <Typography variant="h2" sx={{ fontSize: { xs: 21, sm: 31 } }}>
               {parse(DOMPurify.sanitize(data.introductionPage.title))}
             </Typography>
-            <Typography variant="h2" sx={{ fontSize: 22 }}>
+            <Typography variant="h2" sx={{ fontSize: { xs: 19, sm: 22 } }}>
               {parse(DOMPurify.sanitize(data.introductionPage.subtitle))}
             </Typography>
           </Stack>
@@ -46,7 +56,11 @@ export const HomePage = () => {
           <Typography variant="body2">
             {parse(DOMPurify.sanitize(data.introductionPage.introduction))}
           </Typography>
-          <Stack direction="row" sx={{ justifyContent: "space-evenly" }}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 3, sm: 0 }}
+            sx={{ justifyContent: { sm: "space-evenly" } }}
+          >
             <PopoverButton
               name={data.introductionPage.luckyDrawButton}
               description={data.introductionPage.luckyDrawDescription}

@@ -17,9 +17,13 @@ export const SearchBar = ({ page }: SearchBarProps) => {
   };
 
   return (
-    <Stack direction="row" sx={{ justifyContent: "space-between" }}>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={{ xs: 2, sm: 0 }}
+      sx={{ justifyContent: { sm: "space-between" } }}
+    >
       <TextField label="Search" variant="outlined" />
-      <Stack spacing={1} direction="row">
+      <Stack spacing={1} direction="row" sx={{ justifyContent: "center" }}>
         <UtilityButton title="Download" Icon={Download} />
         <UtilityButton title="Shuffle" Icon={Shuffle} />
         {page === "Visualise" ? (
@@ -53,7 +57,7 @@ export const SearchBar = ({ page }: SearchBarProps) => {
                       <Typography variant="body2">Relation Type</Typography>
                       <Dropdown
                         required={true}
-                        inputLabel={"Select a relation type"}
+                        helperText={"Select a relation type"}
                         value={""}
                         name={"relation_type"}
                         // onChange={}
@@ -69,7 +73,7 @@ export const SearchBar = ({ page }: SearchBarProps) => {
                       </Typography>
                       <Dropdown
                         required={true}
-                        inputLabel={"Select a visualisation type"}
+                        helperText={"Select a visualisation type"}
                         value={""}
                         name={"visualisation_type"}
                         // onChange={}

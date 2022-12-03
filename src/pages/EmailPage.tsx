@@ -23,7 +23,14 @@ export const EmailPage = ({ form }: EmailPageProps) => {
   }, []);
 
   return (
-    <Stack spacing={5} sx={{ minHeight: "100vh" }}>
+    <Stack
+      spacing={5}
+      sx={{
+        width: { xs: "80%", sm: "60%" },
+        margin: "auto",
+        pb: { xs: 25, sm: 10 },
+      }}
+    >
       <Typography variant="h3" sx={{ py: 4 }}>
         {parse(DOMPurify.sanitize(data.emailPage.title))}
       </Typography>
@@ -31,7 +38,6 @@ export const EmailPage = ({ form }: EmailPageProps) => {
         spacing={6}
         sx={{
           flex: 1,
-          width: 750,
           alignSelf: "center",
           "& .MuiTypography-root": { alignSelf: "start" },
         }}
@@ -56,7 +62,10 @@ export const EmailPage = ({ form }: EmailPageProps) => {
               DOMPurify.sanitize(data.emailPage.secondParagraph.description1)
             )}
             <Link
-              sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
+              sx={{
+                cursor: "pointer",
+                "&:hover": { color: "secondary.main" },
+              }}
               onClick={() =>
                 window.open(data.email.link.singlishwords, "_blank")
               }
@@ -69,8 +78,23 @@ export const EmailPage = ({ form }: EmailPageProps) => {
               DOMPurify.sanitize(data.emailPage.secondParagraph.enterCode)
             )}
           </Typography>
-          <Stack spacing={7} direction="row" sx={{ border: "2px solid", p: 4 }}>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+          <Stack
+            spacing={{ xs: 2, sm: 7 }}
+            direction="row"
+            sx={{
+              border: "2px solid",
+              p: { xs: 1, sm: 4 },
+              justifyContent: "center",
+            }}
+          >
+            {/* good to have - refactor to theme breakpoints https://github.com/mui/material-ui/issues/30484 */}
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: "bold",
+                fontSize: { xs: 15, sm: 30 },
+              }}
+            >
               {form.uuid}
             </Typography>
             <AppButton
@@ -108,7 +132,10 @@ export const EmailPage = ({ form }: EmailPageProps) => {
               DOMPurify.sanitize(data.emailPage.fourthParagraph.description1)
             )}
             <Link
-              sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
+              sx={{
+                cursor: "pointer",
+                "&:hover": { color: "secondary.main" },
+              }}
               onClick={() =>
                 window.open(data.email.link.singlishwords, "_blank")
               }
@@ -121,7 +148,10 @@ export const EmailPage = ({ form }: EmailPageProps) => {
               DOMPurify.sanitize(data.emailPage.fourthParagraph.description2)
             )}
             <Link
-              sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
+              sx={{
+                cursor: "pointer",
+                "&:hover": { color: "secondary.main" },
+              }}
               onClick={() => window.open(data.email.link.professor, "_blank")}
             >
               {parse(DOMPurify.sanitize(data.email.html.professor))}
@@ -137,7 +167,10 @@ export const EmailPage = ({ form }: EmailPageProps) => {
           <Typography variant="body1">
             {parse(DOMPurify.sanitize(data.emailPage.fifthParagraph))}
             <Link
-              sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}
+              sx={{
+                cursor: "pointer",
+                "&:hover": { color: "secondary.main" },
+              }}
               onClick={() => window.open(data.url.link.singlishwords, "_blank")}
             >
               {parse(DOMPurify.sanitize(data.url.html.singlishwords))}
@@ -150,8 +183,6 @@ export const EmailPage = ({ form }: EmailPageProps) => {
           onClick={() => navigate("/")}
         />
       </Stack>
-      {/* Footer */}
-      <Footer />
     </Stack>
   );
 };

@@ -29,7 +29,13 @@ export const NavigationBar = () => {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Phone Navigation Bar */}
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+              bgcolor: "primary.main",
+            }}
+          >
             <IconButton
               size="large"
               onClick={handleOpenNavMenu}
@@ -38,7 +44,6 @@ export const NavigationBar = () => {
               <List />
             </IconButton>
             <Menu
-              id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
                 vertical: "bottom",
@@ -53,6 +58,7 @@ export const NavigationBar = () => {
               onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: "block", md: "none" },
+                "& .MuiPaper-root .MuiList-root": { bgcolor: "primary.main" },
               }}
             >
               {NavigationBarRoutes.map(({ path, label }) => (

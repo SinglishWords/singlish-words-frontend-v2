@@ -67,13 +67,20 @@ export const UserDetailPage = ({
   };
 
   return (
-    <Stack sx={{ alignItems: "center", pb: 10 }}>
-      <Typography variant="h4" sx={{ py: 4 }}>
+    <Stack
+      sx={{
+        width: { xs: "80%", sm: "60%" },
+        margin: "auto",
+        pb: { xs: 25, sm: 10 },
+      }}
+    >
+      {/* good to have - refactor to theme breakpoints https://github.com/mui/material-ui/issues/30484 */}
+      <Typography variant="h4" sx={{ py: 4, fontSize: { xs: 30, sm: 35 } }}>
         {parse(DOMPurify.sanitize(data.userDetailPage.title))}
       </Typography>
 
       {/* Content */}
-      <Stack spacing={3} sx={{ width: 750 }}>
+      <Stack spacing={6}>
         <Divider sx={{ background: "black" }} />
 
         {/* User Detail Input Instructions */}
@@ -84,7 +91,7 @@ export const UserDetailPage = ({
         {/* Age */}
         <Dropdown
           required={true}
-          inputLabel={data.userDetailPage.age}
+          helperText={data.userDetailPage.age}
           value={form.age}
           name={"age"}
           listData={data.userDetailPage.agesList}
@@ -94,7 +101,7 @@ export const UserDetailPage = ({
         {/* Gender */}
         <Dropdown
           required={true}
-          inputLabel={data.userDetailPage.gender}
+          helperText={data.userDetailPage.gender}
           value={form.gender}
           name={"gender"}
           listData={data.userDetailPage.genderList}
@@ -104,7 +111,7 @@ export const UserDetailPage = ({
         {/* Education */}
         <Dropdown
           required={true}
-          inputLabel={data.userDetailPage.education}
+          helperText={data.userDetailPage.education}
           value={form.education}
           name={"education"}
           listData={data.userDetailPage.educationLevelList}
@@ -114,7 +121,7 @@ export const UserDetailPage = ({
         {/* Country-of-Birth */}
         <Dropdown
           required={true}
-          inputLabel={data.userDetailPage.birthCountry}
+          helperText={data.userDetailPage.birthCountry}
           value={form.countryOfBirth}
           name={"countryOfBirth"}
           listData={data.userDetailPage.countriesList}
@@ -125,7 +132,7 @@ export const UserDetailPage = ({
         {isSingaporean ? (
           <Dropdown
             required={true}
-            inputLabel={data.userDetailPage.ethnicity}
+            helperText={data.userDetailPage.ethnicity}
             value={form.ethnicity}
             name={"ethnicity"}
             listData={data.userDetailPage.ethicGroupList}
@@ -136,7 +143,7 @@ export const UserDetailPage = ({
         {/* Country-of-Residence */}
         <Dropdown
           required={true}
-          inputLabel={data.userDetailPage.residenceCountry}
+          helperText={data.userDetailPage.residenceCountry}
           value={form.countryOfResidence}
           name={"countryOfResidence"}
           listData={data.userDetailPage.countriesList}
@@ -146,7 +153,7 @@ export const UserDetailPage = ({
         {/* Native Speaker? */}
         <Dropdown
           required={true}
-          inputLabel={data.userDetailPage.native}
+          helperText={data.userDetailPage.native}
           value={form.isNative}
           name={"isNative"}
           listData={data.userDetailPage.yesNoList}
@@ -162,7 +169,7 @@ export const UserDetailPage = ({
             Select component is used in Dropdown instead of Multi-Select */}
             <Dropdown
               required={false}
-              inputLabel={data.userDetailPage.languages}
+              helperText={data.userDetailPage.languages}
               value={form.languagesSpoken}
               name={"languagesSpoken"}
               listData={data.userDetailPage.languagesSpokenList}

@@ -8,11 +8,15 @@ export const VisualisePage = () => {
   const panels = ["Legend 1", "Legend 2", "Legend 3"];
 
   return (
-    <Stack spacing={4} sx={{ width: "60%", alignSelf: "center", pb: 10 }}>
+    <Stack
+      spacing={4}
+      sx={{ width: { xs: "80%", sm: "60%" }, alignSelf: "center", pb: 10 }}
+    >
       <SearchBar page="Visualise" />
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
-        Visualization: <i>One-hop network </i>| Relation:{" "}
-        <i>Forward associations</i>
+        Visualization: <i>One-hop network </i>
+        <br />
+        Relation: <i>Forward associations</i>
       </Typography>
       <NetworkChart />
       <Stack spacing={2}>
