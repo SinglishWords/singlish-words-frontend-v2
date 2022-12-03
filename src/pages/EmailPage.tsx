@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link, Stack, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
@@ -6,14 +7,15 @@ import parse from "html-react-parser";
 import { AppButton } from "src/components/AppButton";
 import { Footer } from "src/components/Footer";
 import { data } from "src/utils/data";
-import { Form } from "src/utils/types";
+import { FormType } from "src/utils/types";
 
 type EmailPageProps = {
-  form: Form;
+  form: FormType;
 };
 
 export const EmailPage = ({ form }: EmailPageProps) => {
   const [copied, setCopied] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   /* Remove saved state from local storage */
   useEffect(() => {
@@ -142,8 +144,12 @@ export const EmailPage = ({ form }: EmailPageProps) => {
             </Link>
           </Typography>
         </Stack>
+        <AppButton
+          name={"RETURN TO HOME PAGE"}
+          sx={{ alignSelf: "end", fontWeight: "bold" }}
+          onClick={() => navigate("/")}
+        />
       </Stack>
-
       {/* Footer */}
       <Footer />
     </Stack>

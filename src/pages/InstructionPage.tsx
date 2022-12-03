@@ -4,11 +4,11 @@ import parse from "html-react-parser";
 
 import { AppButton } from "src/components/AppButton";
 import { data } from "src/utils/data";
-import { Form } from "src/utils/types";
+import { FormType } from "src/utils/types";
 
 type InstructionPageProps = {
-  form: Form;
-  setForm: React.Dispatch<React.SetStateAction<Form>>;
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
   nextStep: () => void;
 };
 

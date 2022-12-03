@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { LinearProgress, Stack, TextField, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
-import { Form } from "src/utils/types";
+import { FormType, RecaptchaType } from "src/utils/types";
 import {
   startTimer,
   endTimer,
@@ -14,8 +15,8 @@ import {
 } from "src/utils/logic/timeLogic";
 
 type QuizPageProps = {
-  form: Form;
-  setForm: React.Dispatch<React.SetStateAction<Form>>;
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
   nextStep: () => void;
 };
 
@@ -155,11 +156,19 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const numberOfWords = words?.length;
   const wordId = words[wordIndex]?.id;
   const currentWord = words[wordIndex]?.word;
+  const [recaptcha, setRecaptcha] = useState<RecaptchaType>({
+    isVerified: false,
+    /* 5% chance of recaptcha rendering to catch bots */
+    showRecaptcha: Math.random() < 0.05,
+    /* Render recaptcha once on Quiz page, at random depending on showRecaptcha boolean */
+    recaptchaAlreadyShown: false,
+  });
 
   /* Once user clicks the "Continue" button, reset all test fields and reset
     cursor back to the first association textfield */
   useEffect(() => {
     setStartTime(startTimer());
+    setRecaptcha({ ...recaptcha, showRecaptcha: Math.random() < 0.05 });
     setFirstResponse("");
     setSecondResponse("");
     setThirdResponse("");
@@ -210,6 +219,14 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     }
   };
 
+  const handleRecaptchaChange = () => {
+    setRecaptcha({
+      ...recaptcha,
+      recaptchaAlreadyShown: true,
+      isVerified: true,
+    });
+  };
+
   return (
     <Stack sx={{ alignItems: "center", pb: 10 }}>
       <Typography variant="h3" sx={{ py: 6 }}>
@@ -258,6 +275,18 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
             value={(100 / numberOfWords) * wordIndex}
           />
         </Stack>
+        {/* Recaptcha that randomly appears one time in quiz page .
+          Show Recaptcha once at random if it has not been shown. */}
+        {recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown ? (
+          <Stack sx={{ alignItems: "center" }}>
+            <ReCAPTCHA
+              /* To change site key once actual site is up.
+                Use smallworldofsinglishwords@gmail.com */
+              sitekey="6Ldy0tQbAAAAANL-FvKgyzKBeWcGSaER4cd9jta0"
+              onChange={handleRecaptchaChange}
+            />
+          </Stack>
+        ) : null}
         <Stack direction="row" sx={{ justifyContent: "space-evenly" }}>
           <PopoverButton
             name={data.quizPage.needHelpButton}
@@ -267,6 +296,11 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
+            disabled={
+              recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown
+                ? !recaptcha.isVerified
+                : false
+            }
           />
         </Stack>
       </Stack>

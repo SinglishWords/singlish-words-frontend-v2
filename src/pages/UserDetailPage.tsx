@@ -17,11 +17,11 @@ import {
   checkCountryOfBirthSingapore,
   checkEthnicityFieldFilled,
 } from "src/utils/logic/userInformationLogic";
-import { Form } from "src/utils/types";
+import { FormType } from "src/utils/types";
 
 type UserDetailPageProps = {
-  form: Form;
-  setForm: React.Dispatch<React.SetStateAction<Form>>;
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
   nextStep: () => void;
 };
 

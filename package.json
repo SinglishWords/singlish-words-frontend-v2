@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@types/dompurify": "^2.4.0",
+    "@types/react-google-recaptcha": "^2.1.5",
     "@types/uuid": "^8.3.4"
   },
   "scripts": {
