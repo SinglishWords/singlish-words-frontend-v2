@@ -8,7 +8,7 @@ import {
 type DropdownProps = {
   required: boolean;
   helperText: string;
-  value: string | string[];
+  value: number | string | string[];
   name: string;
   listData: string[] | number[];
   handleChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -26,7 +26,7 @@ export const Dropdown = ({
     <FormControl required={required}>
       <InputLabel variant="standard" htmlFor="uncontrolled-native"></InputLabel>
       <NativeSelect value={value} name={name} onChange={handleChange}>
-        <option value="" />
+        <option value={name === "age" ? -1 : ""} />
         {listData.map((item) => (
           <option key={item} value={item}>
             {/* If user is of age less than 18 or greater than 81, classify them under Less Than 18/More Than 80*/}

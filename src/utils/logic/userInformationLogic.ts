@@ -2,7 +2,7 @@ import { Form } from "src/types/state/form.dto";
 
 export const checkCompulsoryFieldsForNonSingaporean = (values: Form) => {
   return (
-    values.age !== "" &&
+    values.age !== -1 &&
     values.gender !== "" &&
     values.education !== "" &&
     values.countryOfBirth !== "" &&

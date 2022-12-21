@@ -48,6 +48,8 @@ export const UserDetailPage = ({
           ethnicity: "",
           [event.target.name]: event.target.value,
         })
+      : event.target.name === "age"
+      ? setForm({ ...form, [event.target.name]: parseInt(event.target.value) })
       : setForm({ ...form, [event.target.name]: event.target.value });
   };
 

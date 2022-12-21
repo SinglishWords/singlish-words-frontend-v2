@@ -21,6 +21,7 @@ import {
   currentDateTime,
 } from "src/utils/logic/timeLogic";
 import { useWords } from "src/hooks/useWords";
+import { useSubmitForm } from "src/hooks/useForm";
 
 type QuizPageProps = {
   form: Form;
@@ -30,6 +31,7 @@ type QuizPageProps = {
 
 export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const wordLimit = 20;
+  const { submitForm } = useSubmitForm();
   const { words } = useWords(wordLimit);
 
   const firstResponseRef = useRef<HTMLInputElement | null>(null);
@@ -104,6 +106,7 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
       if (wordIndex < words?.length - 1) {
         nextWord();
       } else {
+        submitForm(form);
         nextStep();
       }
     }

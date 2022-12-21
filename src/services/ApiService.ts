@@ -3,7 +3,9 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 const API_BASE_URL = "http://localhost:8080/";
 
 const getApiErrorMessage = (error: unknown): ApiResponseError => {
-  const defaultError = { message: "Something went wrong" };
+  const defaultError = {
+    message: `Something went wrong. Please contact the project team at singlishwords@nus.edu.sg.`,
+  };
 
   if (axios.isAxiosError(error)) {
     if (!error.response) {
