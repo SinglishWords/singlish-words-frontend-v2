@@ -1,4 +1,4 @@
-export type FormType = {
+export type Form = {
   step: number;
   age: string;
   gender: string;
@@ -20,10 +20,4 @@ export type FormType = {
     response: string[];
     timeOnPage: number;
   }[];
-};
-
-export type RecaptchaType = {
-  isVerified: boolean;
-  showRecaptcha: boolean;
-  recaptchaAlreadyShown: boolean;
 };

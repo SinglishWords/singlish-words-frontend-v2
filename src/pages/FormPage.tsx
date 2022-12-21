@@ -5,7 +5,7 @@ import { UserDetailPage } from "src/pages/UserDetailPage";
 import { InstructionPage } from "src/pages/InstructionPage";
 import { QuizPage } from "src/pages/QuizPage";
 import { EmailPage } from "src/pages/EmailPage";
-import { FormType } from "src/utils/types";
+import { Form } from "src/types/state/form.dto";
 import { currentDateTime } from "src/utils/logic/timeLogic";
 
 export const FormPage = () => {
@@ -30,7 +30,7 @@ export const FormPage = () => {
         };
   };
 
-  const [form, setForm] = useState<FormType>(checkForStorageData());
+  const [form, setForm] = useState<Form>(checkForStorageData());
   const { step } = form;
 
   const nextStep = () => {

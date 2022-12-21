@@ -5,12 +5,11 @@ import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 
 import { AppButton } from "src/components/AppButton";
-import { Footer } from "src/components/Footer";
 import { data } from "src/utils/data";
-import { FormType } from "src/utils/types";
+import { Form } from "src/types/state/form.dto";
 
 type EmailPageProps = {
-  form: FormType;
+  form: Form;
 };
 
 export const EmailPage = ({ form }: EmailPageProps) => {

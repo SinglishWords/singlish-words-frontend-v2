@@ -1,6 +1,6 @@
-import { FormType } from "src/utils/types";
+import { Form } from "src/types/state/form.dto";
 
-export const checkCompulsoryFieldsForNonSingaporean = (values: FormType) => {
+export const checkCompulsoryFieldsForNonSingaporean = (values: Form) => {
   return (
     values.age !== "" &&
     values.gender !== "" &&
@@ -11,10 +11,10 @@ export const checkCompulsoryFieldsForNonSingaporean = (values: FormType) => {
   );
 };
 
-export const checkCountryOfBirthSingapore = (values: FormType) => {
+export const checkCountryOfBirthSingapore = (values: Form) => {
   return values.countryOfBirth === "Singapore";
 };
 
-export const checkEthnicityFieldFilled = (values: FormType) => {
+export const checkEthnicityFieldFilled = (values: Form) => {
   return values.ethnicity !== "";
 };
