@@ -52,7 +52,7 @@ export const EmailPage = ({ form }: EmailPageProps) => {
         </Stack>
 
         {/* Paragraph 2 - If you would like to take part in the lucky draw or receive updates about this research */}
-        <Stack spacing={3}>
+        {/* <Stack spacing={3}>
           <Typography variant="h5">
             {parse(DOMPurify.sanitize(data.emailPage.secondHeader))}
           </Typography>
@@ -85,9 +85,9 @@ export const EmailPage = ({ form }: EmailPageProps) => {
               p: { xs: 1, sm: 4 },
               justifyContent: "center",
             }}
-          >
-            {/* good to have - refactor to theme breakpoints https://github.com/mui/material-ui/issues/30484 */}
-            <Typography
+          > */}
+        {/* good to have - refactor to theme breakpoints https://github.com/mui/material-ui/issues/30484 */}
+        {/* <Typography
               variant="h5"
               sx={{
                 fontWeight: "bold",
@@ -109,17 +109,17 @@ export const EmailPage = ({ form }: EmailPageProps) => {
               DOMPurify.sanitize(data.emailPage.secondParagraph.description2)
             )}
           </Typography>
-        </Stack>
+        </Stack> */}
 
         {/* Paragraph 3 - Lucky Draw T&C*/}
-        <Stack spacing={3}>
+        {/* <Stack spacing={3}>
           <Typography variant="h5">
             {parse(DOMPurify.sanitize(data.emailPage.thirdHeader))}
           </Typography>
           <Typography variant="body1">
             {parse(DOMPurify.sanitize(data.emailPage.thirdParagraph))}
           </Typography>
-        </Stack>
+        </Stack> */}
 
         {/* Paragraph 4 - Get in touch*/}
         <Stack spacing={3}>

@@ -61,10 +61,10 @@ export const HomePage = () => {
             spacing={{ xs: 3, sm: 0 }}
             sx={{ justifyContent: { sm: "space-evenly" } }}
           >
-            <PopoverButton
+            {/* <PopoverButton
               name={data.introductionPage.luckyDrawButton}
               description={data.introductionPage.luckyDrawDescription}
-            />
+            /> */}
             <AppButton
               name={data.introductionPage.continueButton}
               onClick={() => navigate("/form")}

@@ -16,9 +16,7 @@ export const data = {
       You can help us capture this knowledge by playing a simple game of word associations. This game takes no more than 15 minutes of your time. All you have to do is to respond with the first three words that come to your mind for a list of Singapore English words.
       
       If you are between 18 to 80 years old, and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study.
-      
-      Upon completion of the study, you can enter a <b>monthly lucky draw (refer to "Lucky Draw T&C")</b> to stand a chance of winning $5 Grab vouchers by entering your email address in the last page. The more times you complete the study, the more chances you get. <i>Don't say bojio!<i/>
-      
+            
       If you proceed, you consent to your demographic and linguistic data to be collected for research purposes. This data is completely anonymous, and never linked to your personal or contact information. Your anonymized data could be shared with other researchers for the purpose of scientific exploration.`,
     luckyDrawDescription: `The lucky draw will be active from 1st January 2022 to 31st December 2022. In order to participate, please email the unique code shown at the end of the survey to singlishwords@nus.edu.sg. 
       

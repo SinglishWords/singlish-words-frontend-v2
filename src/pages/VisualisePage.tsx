@@ -5,14 +5,27 @@ import { NetworkChart } from "src/components/NetworkChart";
 import { SearchBar } from "src/components/SearchBar";
 
 export const VisualisePage = () => {
-  const panels = ["Legend 1", "Legend 2", "Legend 3"];
+  const panels = [
+    {
+      header: "Legend 1",
+      body: "Some Text",
+    },
+    {
+      header: "Legend 2",
+      body: "Some Text",
+    },
+    {
+      header: "Legend 3",
+      body: "Some Text",
+    },
+  ];
 
   return (
     <Stack
       spacing={4}
       sx={{ width: { xs: "80%", sm: "60%" }, alignSelf: "center", pb: 10 }}
     >
-      <SearchBar page="Visualise" />
+      {/* <SearchBar page="Visualise" /> */}
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
         Visualization: <i>One-hop network </i>
         <br />
@@ -20,8 +33,8 @@ export const VisualisePage = () => {
       </Typography>
       <NetworkChart />
       <Stack spacing={2}>
-        {panels.map((title) => (
-          <ExpansionPanel key={title} title={title} />
+        {panels.map((panel) => (
+          <ExpansionPanel key={panel.header} panel={panel} />
         ))}
       </Stack>
     </Stack>

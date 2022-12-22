@@ -4,16 +4,29 @@ import { Download, Shuffle, Settings } from "@mui/icons-material";
 
 import { Dropdown } from "src/components/Dropdown";
 import { UtilityButton } from "src/components/UtilityButton";
+import { useRandomAssociation } from "src/hooks/useAssociation";
 
 type SearchBarProps = {
   page: string;
+  setCurrentWord: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const SearchBar = ({ page }: SearchBarProps) => {
+export const SearchBar = ({ page, setCurrentWord }: SearchBarProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
+  const { refetchRandomWord } = useRandomAssociation();
 
-  const handleChange = () => {
+  const handleModalChange = () => {
     setExpanded(!expanded);
+  };
+
+  const handleShuffleClick = () => {
+    refetchRandomWord();
+  };
+
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setCurrentWord(event.target.value.replace(/\s+/g, "-").toLowerCase());
   };
 
   return (
@@ -22,18 +35,26 @@ export const SearchBar = ({ page }: SearchBarProps) => {
       spacing={{ xs: 2, sm: 0 }}
       sx={{ justifyContent: { sm: "space-between" } }}
     >
-      <TextField label="Search" variant="outlined" />
+      <TextField
+        label="Search"
+        variant="outlined"
+        onChange={handleTextFieldChange}
+      />
       <Stack spacing={1} direction="row" sx={{ justifyContent: "center" }}>
         <UtilityButton title="Download" Icon={Download} />
-        <UtilityButton title="Shuffle" Icon={Shuffle} />
+        <UtilityButton
+          title="Shuffle"
+          Icon={Shuffle}
+          onClick={handleShuffleClick}
+        />
         {page === "Visualise" ? (
           <Stack sx={{ justifyContent: "center" }}>
             <UtilityButton
               title="Options"
               Icon={Settings}
-              onClick={handleChange}
+              onClick={handleModalChange}
             />
-            <Modal open={expanded} onClose={handleChange}>
+            <Modal open={expanded} onClose={handleModalChange}>
               <Fade in={expanded}>
                 <Box
                   sx={{

@@ -31,7 +31,7 @@ export const useWords = (limit?: number) => {
     }
   };
   const { data: words, isLoading: isWordsLoading } = useQuery(
-    [QUERY_KEYS.WORDS],
+    [QUERY_KEYS.WORDS, limit?.toString() || ""],
     getWords,
     // Prevents data from being marked as stale to avoid data refetching
     { staleTime: Infinity }

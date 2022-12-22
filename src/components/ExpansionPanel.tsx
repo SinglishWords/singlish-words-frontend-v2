@@ -7,10 +7,13 @@ import {
 import { ExpandMore } from "@mui/icons-material";
 
 type ExpansionPanelProps = {
-  title: string;
+  panel: {
+    header: string;
+    body: string | string[] | undefined;
+  };
 };
 
-export const ExpansionPanel = ({ title }: ExpansionPanelProps) => {
+export const ExpansionPanel = ({ panel }: ExpansionPanelProps) => {
   return (
     <Accordion
       defaultExpanded={true}
@@ -28,21 +31,11 @@ export const ExpansionPanel = ({ title }: ExpansionPanelProps) => {
         }}
       >
         <Typography sx={{ color: "white", fontWeight: "bold" }}>
-          {title}
+          {panel.header}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography className="text">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-          consequat a lacus euismod vulputate. Quisque ut blandit lacus. Donec
-          posuere odio ut consequat vestibulum. Nullam ligula diam, porttitor
-          porta iaculis non, gravida sed leo. Suspendisse at nulla ultricies,
-          viverra est posuere, finibus mauris. Integer tincidunt arcu eu mi
-          malesuada condimentum. Donec eget venenatis nulla. Integer bibendum
-          dictum lectus, a ultrices lorem ullamcorper non. Quisque vitae leo sit
-          amet enim tristique mattis sed luctus est. Aliquam eget feugiat nisl,
-          eu porta magna.
-        </Typography>
+        <Typography>{panel.body}</Typography>
       </AccordionDetails>
     </Accordion>
   );
