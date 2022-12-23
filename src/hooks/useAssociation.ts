@@ -45,7 +45,6 @@ export const useForwardAssociation = (word: string) => {
   const { enqueueSnackbar } = useSnackbar();
   const getForwardAssociation = async () => {
     try {
-      console.log(`/associations/forward/${word}`);
       const { data } = await ApiService.get<GetAssociationRes | undefined>(
         `/associations/forward/${word}`
       );
@@ -64,7 +63,11 @@ export const useForwardAssociation = (word: string) => {
     }
   };
   const { data: forwardAssociation, isLoading: isForwardAssociationLoading } =
-    useQuery([QUERY_KEYS.FORWARD_ASSOCIATION, word], getForwardAssociation);
+    useQuery(
+      [QUERY_KEYS.FORWARD_ASSOCIATION, word || ""],
+      getForwardAssociation,
+      { enabled: !!word }
+    );
   return {
     forwardAssociation,
     isForwardAssociationLoading,
@@ -93,7 +96,11 @@ export const useBackwardAssociation = (word: string) => {
     }
   };
   const { data: backwardAssociation, isLoading: isBackwardAssociationLoading } =
-    useQuery([QUERY_KEYS.BACKWARD_ASSOCIATION, word], getBackwardAssociation);
+    useQuery(
+      [QUERY_KEYS.BACKWARD_ASSOCIATION, word || ""],
+      getBackwardAssociation,
+      { enabled: !!word }
+    );
   return {
     backwardAssociation,
     isBackwardAssociationLoading,

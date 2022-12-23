@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Fade, Modal, Stack, TextField, Typography } from "@mui/material";
 import { Download, Shuffle, Settings } from "@mui/icons-material";
 
@@ -13,20 +13,33 @@ type SearchBarProps = {
 
 export const SearchBar = ({ page, setCurrentWord }: SearchBarProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const { refetchRandomWord } = useRandomAssociation();
+  const [text, setText] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const { randomAssociation, refetchRandomWord } = useRandomAssociation();
 
   const handleModalChange = () => {
     setExpanded(!expanded);
   };
 
   const handleShuffleClick = () => {
+    // TODO
+    // Update inputRef to randomAssociation source node value
+    if (inputRef.current) inputRef.current.value = "";
     refetchRandomWord();
   };
 
+  // Update text field value, but don't call association API yet
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setCurrentWord(event.target.value.replace(/\s+/g, "-").toLowerCase());
+    setText(event.target.value.replace(/\s+/g, "-").toLowerCase());
+  };
+
+  // Call association API when user press `Enter` on keyboard
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      setCurrentWord(text);
+    }
   };
 
   return (
@@ -38,7 +51,9 @@ export const SearchBar = ({ page, setCurrentWord }: SearchBarProps) => {
       <TextField
         label="Search"
         variant="outlined"
+        inputRef={inputRef}
         onChange={handleTextFieldChange}
+        onKeyPress={handleKeyPress}
       />
       <Stack spacing={1} direction="row" sx={{ justifyContent: "center" }}>
         <UtilityButton title="Download" Icon={Download} />
