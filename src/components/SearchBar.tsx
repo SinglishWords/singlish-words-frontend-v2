@@ -9,9 +9,15 @@ import { useRandomAssociation } from "src/hooks/useAssociation";
 type SearchBarProps = {
   page: string;
   setCurrentWord: React.Dispatch<React.SetStateAction<string>>;
+  setVisualisation?: React.Dispatch<React.SetStateAction<string>>;
+  setRelation?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const SearchBar = ({ page, setCurrentWord }: SearchBarProps) => {
+export const SearchBar = ({
+  page,
+  setCurrentWord,
+  setRelation,
+}: SearchBarProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
   const [text, setText] = useState<string>("");
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -28,18 +34,24 @@ export const SearchBar = ({ page, setCurrentWord }: SearchBarProps) => {
     refetchRandomWord();
   };
 
-  // Update text field value, but don't call association API yet
+  /* Update text field value, but don't call association API yet */
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setText(event.target.value.replace(/\s+/g, "-").toLowerCase());
   };
 
-  // Call association API when user press `Enter` on keyboard
+  /* Call association API when user press `Enter` on keyboard */
   const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       setCurrentWord(text);
     }
+  };
+
+  const handleVisualisationChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setRelation && setRelation(event.target.value);
   };
 
   return (
@@ -95,25 +107,12 @@ export const SearchBar = ({ page, setCurrentWord }: SearchBarProps) => {
                         required={true}
                         helperText={"Select a relation type"}
                         value={""}
-                        name={"relation_type"}
-                        // onChange={}
+                        name={"relationType"}
+                        handleChange={handleVisualisationChange}
                         listData={[
                           "Forward Associations",
                           "Backward Associations",
                         ]}
-                      />
-                    </Stack>
-                    <Stack spacing={2}>
-                      <Typography variant="body2">
-                        Visualisation Type
-                      </Typography>
-                      <Dropdown
-                        required={true}
-                        helperText={"Select a visualisation type"}
-                        value={""}
-                        name={"visualisation_type"}
-                        // onChange={}
-                        listData={["One-hop Network"]}
                       />
                     </Stack>
                   </Stack>

@@ -32,7 +32,8 @@ type QuizPageProps = {
 export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const wordLimit = 20;
   const { submitForm } = useSubmitForm();
-  const { words } = useWords(wordLimit);
+  const { words, refetchWords } = useWords(wordLimit);
+  console.log(words);
 
   const firstResponseRef = useRef<HTMLInputElement | null>(null);
   const secondResponseRef = useRef<HTMLInputElement | null>(null);
@@ -50,6 +51,11 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     /* Render recaptcha once on Quiz page, at random depending on showRecaptcha boolean */
     recaptchaAlreadyShown: false,
   });
+
+  /* Pull the data once when the user renders page*/
+  useEffect(() => {
+    refetchWords();
+  }, [refetchWords]);
 
   /* Once user clicks the "Continue" button, reset all test fields and reset
     cursor back to the first association textfield */

@@ -26,7 +26,8 @@ export const ExplorePage = () => {
 
   useEffect(() => {
     // TODO
-    // To target forward and backward in random association once random association is consolidated into a single endpoint
+    // To target forward and backward in random association (eg randomAssociation.forward/randomAssociation.backward)
+    // once random association is consolidated into a single endpoint
     setForward(randomAssociation);
     setBackward(randomAssociation);
   }, [randomAssociation]);
