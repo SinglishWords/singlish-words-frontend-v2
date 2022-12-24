@@ -50,6 +50,7 @@ export const SearchBar = ({
     if (event.key === "Enter") {
       setSearchWord(text);
       setIsSearchWord && setIsSearchWord(true);
+      if (inputRef.current) inputRef.current.value = "";
     }
   };
 
@@ -58,12 +59,6 @@ export const SearchBar = ({
   ) => {
     setRelation && setRelation(event.target.value);
   };
-
-  /* Populate textfield when a randomised word is called*/
-  useEffect(() => {
-    if (inputRef.current && randomAssociation)
-      inputRef.current.value = randomAssociation.word;
-  }, [randomAssociation]);
 
   return (
     <Stack

@@ -13,6 +13,9 @@ import {
 export const ExplorePage = () => {
   const [searchWord, setSearchWord] = useState<string>("");
   const [randomWord, setRandomWord] = useState<string>("");
+  const [isSearchWord, setIsSearchWord] = useState<boolean | undefined>(
+    undefined
+  );
   const [forward, setForward] = useState<GetAssociationRes>();
   const [backward, setBackward] = useState<GetAssociationRes>();
 
@@ -32,6 +35,15 @@ export const ExplorePage = () => {
   }, [randomAssociation]);
 
   const panels = [
+    {
+      header: "Word",
+      body:
+        isSearchWord === undefined
+          ? "The explored word."
+          : isSearchWord
+          ? searchWord
+          : randomWord,
+    },
     {
       header: "Forward Associations",
       body:
@@ -77,6 +89,7 @@ export const ExplorePage = () => {
         page="Explore"
         searchWord={searchWord}
         setSearchWord={setSearchWord}
+        setIsSearchWord={setIsSearchWord}
       />
       {panels.map((panel) => (
         <ExpansionPanel key={panel.header} panel={panel} />

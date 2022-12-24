@@ -56,6 +56,7 @@ const normalize = (association: GetAssociationRes | undefined) => {
 
 export const VisualisePage = () => {
   const [searchWord, setSearchWord] = useState<string>("");
+  const [randomWord, setRandomWord] = useState<string>("");
   const [isSearchWord, setIsSearchWord] = useState<boolean | undefined>(
     undefined
   );
@@ -85,8 +86,10 @@ export const VisualisePage = () => {
     if (!isSearchWord && isSearchWord !== undefined) {
       if (relation === "Forward Associations") {
         setAssociation(randomAssociation && randomAssociation.forward);
+        setRandomWord((randomAssociation && randomAssociation.word) || "");
       } else if (relation === "Backward Associations") {
         setAssociation(randomAssociation && randomAssociation.backward);
+        setRandomWord((randomAssociation && randomAssociation.word) || "");
       } else {
         return;
       }
@@ -124,6 +127,15 @@ export const VisualisePage = () => {
         setRelation={setRelation}
       />
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
+        Word:{" "}
+        <i>
+          {isSearchWord === undefined
+            ? ""
+            : isSearchWord
+            ? searchWord
+            : randomWord}
+        </i>
+        <br />
         Visualisation: <i>One-hop Network</i>
         <br />
         Relation: <i>{relation}</i>
