@@ -29,9 +29,11 @@ export const ExplorePage = () => {
   }, [forwardAssociation, backwardAssociation]);
 
   useEffect(() => {
-    setForward(randomAssociation && randomAssociation.forward);
-    setBackward(randomAssociation && randomAssociation.backward);
-    setRandomWord((randomAssociation && randomAssociation.word) || "");
+    if (isSearchWord !== undefined) {
+      setForward(randomAssociation && randomAssociation.forward);
+      setBackward(randomAssociation && randomAssociation.backward);
+      setRandomWord((randomAssociation && randomAssociation.word) || "");
+    }
   }, [randomAssociation]);
 
   const panels = [

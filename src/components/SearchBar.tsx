@@ -27,7 +27,7 @@ export const SearchBar = ({
   const [expanded, setExpanded] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { randomAssociation, refetchRandomWord } = useRandomAssociation();
+  const { refetchRandomWord } = useRandomAssociation();
 
   const handleModalChange = () => {
     setExpanded(!expanded);
