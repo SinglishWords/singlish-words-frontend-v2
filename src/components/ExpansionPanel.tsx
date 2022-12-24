@@ -9,7 +9,7 @@ import { ExpandMore } from "@mui/icons-material";
 type ExpansionPanelProps = {
   panel: {
     header: string;
-    body: string | string[] | undefined;
+    body: string | string[];
   };
 };
 

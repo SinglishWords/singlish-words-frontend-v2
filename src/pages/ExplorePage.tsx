@@ -25,11 +25,9 @@ export const ExplorePage = () => {
   }, [forwardAssociation, backwardAssociation]);
 
   useEffect(() => {
-    // TODO
-    // To target forward and backward in random association (eg randomAssociation.forward/randomAssociation.backward)
-    // once random association is consolidated into a single endpoint
-    setForward(randomAssociation);
-    setBackward(randomAssociation);
+    setForward(randomAssociation && randomAssociation.forward);
+    setBackward(randomAssociation && randomAssociation.backward);
+    setCurrentWord((randomAssociation && randomAssociation.word) || "");
   }, [randomAssociation]);
 
   const panels = [
@@ -37,7 +35,9 @@ export const ExplorePage = () => {
       header: "Forward Associations",
       body:
         forward && forward.nodes.length !== 0
-          ? forward.nodes.map((node) => node.name + " " + node.value + " | ")
+          ? forward.nodes // Omit subject node with filter
+              .filter((node) => (node.name === currentWord ? false : true))
+              .map((node) => node.name + " " + node.value + " | ")
           : forward && forward.nodes.length === 0
           ? "Forward associations of the word `" + currentWord + "` not found."
           : "The formation of an associative link between one item and an item that follows it in a series or sequence.",
@@ -46,7 +46,9 @@ export const ExplorePage = () => {
       header: "Backward Associations",
       body:
         backward && backward.nodes.length !== 0
-          ? backward.nodes.map((node) => node.name + " " + node.value + " | ")
+          ? backward.nodes // Omit subject node with filter
+              .filter((node) => (node.name === currentWord ? false : true))
+              .map((node) => node.name + " " + node.value + " | ")
           : backward && backward.nodes.length === 0
           ? "Backward associations of the word `" + currentWord + "` not found."
           : "The formation of an associative link between an item and the one preceding it in a series or sequence.",
@@ -62,7 +64,11 @@ export const ExplorePage = () => {
         minHeight: "100vh",
       }}
     >
-      <SearchBar page="Explore" setCurrentWord={setCurrentWord} />
+      <SearchBar
+        page="Explore"
+        currentWord={currentWord}
+        setCurrentWord={setCurrentWord}
+      />
       {panels.map((panel) => (
         <ExpansionPanel key={panel.header} panel={panel} />
       ))}

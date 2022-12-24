@@ -4,22 +4,25 @@ import { useSnackbar } from "notistack";
 import { QUERY_KEYS } from "src/constants/query-keys";
 import { ApiService } from "src/services/ApiService";
 import { ApiResponseError } from "src/services/ApiService";
-import { GetAssociationRes } from "src/types/api/association.dto";
+import {
+  GetAssociationRes,
+  GetRandomAssociationRes,
+} from "src/types/api/association.dto";
 
 export const useRandomAssociation = () => {
   const { enqueueSnackbar } = useSnackbar();
   const getRandomAssociation = async () => {
     try {
-      const { data } = await ApiService.get<GetAssociationRes | undefined>(
-        `/associations/random/forward`
-      );
+      const { data } = await ApiService.get<
+        GetRandomAssociationRes | undefined
+      >(`/associations/random`);
       enqueueSnackbar("Random word retrieved. ", {
         variant: "success",
       });
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
-        "Unable to retrieve random forward associations. " +
+        "Unable to retrieve random associations. " +
           (e as ApiResponseError).message,
         {
           variant: "error",

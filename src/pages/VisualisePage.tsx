@@ -11,20 +11,67 @@ import {
   useRandomAssociation,
 } from "src/hooks/useAssociation";
 
+// TODO - Figure out how to normalize properly / normalize on the backend
+const normalize = (association: GetAssociationRes | undefined) => {
+  if (association) {
+    // Get min max (Excluiding subject node)
+    var max = -1;
+    var min = 10000000000;
+    association.nodes.map((node) => {
+      if (node.symbolSize === 10000000000) {
+      }
+      if (node.symbolSize > max) {
+        max = node.symbolSize;
+      }
+      if (node.symbolSize < min) {
+        min = node.symbolSize;
+      }
+      return node;
+    });
+
+    // Normalise to range of 0 and 50
+    association.nodes.map((node) => {
+      if (node.symbolSize === 10000000000) {
+        node.symbolSize = 60;
+        return node;
+      } else {
+        node.symbolSize = Math.round(
+          ((node.symbolSize - min) / (max - min)) * 60
+        );
+        return node;
+      }
+    });
+
+    // Convert 0 to 5
+    association.nodes.map((node) => {
+      if (node.symbolSize < 5) {
+        node.symbolSize = 5;
+      }
+      return node;
+    });
+
+    return association;
+  }
+};
+
 export const VisualisePage = () => {
   const [currentWord, setCurrentWord] = useState<string>("");
   const [relation, setRelation] = useState<string>("Forward Associations");
   const [association, setAssociation] = useState<GetAssociationRes>();
-  console.log(association);
 
   const { randomAssociation } = useRandomAssociation();
   const { forwardAssociation } = useForwardAssociation(currentWord);
   const { backwardAssociation } = useBackwardAssociation(currentWord);
+  normalize(association);
 
   useEffect(() => {
     if (relation === "Forward Associations") {
+      // TODO
+      // SET CURRENT WORD
       setAssociation(forwardAssociation);
     } else if (relation === "Backward Associations") {
+      // TODO
+      // SET CURRENT WORD
       setAssociation(backwardAssociation);
     } else {
       return;
@@ -32,17 +79,16 @@ export const VisualisePage = () => {
   }, [forwardAssociation, backwardAssociation, relation]);
 
   useEffect(() => {
-    // TODO
-    // To target forward and backward in random association (eg randomAssociation.forward/randomAssociation.backward)
-    // once random association is consolidated into a single endpoint
     if (relation === "Forward Associations") {
-      setAssociation(randomAssociation);
+      setAssociation(randomAssociation && randomAssociation.forward);
+      setCurrentWord((randomAssociation && randomAssociation.word) || "");
     } else if (relation === "Backward Associations") {
-      setAssociation(randomAssociation);
+      setAssociation(randomAssociation && randomAssociation.backward);
+      setCurrentWord((randomAssociation && randomAssociation.word) || "");
     } else {
       return;
     }
-  }, [randomAssociation]);
+  }, [randomAssociation, relation]);
 
   const panels = [
     {
@@ -66,7 +112,9 @@ export const VisualisePage = () => {
     >
       <SearchBar
         page="Visualise"
+        currentWord={currentWord}
         setCurrentWord={setCurrentWord}
+        relation={relation}
         setRelation={setRelation}
       />
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
@@ -74,7 +122,7 @@ export const VisualisePage = () => {
         <br />
         Relation: <i>{relation}</i>
       </Typography>
-      <NetworkChart />
+      <NetworkChart association={association} />
       <Stack spacing={2}>
         {panels.map((panel) => (
           <ExpansionPanel key={panel.header} panel={panel} />

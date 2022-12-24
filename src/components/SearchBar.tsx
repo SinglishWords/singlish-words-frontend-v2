@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Box, Fade, Modal, Stack, TextField, Typography } from "@mui/material";
 import { Download, Shuffle, Settings } from "@mui/icons-material";
 
@@ -8,6 +8,8 @@ import { useRandomAssociation } from "src/hooks/useAssociation";
 
 type SearchBarProps = {
   page: string;
+  currentWord: string;
+  relation?: string;
   setCurrentWord: React.Dispatch<React.SetStateAction<string>>;
   setVisualisation?: React.Dispatch<React.SetStateAction<string>>;
   setRelation?: React.Dispatch<React.SetStateAction<string>>;
@@ -15,22 +17,19 @@ type SearchBarProps = {
 
 export const SearchBar = ({
   page,
+  currentWord,
+  relation,
   setCurrentWord,
   setRelation,
 }: SearchBarProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [text, setText] = useState<string>("");
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const { randomAssociation, refetchRandomWord } = useRandomAssociation();
+  const { refetchRandomWord } = useRandomAssociation();
 
   const handleModalChange = () => {
     setExpanded(!expanded);
   };
 
   const handleShuffleClick = () => {
-    // TODO
-    // Update inputRef to randomAssociation source node value
-    if (inputRef.current) inputRef.current.value = "";
     refetchRandomWord();
   };
 
@@ -38,14 +37,7 @@ export const SearchBar = ({
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setText(event.target.value.replace(/\s+/g, "-").toLowerCase());
-  };
-
-  /* Call association API when user press `Enter` on keyboard */
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter") {
-      setCurrentWord(text);
-    }
+    setCurrentWord(event.target.value.replace(/\s+/g, "-").toLowerCase());
   };
 
   const handleVisualisationChange = (
@@ -61,11 +53,13 @@ export const SearchBar = ({
       sx={{ justifyContent: { sm: "space-between" } }}
     >
       <TextField
+        value={currentWord}
         label="Search"
         variant="outlined"
-        inputRef={inputRef}
         onChange={handleTextFieldChange}
-        onKeyPress={handleKeyPress}
+        InputLabelProps={{
+          shrink: true,
+        }}
       />
       <Stack spacing={1} direction="row" sx={{ justifyContent: "center" }}>
         <UtilityButton title="Download" Icon={Download} />
@@ -106,7 +100,7 @@ export const SearchBar = ({
                       <Dropdown
                         required={true}
                         helperText={"Select a relation type"}
-                        value={""}
+                        value={relation || ""}
                         name={"relationType"}
                         handleChange={handleVisualisationChange}
                         listData={[

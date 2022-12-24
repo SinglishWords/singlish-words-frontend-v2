@@ -6,6 +6,12 @@ export type GetAssociationRes = {
     value: number;
     category: number;
   }[];
-  Links: { source: number; target: number }[];
-  Categories: string[];
+  links: { source: number; target: number }[];
+  categories: { name: string }[];
+};
+
+export type GetRandomAssociationRes = {
+  word: string;
+  forward: GetAssociationRes;
+  backward: GetAssociationRes;
 };
