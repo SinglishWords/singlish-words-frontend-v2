@@ -33,7 +33,6 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const wordLimit = 20;
   const { submitForm } = useSubmitForm();
   const { words, refetchWords } = useWords(wordLimit);
-  console.log(words);
 
   const firstResponseRef = useRef<HTMLInputElement | null>(null);
   const secondResponseRef = useRef<HTMLInputElement | null>(null);

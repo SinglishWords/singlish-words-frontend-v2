@@ -42,10 +42,10 @@ const normalize = (association: GetAssociationRes | undefined) => {
       }
     });
 
-    // Convert 0 to 5
+    // Convert 0 to 20
     association.nodes.map((node) => {
-      if (node.symbolSize < 5) {
-        node.symbolSize = 5;
+      if (node.symbolSize < 20) {
+        node.symbolSize = 20;
       }
       return node;
     });
@@ -55,40 +55,45 @@ const normalize = (association: GetAssociationRes | undefined) => {
 };
 
 export const VisualisePage = () => {
-  const [currentWord, setCurrentWord] = useState<string>("");
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [isSearchWord, setIsSearchWord] = useState<boolean | undefined>(
+    undefined
+  );
   const [relation, setRelation] = useState<string>("Forward Associations");
   const [association, setAssociation] = useState<GetAssociationRes>();
 
   const { randomAssociation } = useRandomAssociation();
-  const { forwardAssociation } = useForwardAssociation(currentWord);
-  const { backwardAssociation } = useBackwardAssociation(currentWord);
+  const { forwardAssociation } = useForwardAssociation(searchWord);
+  const { backwardAssociation } = useBackwardAssociation(searchWord);
   normalize(association);
 
   useEffect(() => {
-    if (relation === "Forward Associations") {
-      // TODO
-      // SET CURRENT WORD
-      setAssociation(forwardAssociation);
-    } else if (relation === "Backward Associations") {
-      // TODO
-      // SET CURRENT WORD
-      setAssociation(backwardAssociation);
+    if (isSearchWord && isSearchWord !== undefined) {
+      if (relation === "Forward Associations") {
+        setAssociation(forwardAssociation);
+      } else if (relation === "Backward Associations") {
+        setAssociation(backwardAssociation);
+      } else {
+        return;
+      }
     } else {
       return;
     }
-  }, [forwardAssociation, backwardAssociation, relation]);
+  }, [forwardAssociation, backwardAssociation, relation, isSearchWord]);
 
   useEffect(() => {
-    if (relation === "Forward Associations") {
-      setAssociation(randomAssociation && randomAssociation.forward);
-      setCurrentWord((randomAssociation && randomAssociation.word) || "");
-    } else if (relation === "Backward Associations") {
-      setAssociation(randomAssociation && randomAssociation.backward);
-      setCurrentWord((randomAssociation && randomAssociation.word) || "");
+    if (!isSearchWord && isSearchWord !== undefined) {
+      if (relation === "Forward Associations") {
+        setAssociation(randomAssociation && randomAssociation.forward);
+      } else if (relation === "Backward Associations") {
+        setAssociation(randomAssociation && randomAssociation.backward);
+      } else {
+        return;
+      }
     } else {
       return;
     }
-  }, [randomAssociation, relation]);
+  }, [randomAssociation, relation, isSearchWord]);
 
   const panels = [
     {
@@ -112,9 +117,10 @@ export const VisualisePage = () => {
     >
       <SearchBar
         page="Visualise"
-        currentWord={currentWord}
-        setCurrentWord={setCurrentWord}
+        searchWord={searchWord}
         relation={relation}
+        setIsSearchWord={setIsSearchWord}
+        setSearchWord={setSearchWord}
         setRelation={setRelation}
       />
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
@@ -122,7 +128,24 @@ export const VisualisePage = () => {
         <br />
         Relation: <i>{relation}</i>
       </Typography>
-      <NetworkChart association={association} />
+      {(isSearchWord &&
+        relation === "Forward Associations" &&
+        forwardAssociation?.nodes.length === 0) ||
+      (isSearchWord &&
+        relation === "Backward Associations" &&
+        backwardAssociation?.nodes.length === 0) ||
+      (!isSearchWord &&
+        relation === "Forward Associations" &&
+        randomAssociation?.forward.nodes.length === 0) ||
+      (!isSearchWord &&
+        relation === "Backward Associations" &&
+        randomAssociation?.backward.nodes.length === 0) ? (
+        <Typography variant="body1" sx={{ alignSelf: "center", color: "red" }}>
+          No associations found!
+        </Typography>
+      ) : (
+        <NetworkChart association={association} />
+      )}
       <Stack spacing={2}>
         {panels.map((panel) => (
           <ExpansionPanel key={panel.header} panel={panel} />

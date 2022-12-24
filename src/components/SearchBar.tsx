@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Fade, Modal, Stack, TextField, Typography } from "@mui/material";
 import { Download, Shuffle, Settings } from "@mui/icons-material";
 
@@ -8,22 +8,26 @@ import { useRandomAssociation } from "src/hooks/useAssociation";
 
 type SearchBarProps = {
   page: string;
-  currentWord: string;
+  searchWord: string;
   relation?: string;
-  setCurrentWord: React.Dispatch<React.SetStateAction<string>>;
+  setIsSearchWord?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setSearchWord: React.Dispatch<React.SetStateAction<string>>;
   setVisualisation?: React.Dispatch<React.SetStateAction<string>>;
   setRelation?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const SearchBar = ({
   page,
-  currentWord,
+  setIsSearchWord,
   relation,
-  setCurrentWord,
+  setSearchWord,
   setRelation,
 }: SearchBarProps) => {
+  const [text, setText] = useState<string>("");
   const [expanded, setExpanded] = useState<boolean>(false);
-  const { refetchRandomWord } = useRandomAssociation();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const { randomAssociation, refetchRandomWord } = useRandomAssociation();
 
   const handleModalChange = () => {
     setExpanded(!expanded);
@@ -31,13 +35,22 @@ export const SearchBar = ({
 
   const handleShuffleClick = () => {
     refetchRandomWord();
+    setIsSearchWord && setIsSearchWord(false);
   };
 
   /* Update text field value, but don't call association API yet */
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setCurrentWord(event.target.value.replace(/\s+/g, "-").toLowerCase());
+    setText(event.target.value.replace(/\s+/g, "-").toLowerCase());
+  };
+
+  /* Call association API when user press `Enter` on keyboard */
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") {
+      setSearchWord(text);
+      setIsSearchWord && setIsSearchWord(true);
+    }
   };
 
   const handleVisualisationChange = (
@@ -46,6 +59,12 @@ export const SearchBar = ({
     setRelation && setRelation(event.target.value);
   };
 
+  /* Populate textfield when a randomised word is called*/
+  useEffect(() => {
+    if (inputRef.current && randomAssociation)
+      inputRef.current.value = randomAssociation.word;
+  }, [randomAssociation]);
+
   return (
     <Stack
       direction={{ xs: "column", sm: "row" }}
@@ -53,10 +72,11 @@ export const SearchBar = ({
       sx={{ justifyContent: { sm: "space-between" } }}
     >
       <TextField
-        value={currentWord}
         label="Search"
         variant="outlined"
+        inputRef={inputRef}
         onChange={handleTextFieldChange}
+        onKeyPress={handleKeyPress}
         InputLabelProps={{
           shrink: true,
         }}

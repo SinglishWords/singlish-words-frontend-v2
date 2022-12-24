@@ -11,13 +11,14 @@ import {
 } from "src/hooks/useAssociation";
 
 export const ExplorePage = () => {
-  const [currentWord, setCurrentWord] = useState<string>("");
+  const [searchWord, setSearchWord] = useState<string>("");
+  const [randomWord, setRandomWord] = useState<string>("");
   const [forward, setForward] = useState<GetAssociationRes>();
   const [backward, setBackward] = useState<GetAssociationRes>();
 
-  const { randomAssociation } = useRandomAssociation();
-  const { forwardAssociation } = useForwardAssociation(currentWord);
-  const { backwardAssociation } = useBackwardAssociation(currentWord);
+  var { randomAssociation } = useRandomAssociation();
+  const { forwardAssociation } = useForwardAssociation(searchWord);
+  const { backwardAssociation } = useBackwardAssociation(searchWord);
 
   useEffect(() => {
     setForward(forwardAssociation);
@@ -27,7 +28,7 @@ export const ExplorePage = () => {
   useEffect(() => {
     setForward(randomAssociation && randomAssociation.forward);
     setBackward(randomAssociation && randomAssociation.backward);
-    setCurrentWord((randomAssociation && randomAssociation.word) || "");
+    setRandomWord((randomAssociation && randomAssociation.word) || "");
   }, [randomAssociation]);
 
   const panels = [
@@ -36,10 +37,14 @@ export const ExplorePage = () => {
       body:
         forward && forward.nodes.length !== 0
           ? forward.nodes // Omit subject node with filter
-              .filter((node) => (node.name === currentWord ? false : true))
+              .filter((node) =>
+                node.name === searchWord || node.name === randomWord
+                  ? false
+                  : true
+              )
               .map((node) => node.name + " " + node.value + " | ")
           : forward && forward.nodes.length === 0
-          ? "Forward associations of the word `" + currentWord + "` not found."
+          ? "Forward associations of the given word not found."
           : "The formation of an associative link between one item and an item that follows it in a series or sequence.",
     },
     {
@@ -47,10 +52,14 @@ export const ExplorePage = () => {
       body:
         backward && backward.nodes.length !== 0
           ? backward.nodes // Omit subject node with filter
-              .filter((node) => (node.name === currentWord ? false : true))
+              .filter((node) =>
+                node.name === searchWord || node.name === randomWord
+                  ? false
+                  : true
+              )
               .map((node) => node.name + " " + node.value + " | ")
           : backward && backward.nodes.length === 0
-          ? "Backward associations of the word `" + currentWord + "` not found."
+          ? "Backward associations of the given word not found."
           : "The formation of an associative link between an item and the one preceding it in a series or sequence.",
     },
   ];
@@ -66,8 +75,8 @@ export const ExplorePage = () => {
     >
       <SearchBar
         page="Explore"
-        currentWord={currentWord}
-        setCurrentWord={setCurrentWord}
+        searchWord={searchWord}
+        setSearchWord={setSearchWord}
       />
       {panels.map((panel) => (
         <ExpansionPanel key={panel.header} panel={panel} />
