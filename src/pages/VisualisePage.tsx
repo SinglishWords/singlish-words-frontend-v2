@@ -55,21 +55,22 @@ const normalize = (association: GetAssociationRes | undefined) => {
 };
 
 export const VisualisePage = () => {
-  const [searchWord, setSearchWord] = useState<string>("");
+  const [queryWord, setQueryWord] = useState<string>("");
   const [randomWord, setRandomWord] = useState<string>("");
-  const [isSearchWord, setIsSearchWord] = useState<boolean | undefined>(
+  const [isQueryWord, setIsQueryWord] = useState<boolean | undefined>(
     undefined
   );
   const [relation, setRelation] = useState<string>("Forward Associations");
   const [association, setAssociation] = useState<GetAssociationRes>();
 
   const { randomAssociation } = useRandomAssociation();
-  const { forwardAssociation } = useForwardAssociation(searchWord);
-  const { backwardAssociation } = useBackwardAssociation(searchWord);
+  const { forwardAssociation } = useForwardAssociation(queryWord);
+  const { backwardAssociation } = useBackwardAssociation(queryWord);
   normalize(association);
 
   useEffect(() => {
-    if (isSearchWord && isSearchWord !== undefined) {
+    /* If the page is initialised and a word is queried, run this hook. */
+    if (isQueryWord && isQueryWord !== undefined) {
       if (relation === "Forward Associations") {
         setAssociation(forwardAssociation);
       } else if (relation === "Backward Associations") {
@@ -80,10 +81,11 @@ export const VisualisePage = () => {
     } else {
       return;
     }
-  }, [forwardAssociation, backwardAssociation, relation, isSearchWord]);
+  }, [forwardAssociation, backwardAssociation, relation, isQueryWord]);
 
   useEffect(() => {
-    if (!isSearchWord && isSearchWord !== undefined) {
+    /* If the page is initialised and a word is randomized, run this hook */
+    if (!isQueryWord && isQueryWord !== undefined) {
       if (relation === "Forward Associations") {
         setAssociation(randomAssociation && randomAssociation.forward);
         setRandomWord((randomAssociation && randomAssociation.word) || "");
@@ -96,7 +98,7 @@ export const VisualisePage = () => {
     } else {
       return;
     }
-  }, [randomAssociation, relation, isSearchWord]);
+  }, [randomAssociation, relation, isQueryWord]);
 
   const panels = [
     {
@@ -120,19 +122,21 @@ export const VisualisePage = () => {
     >
       <SearchBar
         page="Visualise"
-        searchWord={searchWord}
+        queryWord={queryWord}
         relation={relation}
-        setIsSearchWord={setIsSearchWord}
-        setSearchWord={setSearchWord}
+        setIsQueryWord={setIsQueryWord}
+        setQueryWord={setQueryWord}
         setRelation={setRelation}
       />
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
         Word:{" "}
         <i>
-          {isSearchWord === undefined
+          {/*  If query word is undefined, default empty string. Otherwise check if 
+          the word is queried or random. */}
+          {isQueryWord === undefined
             ? ""
-            : isSearchWord
-            ? searchWord
+            : isQueryWord
+            ? queryWord
             : randomWord}
         </i>
         <br />
@@ -140,18 +144,7 @@ export const VisualisePage = () => {
         <br />
         Relation: <i>{relation}</i>
       </Typography>
-      {(isSearchWord &&
-        relation === "Forward Associations" &&
-        forwardAssociation?.nodes.length === 0) ||
-      (isSearchWord &&
-        relation === "Backward Associations" &&
-        backwardAssociation?.nodes.length === 0) ||
-      (!isSearchWord &&
-        relation === "Forward Associations" &&
-        randomAssociation?.forward.nodes.length === 0) ||
-      (!isSearchWord &&
-        relation === "Backward Associations" &&
-        randomAssociation?.backward.nodes.length === 0) ? (
+      {association?.nodes.length === 0 ? (
         <Typography variant="body1" sx={{ alignSelf: "center", color: "red" }}>
           No associations found!
         </Typography>

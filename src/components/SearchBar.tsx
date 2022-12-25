@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Fade, Modal, Stack, TextField, Typography } from "@mui/material";
 import { Download, Shuffle, Settings } from "@mui/icons-material";
 
@@ -8,19 +8,19 @@ import { useRandomAssociation } from "src/hooks/useAssociation";
 
 type SearchBarProps = {
   page: string;
-  searchWord: string;
+  queryWord: string;
   relation?: string;
-  setIsSearchWord?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
-  setSearchWord: React.Dispatch<React.SetStateAction<string>>;
+  setIsQueryWord?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  setQueryWord: React.Dispatch<React.SetStateAction<string>>;
   setVisualisation?: React.Dispatch<React.SetStateAction<string>>;
   setRelation?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const SearchBar = ({
   page,
-  setIsSearchWord,
+  setIsQueryWord,
   relation,
-  setSearchWord,
+  setQueryWord,
   setRelation,
 }: SearchBarProps) => {
   const [text, setText] = useState<string>("");
@@ -35,7 +35,9 @@ export const SearchBar = ({
 
   const handleShuffleClick = () => {
     refetchRandomWord();
-    setIsSearchWord && setIsSearchWord(false);
+    /* Once the shuffle button is click, update isQueryWord to indicate that 
+    the word is random, not queried. */
+    setIsQueryWord && setIsQueryWord(false);
   };
 
   /* Update text field value, but don't call association API yet */
@@ -48,8 +50,11 @@ export const SearchBar = ({
   /* Call association API when user press `Enter` on keyboard */
   const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
-      setSearchWord(text);
-      setIsSearchWord && setIsSearchWord(true);
+      setQueryWord(text);
+      /* Once the entered button is pressed, update isQueryWord to indicate that
+      the word is queried, not random */
+      setIsQueryWord && setIsQueryWord(true);
+      /* Remove text from search bar once the entered key is pressed */
       if (inputRef.current) inputRef.current.value = "";
     }
   };

@@ -11,17 +11,17 @@ import {
 } from "src/hooks/useAssociation";
 
 export const ExplorePage = () => {
-  const [searchWord, setSearchWord] = useState<string>("");
+  const [queryWord, setQueryWord] = useState<string>("");
   const [randomWord, setRandomWord] = useState<string>("");
-  const [isSearchWord, setIsSearchWord] = useState<boolean | undefined>(
+  const [isQueryWord, setIsQueryWord] = useState<boolean | undefined>(
     undefined
   );
   const [forward, setForward] = useState<GetAssociationRes>();
   const [backward, setBackward] = useState<GetAssociationRes>();
 
-  var { randomAssociation } = useRandomAssociation();
-  const { forwardAssociation } = useForwardAssociation(searchWord);
-  const { backwardAssociation } = useBackwardAssociation(searchWord);
+  const { randomAssociation } = useRandomAssociation();
+  const { forwardAssociation } = useForwardAssociation(queryWord);
+  const { backwardAssociation } = useBackwardAssociation(queryWord);
 
   useEffect(() => {
     setForward(forwardAssociation);
@@ -29,7 +29,12 @@ export const ExplorePage = () => {
   }, [forwardAssociation, backwardAssociation]);
 
   useEffect(() => {
-    if (isSearchWord !== undefined) {
+    /* Condition "isQueryWord !== undefined" prevents auto-population 
+    of state (if randomAssociation already exist) on page render. Without condition,
+    randomAssociation is automatically set when we click shuffle in Explore page, move 
+    to the Visualise page and back to the Explore page. isQueryWord will be initialised 
+    to "undefined" on Explore page render */
+    if (isQueryWord !== undefined) {
       setForward(randomAssociation && randomAssociation.forward);
       setBackward(randomAssociation && randomAssociation.backward);
       setRandomWord((randomAssociation && randomAssociation.word) || "");
@@ -39,20 +44,25 @@ export const ExplorePage = () => {
   const panels = [
     {
       header: "Word",
+      /* If query word is undefined, default to the string "The searched/shuffled word". 
+      Otherwise check if the word is queried or random. If it is a random word, we need to
+      rely on the API response field "word" to check what word it is using randomWord. If
+      it is a queried word, the queryWord which comes from the query params of the API call will 
+      be rendered on the body */
       body:
-        isSearchWord === undefined
-          ? "The explored word."
-          : isSearchWord
-          ? searchWord
+        isQueryWord === undefined
+          ? "The searched/shuffled word."
+          : isQueryWord
+          ? queryWord
           : randomWord,
     },
     {
       header: "Forward Associations",
       body:
         forward && forward.nodes.length !== 0
-          ? forward.nodes // Omit subject node with filter
+          ? forward.nodes /* Omit the queried/random node in the panel */
               .filter((node) =>
-                node.name === searchWord || node.name === randomWord
+                node.name === queryWord || node.name === randomWord
                   ? false
                   : true
               )
@@ -65,9 +75,9 @@ export const ExplorePage = () => {
       header: "Backward Associations",
       body:
         backward && backward.nodes.length !== 0
-          ? backward.nodes // Omit subject node with filter
+          ? backward.nodes /* Omit the queried/random node in the panel */
               .filter((node) =>
-                node.name === searchWord || node.name === randomWord
+                node.name === queryWord || node.name === randomWord
                   ? false
                   : true
               )
@@ -89,9 +99,9 @@ export const ExplorePage = () => {
     >
       <SearchBar
         page="Explore"
-        searchWord={searchWord}
-        setSearchWord={setSearchWord}
-        setIsSearchWord={setIsSearchWord}
+        queryWord={queryWord}
+        setQueryWord={setQueryWord}
+        setIsQueryWord={setIsQueryWord}
       />
       {panels.map((panel) => (
         <ExpansionPanel key={panel.header} panel={panel} />
