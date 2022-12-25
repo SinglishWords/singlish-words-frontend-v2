@@ -29,7 +29,7 @@ const normalize = (association: GetAssociationRes | undefined) => {
       return node;
     });
 
-    // Normalise to range of 0 and 50
+    // Normalise to range of 0 and 60
     association.nodes.map((node) => {
       if (node.symbolSize === 10000000000) {
         node.symbolSize = 60;
