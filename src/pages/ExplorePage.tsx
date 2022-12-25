@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Stack } from "@mui/material";
 
+import { AppButton } from "src/components/AppButton";
 import { ExpansionPanel } from "src/components/ExpansionPanel";
 import { SearchBar } from "src/components/SearchBar";
 import { GetAssociationRes } from "src/types/api/association.dto";
@@ -28,6 +29,8 @@ export const ExplorePage = () => {
     setBackward(backwardAssociation);
   }, [forwardAssociation, backwardAssociation]);
 
+  console.log(backwardAssociation);
+
   useEffect(() => {
     /* Condition "isQueryWord !== undefined" prevents auto-population 
     of state (if randomAssociation already exist) on page render. Without condition,
@@ -39,7 +42,7 @@ export const ExplorePage = () => {
       setBackward(randomAssociation && randomAssociation.backward);
       setRandomWord((randomAssociation && randomAssociation.word) || "");
     }
-  }, [randomAssociation]);
+  }, [randomAssociation, isQueryWord]);
 
   const panels = [
     {
@@ -66,7 +69,17 @@ export const ExplorePage = () => {
                   ? false
                   : true
               )
-              .map((node) => node.name + " " + node.value + " | ")
+              .map((node) => [
+                <AppButton
+                  size="small"
+                  name={node.name}
+                  onClick={() => {
+                    setQueryWord(node.name);
+                    setIsQueryWord(true);
+                  }}
+                />,
+                "  " + node.value + "      ",
+              ])
           : forward && forward.nodes.length === 0
           ? "Forward associations of the given word not found."
           : "The formation of an associative link between one item and an item that follows it in a series or sequence.",
@@ -81,7 +94,17 @@ export const ExplorePage = () => {
                   ? false
                   : true
               )
-              .map((node) => node.name + " " + node.value + " | ")
+              .map((node) => [
+                <AppButton
+                  size="small"
+                  name={node.name}
+                  onClick={() => {
+                    setQueryWord(node.name);
+                    setIsQueryWord(true);
+                  }}
+                />,
+                "  " + node.value + "      ",
+              ])
           : backward && backward.nodes.length === 0
           ? "Backward associations of the given word not found."
           : "The formation of an associative link between an item and the one preceding it in a series or sequence.",

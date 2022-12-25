@@ -9,7 +9,7 @@ import { ExpandMore } from "@mui/icons-material";
 type ExpansionPanelProps = {
   panel: {
     header: string;
-    body: string | string[];
+    body: string | (string | JSX.Element)[][];
   };
 };
 
@@ -35,7 +35,7 @@ export const ExpansionPanel = ({ panel }: ExpansionPanelProps) => {
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography>{panel.body}</Typography>
+        <Typography sx={{ whiteSpace: "pre-wrap" }}>{panel.body}</Typography>
       </AccordionDetails>
     </Accordion>
   );
