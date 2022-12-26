@@ -10,6 +10,10 @@ import {
   useForwardAssociation,
   useRandomAssociation,
 } from "src/hooks/useAssociation";
+import {
+  replaceDashWithSpace,
+  replaceSpaceWithDash,
+} from "src/utils/logic/textTransformationLogic";
 
 export const ExplorePage = () => {
   const [queryWord, setQueryWord] = useState<string>("");
@@ -29,8 +33,6 @@ export const ExplorePage = () => {
     setBackward(backwardAssociation);
   }, [forwardAssociation, backwardAssociation]);
 
-  console.log(backwardAssociation);
-
   useEffect(() => {
     /* Condition "isQueryWord !== undefined" prevents auto-population 
     of state (if randomAssociation already exist) on page render. Without condition,
@@ -44,6 +46,11 @@ export const ExplorePage = () => {
     }
   }, [randomAssociation, isQueryWord]);
 
+  console.log("forward");
+  console.log(forwardAssociation);
+  console.log("backward");
+  console.log(backwardAssociation);
+
   const panels = [
     {
       header: "Word",
@@ -56,7 +63,7 @@ export const ExplorePage = () => {
         isQueryWord === undefined
           ? "The searched/shuffled word."
           : isQueryWord
-          ? queryWord
+          ? replaceDashWithSpace(queryWord)
           : randomWord,
     },
     {
@@ -65,7 +72,8 @@ export const ExplorePage = () => {
         forward && forward.nodes.length !== 0
           ? forward.nodes /* Omit the queried/random node in the panel */
               .filter((node) =>
-                node.name === queryWord || node.name === randomWord
+                node.name === replaceDashWithSpace(queryWord) ||
+                node.name === randomWord
                   ? false
                   : true
               )
@@ -74,7 +82,7 @@ export const ExplorePage = () => {
                   size="small"
                   name={node.name}
                   onClick={() => {
-                    setQueryWord(node.name);
+                    setQueryWord(replaceSpaceWithDash(node.name));
                     setIsQueryWord(true);
                   }}
                 />,
@@ -90,7 +98,8 @@ export const ExplorePage = () => {
         backward && backward.nodes.length !== 0
           ? backward.nodes /* Omit the queried/random node in the panel */
               .filter((node) =>
-                node.name === queryWord || node.name === randomWord
+                node.name === replaceDashWithSpace(queryWord) ||
+                node.name === randomWord
                   ? false
                   : true
               )
@@ -99,7 +108,7 @@ export const ExplorePage = () => {
                   size="small"
                   name={node.name}
                   onClick={() => {
-                    setQueryWord(node.name);
+                    setQueryWord(replaceSpaceWithDash(node.name));
                     setIsQueryWord(true);
                   }}
                 />,

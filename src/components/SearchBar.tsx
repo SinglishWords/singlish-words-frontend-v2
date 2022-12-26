@@ -5,6 +5,7 @@ import { Download, Shuffle, Settings } from "@mui/icons-material";
 import { Dropdown } from "src/components/Dropdown";
 import { UtilityButton } from "src/components/UtilityButton";
 import { useRandomAssociation } from "src/hooks/useAssociation";
+import { replaceSpaceWithDash } from "src/utils/logic/textTransformationLogic";
 
 type SearchBarProps = {
   page: string;
@@ -44,13 +45,13 @@ export const SearchBar = ({
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setText(event.target.value.replace(/\s+/g, "-").toLowerCase());
+    setText(event.target.value);
   };
 
   /* Call association API when user press `Enter` on keyboard */
   const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
-      setQueryWord(text);
+      setQueryWord(replaceSpaceWithDash(text).toLowerCase());
       /* Once the entered button is pressed, update isQueryWord to indicate that
       the word is queried, not random */
       setIsQueryWord && setIsQueryWord(true);

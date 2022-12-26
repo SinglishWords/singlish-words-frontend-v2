@@ -10,6 +10,7 @@ import {
   useForwardAssociation,
   useRandomAssociation,
 } from "src/hooks/useAssociation";
+import { replaceDashWithSpace } from "src/utils/logic/textTransformationLogic";
 
 // TODO - Figure out how to normalize properly / normalize on the backend
 const normalize = (association: GetAssociationRes | undefined) => {
@@ -67,6 +68,7 @@ export const VisualisePage = () => {
   const { forwardAssociation } = useForwardAssociation(queryWord);
   const { backwardAssociation } = useBackwardAssociation(queryWord);
   normalize(association);
+  console.log(association);
 
   useEffect(() => {
     /* If the page is initialised and a word is queried, run this hook. */
@@ -136,7 +138,7 @@ export const VisualisePage = () => {
           {isQueryWord === undefined
             ? ""
             : isQueryWord
-            ? queryWord
+            ? replaceDashWithSpace(queryWord)
             : randomWord}
         </i>
         <br />

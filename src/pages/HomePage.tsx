@@ -6,7 +6,6 @@ import parse from "html-react-parser";
 import NUS_Logo from "src/assets/images/NUS_Logo.png";
 import { AppButton } from "src/components/AppButton";
 import { Footer } from "src/components/Footer";
-import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 
 export const HomePage = () => {
@@ -50,7 +49,6 @@ export const HomePage = () => {
             </Typography>
           </Stack>
         </Stack>
-
         {/* Description */}
         <Stack spacing={6}>
           <Typography variant="body2">
@@ -61,10 +59,6 @@ export const HomePage = () => {
             spacing={{ xs: 3, sm: 0 }}
             sx={{ justifyContent: { sm: "space-evenly" } }}
           >
-            {/* <PopoverButton
-              name={data.introductionPage.luckyDrawButton}
-              description={data.introductionPage.luckyDrawDescription}
-            /> */}
             <AppButton
               name={data.introductionPage.continueButton}
               onClick={() => navigate("/form")}

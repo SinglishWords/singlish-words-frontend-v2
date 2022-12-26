@@ -18,36 +18,8 @@ export const data = {
       If you are between 18 to 80 years old, and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study.
             
       If you proceed, you consent to your demographic and linguistic data to be collected for research purposes. This data is completely anonymous, and never linked to your personal or contact information. Your anonymized data could be shared with other researchers for the purpose of scientific exploration.`,
-    luckyDrawDescription: `The lucky draw will be active from 1st January 2022 to 31st December 2022. In order to participate, please email the unique code shown at the end of the survey to singlishwords@nus.edu.sg. 
-      
-      Your decision to participate is voluntary. The chance that each participant has to win a voucher is proportional to the number of times they had completed the study and entered their email address on the final page. Participants who have been identified as exhibiting bot-like behavior are not permitted to participate in the lucky draw.
-      
-      Winners of the lucky draw will be randomly selected on the final day of the month. All participants will be notified of the outcome regardless of whether they had won or not. 100 $5 Grab Vouchers will be awarded each month.
-      
-      After winners have been selected, the pool from which the lucky draw winners are selected is reset for the next month.`,
-    luckyDrawButton: `Lucky Draw T&C`,
     continueButton: `I want to participate!`,
   },
-
-  // /* Introduction Page (Student) */
-  // introductionPageStudent: {
-  //   title: `A Small World of Singlish Words:`,
-  //   subtitle: `A Word Association Study`,
-  //   introduction: `Welcome to this study on word associations in Singapore English. Singaporeans have a unique vocabulary, consisting of Singlish words and phrases that originate from various local languages, on top of the Standard English vocabulary. As researchers studying language and memory we are interested in the nature and organization of this unique mental dictionary of Singapore English.
-
-  //     You can help us capture this knowledge by playing a simple game of word associations. This game takes no more than 30 minutes of your time. All you have to do is to respond with the first three words that come to your mind for a list of Singapore English words.
-
-  //     If you are between 18 to 25 years old, and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study.
-
-  //     Upon completion of the study, if you are a current NUS student, you are eligible to be reimbursed $5 for your time by emailing us, with your `,
-  //   introductionEmail: `NUS student email address`,
-  //   introduction2: `, your participation code presented to you only upon completion of this study. `,
-  //   introduction3: `Don't say bojio!`,
-  //   introduction4: `If you proceed, you consent to your demographic and linguistic data to be collected for research purposes. This data is completely anonymous, and never linked to your personal or contact information. Your anonymized data could be shared with other researchers for the purpose of scientific exploration.`,
-  //   continueButtonDescription: `I want to participate!`,
-  //   footerTop: `This project was inspired by the Small World of Words project. We thank the creators for giving us permission to expand this work into the words that make up the Singaporean lexicon.`,
-  //   footerBottom: `Small World of Words - `,
-  // },
 
   /* User Detail Page */
   userDetailPage: {
@@ -110,29 +82,16 @@ export const data = {
     firstParagraph: `The mental lexicon is the part of long-term memory where all of the words that you know and their meanings are stored. The connections between these words and concepts can be represented as a language network (akin to a “social network” of words) to model the large-scale structure of the mental lexicon.
       
     In this study, you were asked to respond with words that came to your mind upon the presentation of Singapore English words. These responses are called free associations, and we and other language researchers plan to use these free associations across thousands of words in Singapore English to study the structure of the Singaporean mental lexicon. Thank you for your help with this research!`,
-    secondHeader: `<b>If you would like to take part in the lucky draw or receive updates about this research</b>`,
+    secondHeader: `<b>Get in touch</b>`,
     secondParagraph: {
-      description1: `Please email the following code to `,
-
-      enterCode: `<b>Your code is:</b>`,
-      description2: `Note that your contact information is never connected to the data you provided previously. Your responses remain confidential and anonymous.`,
-    },
-    thirdHeader: `<b>Lucky Draw Terms & Conditions</b>`,
-    thirdParagraph: `The lucky draw will be active from 1st January 2022 to 31st December 2022. Your decision to participate is voluntary. The chance that each participant has to win a voucher is proportional to the number of times they had completed the study and entered their email address on the final page. Participants who have been identified as exhibiting bot-like behavior are not permitted to participate in the lucky draw.
-    
-    Winners of the lucky draw will be randomly selected on the final day of the month. All participants will be notified of the outcome regardless of whether they had won or not. 100 $5 Grab Vouchers will be awarded each month.
-      
-    After winners have been selected, the pool from which the lucky draw winners are selected is reset for the next month.`,
-    fourthHeader: `<b>Get in touch</b>`,
-    fourthParagraph: {
       description1: `If you have any concerns or questions regarding this research, please do not hesitate to contact the project team at: `,
       description2: `<b>Principal Investigator: Dr. Cynthia Siew
         Department of Psychology, National University of Singapore.
         Email: </b>`,
     },
 
-    fifthHeader: `<b>Share the study</b>`,
-    fifthParagraph: `To get enough words and make the mental dictionary useful, we need many helping hands. If you want to help, just share the study with family and friends or come back some other time for new words! - `,
+    thirdHeader: `<b>Share the study</b>`,
+    thirdParagraph: `To get enough words and make the mental dictionary useful, we need many helping hands. If you want to help, just share the study with family and friends or come back some other time for new words! - `,
   },
 
   footer: {
@@ -161,30 +120,4 @@ export const data = {
       singlishwords: `https://singlishwords.nus.edu.sg/`,
     },
   },
-
-  // /* Email Page (Student) */
-  // emailPageStudent: {
-  //   title: `Thank You!`,
-  //   firstParagraphHeader: `What are we trying to do`,
-  //   firstParagraphDescription: `The mental lexicon is the part of long-term memory where all of the words that you know and their meanings are stored. The connections between these words and concepts can be represented as a language network (akin to a “social network” of words) to model the large-scale structure of the mental lexicon.
-
-  //     In this study, you were asked to respond with words that came to your mind upon the presentation of Singapore English words. These responses are called free associations, and we and other language researchers plan to use these free associations across thousands of words in Singapore English to study the structure of the Singaporean mental lexicon. Thank you for your help with this research!`,
-  //   secondParagraphHeader: `If you would like to be reimbursed or receive updates about this research`,
-  //   secondParagraphDescription: {
-  //     description1: `Please email the following code to `,
-  //     email: `singlishwords@nus.edu.sg`,
-  //     description2: ` to be reimbursed.`,
-  //     enterCode: `Your code is:`,
-  //     description3: `Note that your contact information is never connected to the data you provided previously. Your responses remain confidential and anonymous.`,
-  //   },
-  //   //    thirdParagraphHeader: `Get in touch`,
-  //   //    thirdParagraphDescription: {
-  //   //      description1: `If you have any concerns or questions regarding this research, please do not hesitate to contact the project team at: `,
-  //   //      email: `smallworldofsinglishwords@gmail.com`,
-  //   //      description2: `Principal Investigator: Dr. Cynthia Siew
-  //   //      Department of Psychology, National University of Singapore.
-  //   //      Email: `,
-  //   //      email2: `cynthia@nus.edu.sg`,
-  //   //    },
-  // },
 };

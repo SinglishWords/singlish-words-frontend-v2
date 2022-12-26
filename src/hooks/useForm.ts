@@ -10,7 +10,7 @@ export const useSubmitForm = () => {
   const submitForm = async (input: Form) => {
     try {
       await ApiService.post<void>(`/answers`, input);
-      enqueueSnackbar("Your responses have been submitted", {
+      enqueueSnackbar("Your responses have been submitted.", {
         variant: "success",
       });
     } catch (e: unknown) {

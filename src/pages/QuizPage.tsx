@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CircularProgress,
   LinearProgress,
@@ -31,6 +32,7 @@ type QuizPageProps = {
 
 export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const wordLimit = 20;
+  const navigate = useNavigate();
   const { submitForm } = useSubmitForm();
   const { words, refetchWords } = useWords(wordLimit);
 
@@ -217,6 +219,11 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
       sx={{ justifyContent: "center", alignItems: "center", height: "100vh" }}
     >
       <CircularProgress />
+      <AppButton
+        name={"RETURN TO HOME PAGE"}
+        sx={{ alignSelf: "center", fontWeight: "bold" }}
+        onClick={() => navigate("/")}
+      />
     </Stack>
   );
 };

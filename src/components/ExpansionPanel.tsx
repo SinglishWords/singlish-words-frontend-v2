@@ -13,12 +13,14 @@ type ExpansionPanelProps = {
   };
 };
 
-export const ExpansionPanel = ({ panel }: ExpansionPanelProps) => {
+export const ExpansionPanel = ({ panel, ...rest }: ExpansionPanelProps) => {
   return (
     <Accordion
+      key={panel.header}
       defaultExpanded={true}
       elevation={0}
       sx={{ border: "1px solid rgba(0,0,0,0.2)" }}
+      {...rest}
     >
       <AccordionSummary
         expandIcon={<ExpandMore />}
