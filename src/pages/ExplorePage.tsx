@@ -46,11 +46,6 @@ export const ExplorePage = () => {
     }
   }, [randomAssociation, isQueryWord]);
 
-  console.log("forward");
-  console.log(forwardAssociation);
-  console.log("backward");
-  console.log(backwardAssociation);
-
   const panels = [
     {
       header: "Word",

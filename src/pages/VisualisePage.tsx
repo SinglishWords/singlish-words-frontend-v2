@@ -36,9 +36,11 @@ const normalize = (association: GetAssociationRes | undefined) => {
         node.symbolSize = 60;
         return node;
       } else {
-        node.symbolSize = Math.round(
-          ((node.symbolSize - min) / (max - min)) * 60
-        );
+        if (max !== min) {
+          node.symbolSize = Math.round(
+            ((node.symbolSize - min) / (max - min)) * 60
+          );
+        }
         return node;
       }
     });
@@ -68,7 +70,6 @@ export const VisualisePage = () => {
   const { forwardAssociation } = useForwardAssociation(queryWord);
   const { backwardAssociation } = useBackwardAssociation(queryWord);
   normalize(association);
-  console.log(association);
 
   useEffect(() => {
     /* If the page is initialised and a word is queried, run this hook. */

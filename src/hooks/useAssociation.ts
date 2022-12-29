@@ -57,7 +57,7 @@ export const useForwardAssociation = (word: string) => {
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
-        "Unable to retrieve forward association. " +
+        "Unable to retrieve forward associations. " +
           (e as ApiResponseError).message,
         {
           variant: "error",
@@ -90,7 +90,7 @@ export const useBackwardAssociation = (word: string) => {
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
-        "Unable to retrieve backward association. " +
+        "Unable to retrieve backward associations. " +
           (e as ApiResponseError).message,
         {
           variant: "error",
