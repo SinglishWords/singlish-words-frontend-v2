@@ -14,14 +14,13 @@ export const Footer = () => {
         },
         minHeight: "150px",
         justifyContent: "center",
-        alignItems: "center",
       }}
     >
       <Stack spacing={2} sx={{ px: { xs: 2, sm: 0 } }}>
         <Typography variant="body2">
           {parse(DOMPurify.sanitize(data.footer.footerTop))}
         </Typography>
-        <Typography variant="body2">
+        <Typography variant="body2" sx={{ textAlign: "center" }}>
           {parse(DOMPurify.sanitize(data.footer.footerBottom))}
           <Link
             sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}

@@ -120,7 +120,7 @@ export const VisualisePage = () => {
         <br />
         Relation: <i>{relation}</i>
       </Typography>
-      {association?.nodes.length === 0 ? (
+      {association?.links.length === 0 ? (
         <Typography variant="body1" sx={{ alignSelf: "center", color: "red" }}>
           No {relation} Found!
         </Typography>

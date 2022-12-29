@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 
-import { AppButton } from "src/components/AppButton";
 import { ExpansionPanel } from "src/components/ExpansionPanel";
 import { SearchBar } from "src/components/SearchBar";
 import {
@@ -18,7 +17,6 @@ export const ExplorePage = () => {
 
   const { forwardAssociation } = useForwardAssociation(queryWord);
   const { backwardAssociation } = useBackwardAssociation(queryWord);
-  console.log(backwardAssociation);
 
   const panels = [
     {
@@ -37,14 +35,16 @@ export const ExplorePage = () => {
                 node.name === replaceDashWithSpace(queryWord) ? false : true
               )
               .map((node) => [
-                <AppButton
+                <Button
                   size="small"
-                  name={node.name}
+                  sx={{ fontWeight: 800 }}
                   onClick={() => {
                     setQueryWord(replaceSpaceWithDash(node.name));
                   }}
-                />,
-                "  " + node.value + "      ",
+                >
+                  {node.name}
+                </Button>,
+                node.value + "\t",
               ])
           : forwardAssociation && forwardAssociation.links.length === 0
           ? "Forward associations of the given word not found."
@@ -59,14 +59,16 @@ export const ExplorePage = () => {
                 node.name === replaceDashWithSpace(queryWord) ? false : true
               )
               .map((node) => [
-                <AppButton
+                <Button
                   size="small"
-                  name={node.name}
+                  sx={{ fontWeight: 800 }}
                   onClick={() => {
                     setQueryWord(replaceSpaceWithDash(node.name));
                   }}
-                />,
-                "  " + node.value + "      ",
+                >
+                  {node.name}
+                </Button>,
+                "\t" + node.value + "\t",
               ])
           : backwardAssociation && backwardAssociation.links.length === 0
           ? "Backward associations of the given word not found."
