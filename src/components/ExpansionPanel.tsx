@@ -7,13 +7,15 @@ import {
 import { ExpandMore } from "@mui/icons-material";
 
 type ExpansionPanelProps = {
-  panel: {
-    header: string;
-    body: string | (string | JSX.Element)[][];
-  };
+  header: string | JSX.Element | JSX.Element[];
+  body: string | JSX.Element | JSX.Element[] | (string | JSX.Element)[][];
 };
 
-export const ExpansionPanel = ({ panel, ...rest }: ExpansionPanelProps) => {
+export const ExpansionPanel = ({
+  header,
+  body,
+  ...rest
+}: ExpansionPanelProps) => {
   return (
     <Accordion
       defaultExpanded={true}
@@ -32,11 +34,11 @@ export const ExpansionPanel = ({ panel, ...rest }: ExpansionPanelProps) => {
         }}
       >
         <Typography sx={{ color: "white", fontWeight: "bold" }}>
-          {panel.header}
+          {header}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <Typography sx={{ whiteSpace: "pre-wrap" }}>{panel.body}</Typography>
+        <Typography sx={{ whiteSpace: "pre-wrap" }}>{body}</Typography>
       </AccordionDetails>
     </Accordion>
   );

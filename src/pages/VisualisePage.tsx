@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Stack, Typography } from "@mui/material";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 
 import { ExpansionPanel } from "src/components/ExpansionPanel";
 import { NetworkChart } from "src/components/NetworkChart";
@@ -10,6 +12,7 @@ import {
   useForwardAssociation,
 } from "src/hooks/useAssociation";
 import { replaceDashWithSpace } from "src/utils/logic/textTransformationLogic";
+import { data } from "src/utils/data";
 
 // TODO - Figure out how to normalize properly / normalize on the backend
 const normalize = (association: GetAssociationRes | undefined) => {
@@ -77,16 +80,24 @@ export const VisualisePage = () => {
 
   const panels = [
     {
-      header: "Legend 1",
-      body: "Some Text",
+      header: data.visualisePage.panels.firstHeader,
+      body: data.visualisePage.panels.firstBody,
     },
     {
-      header: "Legend 2",
-      body: "Some Text",
+      header: data.visualisePage.panels.secondHeader,
+      body: data.visualisePage.panels.secondBody,
     },
     {
-      header: "Legend 3",
-      body: "Some Text",
+      header: data.visualisePage.panels.thirdHeader,
+      body: data.visualisePage.panels.thirdBody,
+    },
+    {
+      header: data.visualisePage.panels.fourthHeader,
+      body: data.visualisePage.panels.fourthBody,
+    },
+    {
+      header: data.visualisePage.panels.fifthHeader,
+      body: data.visualisePage.panels.fifthBody,
     },
   ];
 
@@ -116,9 +127,19 @@ export const VisualisePage = () => {
       ) : (
         <NetworkChart association={association} />
       )}
+      <Typography
+        variant="body1"
+        sx={{ alignSelf: "center", fontWeight: "bold" }}
+      >
+        Legend
+      </Typography>
       <Stack spacing={2}>
         {panels.map((panel) => (
-          <ExpansionPanel key={panel.header} panel={panel} />
+          <ExpansionPanel
+            key={panel.header}
+            header={parse(DOMPurify.sanitize(panel.header))}
+            body={parse(DOMPurify.sanitize(panel.body))}
+          />
         ))}
       </Stack>
     </Stack>

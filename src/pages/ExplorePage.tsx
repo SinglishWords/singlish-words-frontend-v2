@@ -89,7 +89,11 @@ export const ExplorePage = () => {
         setQueryWord={setQueryWord}
       />
       {panels.map((panel) => (
-        <ExpansionPanel key={panel.header} panel={panel} />
+        <ExpansionPanel
+          key={panel.header}
+          header={panel.header}
+          body={panel.body}
+        />
       ))}
     </Stack>
   );

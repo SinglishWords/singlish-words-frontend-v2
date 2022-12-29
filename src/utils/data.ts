@@ -94,6 +94,22 @@ export const data = {
     thirdParagraph: `To get enough words and make the mental dictionary useful, we need many helping hands. If you want to help, just share the study with family and friends or come back some other time for new words! - `,
   },
 
+  /* Visualise Page */
+  visualisePage: {
+    panels: {
+      firstHeader: `FORWARD ASSOCIATIONS`,
+      firstBody: `A is a forward association of B if A was a response when B was a cue. For example, if a person was shown <i>jiak peng</i>, and responds with the word <i>rice</i>, then <i>rice</i> is a forward association of the phrase <i>jiak peng</i>.`,
+      secondHeader: `BACKWARD ASSOCIATIONS`,
+      secondBody: `A is a backward association of B if A was the cue which B was the response to. For example, if a person was shown <i>jiak peng</i>, and responds with the word <i>rice</i>, then <i>jiak peng</i> is a backward association of the word <i>rice</i>.`,
+      thirdHeader: `NODE SIZE AND VALUE`,
+      thirdBody: `A node's value, which determines its size, is determined by how many times it appears as a response (akin to how popular the word is).`,
+      fourthHeader: `NODE COLOR AND COMMUNITY`,
+      fourthBody: `Nodes have the same colour if they belong in the same community. A node in a community is more closely connected to other nodes in the same community than to nodes in a different community; a community is a group of nodes more closely related to one another than to other nodes.`,
+      fifthHeader: `EDGE WEIGHT`,
+      fifthBody: `The edge weight of an edge between two nodes is calculated based on how many times that relation appears. For example, if many people respond with <i>eat</i> when shown the word <i>makan</i>, then the weight of the edge between <i>eat</i> and <i>makan</i> in the forward association network will be higher.`,
+    },
+  },
+
   footer: {
     footerTop: `This project was inspired by the Small World of Words project. We thank the creators for giving us permission to expand this work into the words that make up the Singaporean lexicon.`,
     footerBottom: `Small World of Words - `,
