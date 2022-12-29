@@ -12,9 +12,6 @@ export const useDownloadForwardAssociation = (word: string) => {
       const { data } = await ApiService.get(
         `/associations/forward/${word}/download`
       );
-      enqueueSnackbar("Forward associations downloaded. ", {
-        variant: "success",
-      });
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
@@ -29,16 +26,14 @@ export const useDownloadForwardAssociation = (word: string) => {
   const {
     data: downloadForwardAssociation,
     isLoading: isDownloadForwardAssociationLoading,
-    refetch: refetchDownloadForwardAssociation,
   } = useQuery(
     [QUERY_KEYS.DOWNLOAD_FORWARD_ASSOCIATION, word || ""],
     getDownloadForwardAssociation,
-    { enabled: false }
+    { enabled: !!word }
   );
   return {
     downloadForwardAssociation,
     isDownloadForwardAssociationLoading,
-    refetchDownloadForwardAssociation,
   };
 };
 
@@ -49,9 +44,6 @@ export const useDownloadBackwardAssociation = (word: string) => {
       const { data } = await ApiService.get(
         `/associations/backward/${word}/download`
       );
-      enqueueSnackbar("Backward associations downloaded. ", {
-        variant: "success",
-      });
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
@@ -66,15 +58,13 @@ export const useDownloadBackwardAssociation = (word: string) => {
   const {
     data: downloadBackwardAssociation,
     isLoading: isBackwardAssociationLoading,
-    refetch: refetchDownloadBackwardAssociation,
   } = useQuery(
     [QUERY_KEYS.DOWNLOAD_BACKWARD_ASSOCIATION, word || ""],
     getDownloadBackwardAssociation,
-    { enabled: false }
+    { enabled: !!word }
   );
   return {
     downloadBackwardAssociation,
     isBackwardAssociationLoading,
-    refetchDownloadBackwardAssociation,
   };
 };

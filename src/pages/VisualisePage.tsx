@@ -8,7 +8,6 @@ import { GetAssociationRes } from "src/types/api/association.dto";
 import {
   useBackwardAssociation,
   useForwardAssociation,
-  useRandomAssociation,
 } from "src/hooks/useAssociation";
 import { replaceDashWithSpace } from "src/utils/logic/textTransformationLogic";
 
@@ -59,49 +58,22 @@ const normalize = (association: GetAssociationRes | undefined) => {
 
 export const VisualisePage = () => {
   const [queryWord, setQueryWord] = useState<string>("");
-  const [randomWord, setRandomWord] = useState<string>("");
-  const [isQueryWord, setIsQueryWord] = useState<boolean | undefined>(
-    undefined
-  );
   const [relation, setRelation] = useState<string>("Forward Associations");
   const [association, setAssociation] = useState<GetAssociationRes>();
 
-  const { randomAssociation } = useRandomAssociation();
   const { forwardAssociation } = useForwardAssociation(queryWord);
   const { backwardAssociation } = useBackwardAssociation(queryWord);
   normalize(association);
 
   useEffect(() => {
-    /* If the page is initialised and a word is queried, run this hook. */
-    if (isQueryWord && isQueryWord !== undefined) {
-      if (relation === "Forward Associations") {
-        setAssociation(forwardAssociation);
-      } else if (relation === "Backward Associations") {
-        setAssociation(backwardAssociation);
-      } else {
-        return;
-      }
+    if (relation === "Forward Associations") {
+      setAssociation(forwardAssociation);
+    } else if (relation === "Backward Associations") {
+      setAssociation(backwardAssociation);
     } else {
       return;
     }
-  }, [forwardAssociation, backwardAssociation, relation, isQueryWord]);
-
-  useEffect(() => {
-    /* If the page is initialised and a word is randomized, run this hook */
-    if (!isQueryWord && isQueryWord !== undefined) {
-      if (relation === "Forward Associations") {
-        setAssociation(randomAssociation && randomAssociation.forward);
-        setRandomWord((randomAssociation && randomAssociation.word) || "");
-      } else if (relation === "Backward Associations") {
-        setAssociation(randomAssociation && randomAssociation.backward);
-        setRandomWord((randomAssociation && randomAssociation.word) || "");
-      } else {
-        return;
-      }
-    } else {
-      return;
-    }
-  }, [randomAssociation, relation, isQueryWord]);
+  }, [forwardAssociation, backwardAssociation, relation]);
 
   const panels = [
     {
@@ -127,21 +99,11 @@ export const VisualisePage = () => {
         page="Visualise"
         queryWord={queryWord}
         relation={relation}
-        setIsQueryWord={setIsQueryWord}
         setQueryWord={setQueryWord}
         setRelation={setRelation}
       />
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
-        Word:{" "}
-        <i>
-          {/*  If query word is undefined, default empty string. Otherwise check if 
-          the word is queried or random. */}
-          {isQueryWord === undefined
-            ? ""
-            : isQueryWord
-            ? replaceDashWithSpace(queryWord)
-            : randomWord}
-        </i>
+        Word: <i>{queryWord === "" ? "" : replaceDashWithSpace(queryWord)}</i>
         <br />
         Visualisation: <i>One-hop Network</i>
         <br />
@@ -149,7 +111,7 @@ export const VisualisePage = () => {
       </Typography>
       {association?.nodes.length === 0 ? (
         <Typography variant="body1" sx={{ alignSelf: "center", color: "red" }}>
-          No associations found!
+          No {relation} Found!
         </Typography>
       ) : (
         <NetworkChart association={association} />

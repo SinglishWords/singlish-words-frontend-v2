@@ -1,26 +1,28 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Fade, Modal, Stack, TextField, Typography } from "@mui/material";
 import { Download, Shuffle, Settings } from "@mui/icons-material";
 
 import { Dropdown } from "src/components/Dropdown";
 import { UtilityButton } from "src/components/UtilityButton";
 import { useRandomAssociation } from "src/hooks/useAssociation";
+import {
+  useDownloadForwardAssociation,
+  useDownloadBackwardAssociation,
+} from "src/hooks/useDownload";
 import { replaceSpaceWithDash } from "src/utils/logic/textTransformationLogic";
 
 type SearchBarProps = {
   page: string;
   queryWord: string;
   relation?: string;
-  setIsQueryWord?: React.Dispatch<React.SetStateAction<boolean | undefined>>;
   setQueryWord: React.Dispatch<React.SetStateAction<string>>;
-  setVisualisation?: React.Dispatch<React.SetStateAction<string>>;
   setRelation?: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const SearchBar = ({
   page,
-  setIsQueryWord,
   relation,
+  queryWord,
   setQueryWord,
   setRelation,
 }: SearchBarProps) => {
@@ -28,7 +30,18 @@ export const SearchBar = ({
   const [expanded, setExpanded] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { refetchRandomWord } = useRandomAssociation();
+  const { randomAssociation, refetchRandomWord } = useRandomAssociation();
+  const { downloadForwardAssociation } =
+    useDownloadForwardAssociation(queryWord);
+  const { downloadBackwardAssociation } =
+    useDownloadBackwardAssociation(queryWord);
+
+  useEffect(() => {
+    randomAssociation &&
+      setQueryWord(
+        replaceSpaceWithDash(randomAssociation && randomAssociation.word)
+      );
+  }, [randomAssociation, setQueryWord]);
 
   const handleModalChange = () => {
     setExpanded(!expanded);
@@ -36,9 +49,32 @@ export const SearchBar = ({
 
   const handleShuffleClick = () => {
     refetchRandomWord();
-    /* Once the shuffle button is click, update isQueryWord to indicate that 
-    the word is random, not queried. */
-    setIsQueryWord && setIsQueryWord(false);
+  };
+
+  const download = (data: BlobPart, relation: string) => {
+    const blob = new Blob([data], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.setAttribute("href", url);
+    a.setAttribute("download", `${relation}_${queryWord}.csv`);
+    a.click();
+  };
+
+  const handleDownloadClick = () => {
+    if (page === "Explore") {
+      downloadForwardAssociation &&
+        download(downloadForwardAssociation, "forward");
+      downloadBackwardAssociation &&
+        download(downloadBackwardAssociation, "backward");
+    } else if (page === "Visualise") {
+      if (relation === "Forward Associations") {
+        downloadForwardAssociation &&
+          download(downloadForwardAssociation, "forward");
+      } else if (relation === "Backward Associations") {
+        downloadBackwardAssociation &&
+          download(downloadBackwardAssociation, "backward");
+      }
+    }
   };
 
   /* Update text field value, but don't call association API yet */
@@ -52,9 +88,6 @@ export const SearchBar = ({
   const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter") {
       setQueryWord(replaceSpaceWithDash(text).toLowerCase());
-      /* Once the entered button is pressed, update isQueryWord to indicate that
-      the word is queried, not random */
-      setIsQueryWord && setIsQueryWord(true);
       /* Remove text from search bar once the entered key is pressed */
       if (inputRef.current) inputRef.current.value = "";
     }
@@ -83,7 +116,11 @@ export const SearchBar = ({
         }}
       />
       <Stack spacing={1} direction="row" sx={{ justifyContent: "center" }}>
-        <UtilityButton title="Download" Icon={Download} />
+        <UtilityButton
+          title="Download"
+          Icon={Download}
+          onClick={handleDownloadClick}
+        />
         <UtilityButton
           title="Shuffle"
           Icon={Shuffle}

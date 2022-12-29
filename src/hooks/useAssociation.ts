@@ -16,9 +16,6 @@ export const useRandomAssociation = () => {
       const { data } = await ApiService.get<
         GetRandomAssociationRes | undefined
       >(`/associations/random`);
-      enqueueSnackbar("Random word retrieved. ", {
-        variant: "success",
-      });
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
@@ -51,9 +48,6 @@ export const useForwardAssociation = (word: string) => {
       const { data } = await ApiService.get<GetAssociationRes | undefined>(
         `/associations/forward/${word}`
       );
-      enqueueSnackbar("Forward associations retrieved. ", {
-        variant: "success",
-      });
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
@@ -84,9 +78,6 @@ export const useBackwardAssociation = (word: string) => {
       const { data } = await ApiService.get<GetAssociationRes | undefined>(
         `/associations/backward/${word}`
       );
-      enqueueSnackbar("Backward associations retrieved. ", {
-        variant: "success",
-      });
       return data;
     } catch (e: unknown) {
       enqueueSnackbar(
