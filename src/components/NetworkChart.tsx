@@ -9,6 +9,7 @@ type NetworkChartProps = {
 
 export const NetworkChart = ({ association }: NetworkChartProps) => {
   const { width } = useWindowDimensions();
+
   const setZoom = (width: number) => {
     const xs = 600;
     return width < xs ? 1 : 3;
