@@ -7,16 +7,21 @@ type NetworkChartProps = {
 };
 
 export const NetworkChart = ({ association }: NetworkChartProps) => {
+  console.log(association);
   return (
     <ReactEcharts
       option={{
-        tooltip: {},
+        tooltip: {
+          formatter: "Node Value: <b>{c}</b>",
+        },
         // legend: [
         //   {
-        //     data: data.categories.map(function (a) {
-        //       return a.name;
-        //     })
-        //   }
+        //     data:
+        //       association &&
+        //       association.categories.map((a) => {
+        //         return a.name;
+        //       }),
+        //   },
         // ],
         animationDuration: 1500,
         animationEasingUpdate: "quinticInOut",

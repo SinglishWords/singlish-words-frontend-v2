@@ -14,51 +14,6 @@ import {
 import { replaceDashWithSpace } from "src/utils/logic/textTransformationLogic";
 import { data } from "src/utils/data";
 
-// TODO - Figure out how to normalize properly / normalize on the backend
-const normalize = (association: GetAssociationRes | undefined) => {
-  if (association) {
-    // Get min max (Excluiding subject node)
-    var max = -1;
-    var min = 10000000000;
-    association.nodes.map((node) => {
-      if (node.symbolSize === 10000000000) {
-      }
-      if (node.symbolSize > max) {
-        max = node.symbolSize;
-      }
-      if (node.symbolSize < min) {
-        min = node.symbolSize;
-      }
-      return node;
-    });
-
-    // Normalise to range of 0 and 60
-    association.nodes.map((node) => {
-      if (node.symbolSize === 10000000000) {
-        node.symbolSize = 60;
-        return node;
-      } else {
-        if (max !== min) {
-          node.symbolSize = Math.round(
-            ((node.symbolSize - min) / (max - min)) * 60
-          );
-        }
-        return node;
-      }
-    });
-
-    // Convert 0 to 20
-    association.nodes.map((node) => {
-      if (node.symbolSize < 20) {
-        node.symbolSize = 20;
-      }
-      return node;
-    });
-
-    return association;
-  }
-};
-
 export const VisualisePage = () => {
   const [queryWord, setQueryWord] = useState<string>("");
   const [relation, setRelation] = useState<string>("Forward Associations");
@@ -66,7 +21,6 @@ export const VisualisePage = () => {
 
   const { forwardAssociation } = useForwardAssociation(queryWord);
   const { backwardAssociation } = useBackwardAssociation(queryWord);
-  normalize(association);
 
   useEffect(() => {
     if (relation === "Forward Associations") {
