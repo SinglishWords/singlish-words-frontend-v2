@@ -1,13 +1,19 @@
 import ReactEcharts from "echarts-for-react";
 
 import { GetAssociationRes } from "src/types/api/association.dto";
+import { useWindowDimensions } from "src/hooks/useWindowDimensions";
 
 type NetworkChartProps = {
   association: GetAssociationRes | undefined;
 };
 
 export const NetworkChart = ({ association }: NetworkChartProps) => {
-  console.log(association);
+  const { width } = useWindowDimensions();
+  const setZoom = (width: number) => {
+    const xs = 600;
+    return width < xs ? 1 : 3;
+  };
+
   return (
     <ReactEcharts
       option={{
@@ -28,11 +34,11 @@ export const NetworkChart = ({ association }: NetworkChartProps) => {
         series: [
           {
             type: "graph",
-            zoom: 3,
+            zoom: setZoom(width),
             layout: "force",
             draggable: true,
             force: {
-              repulsion: [100, 100],
+              repulsion: [300, 300],
               friction: 0.3,
               gravity: 0.03,
             },
