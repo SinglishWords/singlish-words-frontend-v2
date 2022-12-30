@@ -48,7 +48,6 @@ export const NetworkChart = ({ association }: NetworkChartProps) => {
               position: "inside",
               formatter: "{b}",
               show: true,
-              fontFamily: "Segoe UI",
               fontSize: 15,
               color: "#000",
             },
