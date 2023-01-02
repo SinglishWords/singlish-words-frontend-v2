@@ -101,7 +101,7 @@ export const data = {
 
   /* Visualise Page */
   visualisePage: {
-    instructions: `Enter a word in the <b>Search</b> text field or pick a random word by clicking the <b>Shuffle</b> button. If you want to change the type of relation, click the <b>Options button</b>. The forward and backward associations of the searched/shuffled word can be downloaded by clicking the <b>Download</b> button.`,
+    instructions: `Enter a word in the <b>Search</b> text field or pick a random word by clicking the <b>Shuffle</b> button. If you want to change the type of relation, click the <b>Options</b> button. The forward or backward associations of the searched/shuffled word can be downloaded by clicking the <b>Download</b> button.`,
     panels: {
       firstHeader: `FORWARD ASSOCIATIONS`,
       firstBody: `A is a forward association of B if A was a response when B was a cue. For example, if a person was shown <i>jiak peng</i>, and responds with the word <i>rice</i>, then <i>rice</i> is a forward association of the phrase <i>jiak peng</i>.`,
