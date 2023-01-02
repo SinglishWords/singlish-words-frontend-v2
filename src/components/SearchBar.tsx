@@ -111,9 +111,6 @@ export const SearchBar = ({
         inputRef={inputRef}
         onChange={handleTextFieldChange}
         onKeyPress={handleKeyPress}
-        InputLabelProps={{
-          shrink: true,
-        }}
       />
       <Stack spacing={1} direction="row" sx={{ justifyContent: "center" }}>
         <UtilityButton

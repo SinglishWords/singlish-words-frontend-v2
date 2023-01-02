@@ -67,6 +67,13 @@ export const VisualisePage = () => {
         setQueryWord={setQueryWord}
         setRelation={setRelation}
       />
+      {queryWord === "" ? (
+        <Stack sx={{ bgcolor: "lightgrey", p: 3 }}>
+          <Typography>
+            {parse(DOMPurify.sanitize(data.visualisePage.instructions))}
+          </Typography>
+        </Stack>
+      ) : null}
       <Typography variant="body1" sx={{ alignSelf: "start" }}>
         Word: <i>{queryWord === "" ? "" : replaceDashWithSpace(queryWord)}</i>
         <br />

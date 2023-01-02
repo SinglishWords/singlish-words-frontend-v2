@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Button, Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 
 import { ExpansionPanel } from "src/components/ExpansionPanel";
 import { SearchBar } from "src/components/SearchBar";
@@ -11,6 +13,7 @@ import {
   replaceDashWithSpace,
   replaceSpaceWithDash,
 } from "src/utils/logic/textTransformationLogic";
+import { data } from "src/utils/data";
 
 export const ExplorePage = () => {
   const [queryWord, setQueryWord] = useState<string>("");
@@ -78,6 +81,7 @@ export const ExplorePage = () => {
 
   return (
     <Stack
+      spacing={2}
       sx={{
         width: { xs: "80%", sm: "60%" },
         alignSelf: "center",
@@ -90,6 +94,13 @@ export const ExplorePage = () => {
         queryWord={queryWord}
         setQueryWord={setQueryWord}
       />
+      {queryWord === "" ? (
+        <Stack sx={{ bgcolor: "lightgrey", p: 3 }}>
+          <Typography>
+            {parse(DOMPurify.sanitize(data.explorePage.instructions))}
+          </Typography>
+        </Stack>
+      ) : null}
       {panels.map((panel) => (
         <ExpansionPanel
           key={panel.header}
