@@ -1,10 +1,7 @@
-# singlish-words-frontend
-
 [GitHub - SinglishWords/singlish-words-frontend: Singlish Words Application's Frontend Code (v2)](https://github.com/SinglishWords/singlish-words-frontend-v2)
 
 This repository consists of the working files for the frontend of the SinglishWords project, written primarily using the React framework.
 
-- [singlish-words-frontend](#singlish-words-frontend)
 - [Installation](#installation)
 - [Setting up CORS Everywhere](#setting-up-cors-everywhere)
 - [Editing pages](#editing-pages)
