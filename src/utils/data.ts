@@ -8,7 +8,7 @@ import { yesNoList } from "src/utils/lists/yesNoList";
 
 export const data = {
   /* Introduction Page */
-  introductionPage: {
+  homePage: {
     title: `A Small World of Singlish Words:`,
     subtitle: `A Word Association Study`,
     introduction: `Welcome to this study on word associations in Singapore English. Singaporeans have a unique vocabulary, consisting of Singlish words and phrases that originate from various local languages, on top of the Standard English vocabulary. As researchers studying language and memory we are interested in the nature and organization of this unique mental dictionary of Singapore English. 

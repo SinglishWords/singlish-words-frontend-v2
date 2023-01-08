@@ -42,17 +42,17 @@ export const HomePage = () => {
           >
             {/* good to have - refactor to theme breakpoints https://github.com/mui/material-ui/issues/30484 */}
             <Typography variant="h2" sx={{ fontSize: { xs: 21, sm: 31 } }}>
-              {parse(DOMPurify.sanitize(data.introductionPage.title))}
+              {parse(DOMPurify.sanitize(data.homePage.title))}
             </Typography>
             <Typography variant="h2" sx={{ fontSize: { xs: 19, sm: 22 } }}>
-              {parse(DOMPurify.sanitize(data.introductionPage.subtitle))}
+              {parse(DOMPurify.sanitize(data.homePage.subtitle))}
             </Typography>
           </Stack>
         </Stack>
         {/* Description */}
         <Stack spacing={6}>
           <Typography variant="body2">
-            {parse(DOMPurify.sanitize(data.introductionPage.introduction))}
+            {parse(DOMPurify.sanitize(data.homePage.introduction))}
           </Typography>
           <Stack
             direction={{ xs: "column", sm: "row" }}
@@ -60,7 +60,7 @@ export const HomePage = () => {
             sx={{ justifyContent: { sm: "space-evenly" } }}
           >
             <AppButton
-              name={data.introductionPage.continueButton}
+              name={data.homePage.continueButton}
               onClick={() => navigate("/form")}
             />
           </Stack>

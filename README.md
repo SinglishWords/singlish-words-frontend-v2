@@ -1,46 +1,180 @@
-# Getting Started with Create React App
+# singlish-words-frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[GitHub - SinglishWords/singlish-words-frontend: Singlish Words Application's Frontend Code (v2)](https://github.com/SinglishWords/singlish-words-frontend-v2)
 
-## Available Scripts
+This repository consists of the working files for the frontend of the SinglishWords project, written primarily using the React framework.
 
-In the project directory, you can run:
+- [singlish-words-frontend](#singlish-words-frontend)
+- [Installation](#installation)
+- [Setting up CORS Everywhere](#setting-up-cors-everywhere)
+- [Editing pages](#editing-pages)
+  - [App hierarchy](#app-hierarchy)
+  - [Editing structure and layout](#editing-structure-and-layout)
+    - [Example, changing element tags](#example-changing-element-tags)
+  - [Editing content and wordings](#editing-content-and-wordings)
+  - [Editing data lists](#editing-data-lists)
+  - [Editing cues](#editing-cues)
+- [Building the app](#building-the-app)
+- [Next steps](#next-steps)
 
-### `npm start`
+# Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To deploy the SinglishWords frontend on your local system, open your terminal and first clone the repository
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```bash
+$ git clone https://github.com/SinglishWords/singlish-words-frontend-v2.git
+$ cd singlish-words-frontend-v2 # to enter the directory
+```
 
-### `npm test`
+Use `npm` to install all the packages that the project uses
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+$ npm install
+```
 
-### `npm run build`
+Check for outdated packages and update
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+$ npm outdated
+$ npm update
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+After all the packages are installed, use `npm start` to run the application on your `localhost`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+$ npm start
+```
 
-### `npm run eject`
+This will deploy the frontend of the application to `https://localhost:3000`. Enter this address into a browser of your choice to run and test the application.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+# Setting up CORS Everywhere
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+For the purpose of frontend testing on `[localhost](http://localhost)`, it is recommended to install the CORS Everywhere browser extension on [Firefox](https://addons.mozilla.org/en-US/firefox/addon/cors-everywhere/) or [Google Chrome](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en). This will allow `localhost` to retrieve cues from the backend on [singlishwords.nus.edu.sg](http://singlishwords.nus.edu.sg).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Follow the steps on the pages linked above to install and enable the browser extension
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+Please remember to disable CORS Everywhere after using it to test the application, as it poses a minor security risk during general web browsing.
 
-## Learn More
+<a name="edit"></a>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+# Editing pages
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To make edits to the text, colours, fonts, etc. that are visible to the users, the frontend files must be modified.
+
+Making and saving any edits to the frontend in your code editor will automatically refresh the React app on `[localhost:3000](http://localhost:3000)` with the same changes.
+
+## App hierarchy
+
+Pages are stored in the `./src/pages` directory. Components are stored in the `./src/components` directory.
+
+This project’s frontend consists of the following page components in this hierarchy (these are not directories):
+
+```
+App
+  |_TopbarLayout (/)
+      |_NavigationBar
+      |_Outlet
+          |_ HomePage (/)
+          |_ ExplorePage (/explore)
+          |_ VisualisePage (/visualise)
+  |_FormPage (/form)
+      |_UserDetailPage
+      |_InstructionPage
+      |_QuizPage
+      |_Email
+
+Legend:
+() - Routing Path
+```
+
+## Editing structure and layout
+
+The positioning of elements, HTML-rendered components, and styles such as element heights, fonts, colors, etc. are stored in `.tsx` files.
+
+### Example, changing element tags
+
+For example, let’s say the title in the `HomePage` component is to be changed from `<h2>` to `<h1>`. Below is what the `./src/pages/HomePage.tsx` file looks like.
+
+```tsx
+export const HomePage = () => {
+  const navigate = useNavigate();
+
+  return (
+    ...
+    <Typography variant="h2" sx={{ fontSize: { xs: 21, sm: 31 } }}>
+        {parse(DOMPurify.sanitize(data.homePage.title))}
+    </Typography>
+     <Typography variant="h2" sx={{ fontSize: { xs: 19, sm: 22 } }}>
+       {parse(DOMPurify.sanitize(data.homePage.subtitle))}
+    </Typography>
+    ...
+  );
+};
+```
+
+The `<h2>` tags can be changed to `<h1>`. Saving the file with these changes will automatically refresh the React application running in the browser.
+
+## Editing content and wordings
+
+The content and wordings on every page in the frontend are served as `props` to the components. These properties can be found in `./src/utils/data.ts`. Here is a brief look at what the file contains:
+
+```ts
+export const data = {
+  /* Home Page, as an example */
+  homePage: {
+    title: `A Small World of Singlish Words:`,
+    subtitle: `A Word Association Study`,
+    introduction: `Welcome to this study on word associations ...`
+    ...
+  },
+  /* All other pages */
+}
+```
+
+The contents from this data is imported in every component file. When a component is loaded, for example `<HomePage/>`, the code snippet in the previous section shows the content is being retrieved by using `{data.homePage.title}`.
+
+Hence, making changes to the wordings on any page or component involves changing the string values in `data.ts`.
+
+Once changes are saved, the React application running in the browser will automaticaly update these changes.
+
+## Editing data lists
+
+On the `UserDetails` page, there are several user input fields (dropdown) which ask for the users’
+
+1. Age
+2. Gender
+3. Education Level
+4. Country of Birth
+5. Ethnic Group
+6. Country of Residence
+7. Fluency of English
+8. Other Languages Spoken
+
+The options which are available in these drop-down lists can be changed by navigating to `./src/utils/lists` and updating the corresponding `.ts` file containing the choices.
+
+For example, if an ‘Other’ option needs to be added to the Education Level dropdown, the option can be added to the list of choices in `.src/utils/lists/educationLevelList.ts`.
+
+## Editing cues
+
+The cues that are displayed to the user cannot be modified in the frontend. This is because the MySQL database containing the cues itself must be updated, which cannot be done from the frontend or using React.
+
+To learn more about how to change our cues, follow the instructions on the `singlish-words-backend` [repository](https://github.com/SinglishWords/singlish-words-backend) and `deployment` [repository](https://github.com/SinglishWords/deployment).
+
+# Building the app
+
+After all the changes have been made, a production build containing all the minified assets with HTML, CSS, and JavaScript files can be created. The shell command to do so is
+
+```bash
+$ npm run build
+```
+
+This will create a `build` folder containing all the assets in the root directory `./`
+
+> This is an important step, since we push these files to GitHub as well, and our deployment script will later use the contents of `build` folder when we create a Docker container
+
+# Next steps
+
+At this point, the changes can be commited and pushed to the `master` branch of this repo. The next steps include:
+
+1. Making changes to the backend, if any ([refer to this link](https://github.com/SinglishWords/singlish-words-backend))
+2. Deploying the whole application in a Docker container ([refer to this link](https://github.com/SinglishWords/deployment))
