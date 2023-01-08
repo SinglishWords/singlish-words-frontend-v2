@@ -109,7 +109,7 @@ export const HomePage = () => {
 };
 ```
 
-The `<h2>` tags can be changed to `<h1>`. Saving the file with these changes will automatically refresh the React application running in the browser.
+The `<h2>` tags can be changed to `<h1>` by changing `variant="h2"` to `variant="h1"`. Saving the file with these changes will automatically refresh the React application running in the browser.
 
 ## Editing content and wordings
 
@@ -128,9 +128,9 @@ export const data = {
 }
 ```
 
-The contents from this data is imported in every component file. When a component is loaded, for example `<HomePage/>`, the code snippet in the previous section shows the content is being retrieved by using `{data.homePage.title}`.
+The contents from `data.ts` is imported to every component file. When a component is loaded, for example `<HomePage/>`, the HTML content `A Small World of Singlish Words:` is retrieved using the code snippet `{data.homePage.title}`.
 
-Hence, making changes to the wordings on any page or component involves changing the string values in `data.ts`.
+Hence, making changes to the wordings on any page or component involves changing the string values in `data.ts`. Tags such as bold `<b></b>` and italics `<i></i>` can be added between words in data.ts to format text where necessary.
 
 Once changes are saved, the React application running in the browser will automaticaly update these changes.
 
@@ -150,6 +150,19 @@ On the `UserDetails` page, there are several user input fields (dropdown) which 
 The options which are available in these drop-down lists can be changed by navigating to `./src/utils/lists` and updating the corresponding `.ts` file containing the choices.
 
 For example, if an ‘Other’ option needs to be added to the Education Level dropdown, the option can be added to the list of choices in `.src/utils/lists/educationLevelList.ts`.
+
+```ts
+export const educationLevelList = [
+  "None",
+  "PSLE",
+  "GCE N / O-Levels",
+  "GCE A-Levels",
+  "Bachelor's Degree",
+  "Master's Degree",
+  "Ph.D.(Doctor of Philosophy) / Doctorate",
+  "Other", // Add `Other` Option
+];
+```
 
 ## Editing cues
 
