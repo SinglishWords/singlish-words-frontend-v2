@@ -16,8 +16,8 @@ This repository consists of the working files for the frontend of the SinglishWo
 - [Additional Information for Developers](#additional-information-for-developers)
   - [Base URL Configuration](#base-url-configuration)
   - [Deployment](#deployment)
-  - [Libraries/Packages Used:](#librariespackages-used)
-  - [Test Cases:](#test-cases)
+  - [Libraries/Packages Used](#librariespackages-used)
+  - [Test Cases](#test-cases)
 
 # Installation
 
@@ -220,13 +220,13 @@ $ cd deployment/scripts
 $ ./update_frontend.sh
 ```
 
-## Libraries/Packages Used:
+## Libraries/Packages Used
 
 1. Axios + React Query (Asynchronous State Management, Server-state Utilities, Data Fetching) https://react-query-v3.tanstack.com/
 2. React Router v6 (Routing) https://reactrouter.com/en/main
 3. Apache eCharts (Graph Data Visualisation) https://echarts.apache.org/en/index.html
 
-## Test Cases:
+## Test Cases
 
 <!-- prettier-ignore -->
 | Test ID 	| Test Objective                                                                                                                          	| Steps Taken and Expected Results                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            	|
