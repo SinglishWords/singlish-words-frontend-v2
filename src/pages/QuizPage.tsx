@@ -216,6 +216,7 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     </Stack>
   ) : (
     <Stack
+      spacing={10}
       sx={{ justifyContent: "center", alignItems: "center", height: "100vh" }}
     >
       <CircularProgress />
