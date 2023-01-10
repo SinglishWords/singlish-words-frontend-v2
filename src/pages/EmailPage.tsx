@@ -12,7 +12,7 @@ export const EmailPage = () => {
 
   /* Remove saved state from local storage */
   useEffect(() => {
-    localStorage.removeItem("formState");
+    localStorage.clear();
   }, []);
 
   return (
