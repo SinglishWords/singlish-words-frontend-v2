@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link, Stack, Typography } from "@mui/material";
 import DOMPurify from "dompurify";
@@ -6,14 +5,30 @@ import parse from "html-react-parser";
 
 import { AppButton } from "src/components/AppButton";
 import { data } from "src/utils/data";
+import { Form } from "src/types/state/form.dto";
+import { currentDateTime } from "src/utils/logic/timeLogic";
 
-export const EmailPage = () => {
+type EmailPageProps = {
+  form: Form;
+  setForm: React.Dispatch<React.SetStateAction<Form>>;
+};
+
+export const EmailPage = ({ form, setForm }: EmailPageProps) => {
   const navigate = useNavigate();
 
-  /* Remove saved state from local storage */
-  useEffect(() => {
-    localStorage.removeItem("formState");
-  });
+  const handleHomePageClick = () => {
+    navigate("/");
+  };
+
+  const handleParticipateClick = () => {
+    setForm({
+      ...form,
+      step: 1,
+      startTime: currentDateTime(),
+      endTime: "",
+      data: [],
+    });
+  };
 
   return (
     <Stack
@@ -100,11 +115,22 @@ export const EmailPage = () => {
             </Link>
           </Typography>
         </Stack>
-        <AppButton
-          name={"RETURN TO HOME PAGE"}
-          sx={{ alignSelf: "center", fontWeight: "bold" }}
-          onClick={() => navigate("/")}
-        />
+        <Stack
+          spacing={2}
+          direction="row"
+          sx={{ justifyContent: "space-evenly" }}
+        >
+          <AppButton
+            name={"PARTICIPATE AGAIN"}
+            sx={{ alignSelf: "center", fontWeight: "bold" }}
+            onClick={handleParticipateClick}
+          />
+          <AppButton
+            name={"RETURN TO HOME PAGE"}
+            sx={{ alignSelf: "center", fontWeight: "bold" }}
+            onClick={handleHomePageClick}
+          />
+        </Stack>
       </Stack>
     </Stack>
   );

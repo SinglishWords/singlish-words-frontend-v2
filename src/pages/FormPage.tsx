@@ -54,6 +54,6 @@ export const FormPage = () => {
     case 3:
       return <QuizPage form={form} setForm={setForm} nextStep={nextStep} />;
     case 4:
-      return <EmailPage />;
+      return <EmailPage form={form} setForm={setForm} />;
   }
 };
