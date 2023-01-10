@@ -12,8 +12,8 @@ export const EmailPage = () => {
 
   /* Remove saved state from local storage */
   useEffect(() => {
-    localStorage.clear();
-  }, []);
+    localStorage.removeItem("formState");
+  });
 
   return (
     <Stack
