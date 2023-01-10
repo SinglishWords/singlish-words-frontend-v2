@@ -1,16 +1,16 @@
 {
   "files": {
     "main.css": "/static/css/main.d23e13c2.css",
-    "main.js": "/static/js/main.02e2d4bf.js",
+    "main.js": "/static/js/main.b62364ce.js",
     "static/js/496.b4f68298.chunk.js": "/static/js/496.b4f68298.chunk.js",
     "static/media/NUS_Logo.png": "/static/media/NUS_Logo.a55bd0b7dbc6ee6c9095.png",
     "index.html": "/index.html",
     "main.d23e13c2.css.map": "/static/css/main.d23e13c2.css.map",
-    "main.02e2d4bf.js.map": "/static/js/main.02e2d4bf.js.map",
+    "main.b62364ce.js.map": "/static/js/main.b62364ce.js.map",
     "496.b4f68298.chunk.js.map": "/static/js/496.b4f68298.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d23e13c2.css",
-    "static/js/main.02e2d4bf.js"
+    "static/js/main.b62364ce.js"
   ]
 }
