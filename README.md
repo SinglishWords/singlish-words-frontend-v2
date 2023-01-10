@@ -216,7 +216,7 @@ Retrieve production server IP and password from either Professor Cynthia Siew or
 ```bash
 $ ssh root@<Production-Server-IP>
 $ <Production-Server-Password>
-$ cd scripts
+$ cd deployment/scripts
 $ ./update_frontend.sh
 ```
 
