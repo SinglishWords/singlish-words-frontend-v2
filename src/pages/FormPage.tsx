@@ -20,6 +20,7 @@ export const FormPage = () => {
           education: "",
           countryOfBirth: "Singapore",
           countryOfResidence: "Singapore",
+          durationOfSgpResidence: "",
           ethnicity: "",
           isNative: "",
           languagesSpoken: [],

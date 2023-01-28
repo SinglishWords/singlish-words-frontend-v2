@@ -5,6 +5,7 @@ export type Form = {
   education: string;
   countryOfBirth: string;
   countryOfResidence: string;
+  durationOfSgpResidence: string;
   ethnicity: string;
   isNative: string;
   languagesSpoken: string[];

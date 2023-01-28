@@ -15,6 +15,7 @@ import { data } from "src/utils/data";
 import {
   checkCompulsoryFieldsForNonSingaporean,
   checkCountryOfBirthSingapore,
+  checkCountryOfResidenceSingapore,
   checkEthnicityFieldFilled,
 } from "src/utils/logic/userInformationLogic";
 import { Form } from "src/types/state/form.dto";
@@ -30,15 +31,20 @@ export const UserDetailPage = ({
   setForm,
   nextStep,
 }: UserDetailPageProps) => {
-  /* The below block of code disables/enables the "Continue" button.
+  /* The following logic disables/enables the "Continue" button.
     Firstly, check that all compulsory fields (Age, Gender, Education, Birth Country, 
     Residence Country, Native Speaker) are filled.
     Secondly, if participant is a Singaporean, check that Ethnicity Field is filled. */
-  const compusloryFieldsFilled = checkCompulsoryFieldsForNonSingaporean(form);
-  const isSingaporean = checkCountryOfBirthSingapore(form);
-  const isEnabled = isSingaporean
-    ? compusloryFieldsFilled && checkEthnicityFieldFilled(form)
-    : compusloryFieldsFilled;
+  const enableContinueButton = checkCountryOfBirthSingapore(form)
+    ? checkCompulsoryFieldsForNonSingaporean(form) &&
+      checkEthnicityFieldFilled(form)
+    : checkCompulsoryFieldsForNonSingaporean(form);
+
+  /* Check if the user is born or has resided in Singapore. If so, we remove the "Never" option in the 
+  "How many years have you lived in Singapore?" question.*/
+  const hasBeenInSingapore =
+    checkCountryOfBirthSingapore(form) ||
+    checkCountryOfResidenceSingapore(form);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     /* If user changes to another country of birth, then we should clear the ethnicity field because default country of birth is Singapore*/
@@ -131,7 +137,7 @@ export const UserDetailPage = ({
         />
 
         {/* Ethnicity (Show ethnicity only if Country-of-Birth is Singapore) */}
-        {isSingaporean ? (
+        {checkCountryOfBirthSingapore(form) ? (
           <Dropdown
             required={true}
             helperText={data.userDetailPage.ethnicity}
@@ -149,6 +155,21 @@ export const UserDetailPage = ({
           value={form.countryOfResidence}
           name={"countryOfResidence"}
           listData={data.userDetailPage.countriesList}
+          handleChange={handleChange}
+        />
+
+        <Dropdown
+          required={true}
+          helperText={data.userDetailPage.durationOfSgpResidence}
+          value={form.durationOfSgpResidence}
+          name={"durationOfSgpResidence"}
+          listData={
+            hasBeenInSingapore
+              ? data.userDetailPage.durationOfSgpResidenceList.filter(
+                  (element) => element !== "Never"
+                )
+              : data.userDetailPage.durationOfSgpResidenceList
+          }
           handleChange={handleChange}
         />
 
@@ -212,7 +233,7 @@ export const UserDetailPage = ({
           <AppButton
             name={data.userDetailPage.continueButton}
             onClick={nextStep}
-            disabled={!isEnabled}
+            disabled={!enableContinueButton}
           />
         </Stack>
       </Stack>

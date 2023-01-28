@@ -5,6 +5,7 @@ import { ethicGroupList } from "src/utils/lists/ethicGroupList";
 import { genderList } from "src/utils/lists/genderList";
 import { languagesSpokenList } from "src/utils/lists/languagesSpokenList";
 import { yesNoList } from "src/utils/lists/yesNoList";
+import { durationOfSgpResidenceList } from "src/utils/lists/durationOfSgpResidenceList";
 
 export const data = {
   /* Introduction Page */
@@ -32,6 +33,7 @@ export const data = {
     birthCountry: `Please select your country of birth`,
     ethnicity: `Please select your ethnic group`,
     residenceCountry: `Please select your current country of residence`,
+    durationOfSgpResidence: `How many years have you lived in Singapore?`,
     native: `Are you a native English speaker?`,
     languages: `What other languages do you speak?`,
     continueButton: `continue`,
@@ -42,6 +44,7 @@ export const data = {
     ethicGroupList: ethicGroupList,
     yesNoList: yesNoList,
     languagesSpokenList: languagesSpokenList,
+    durationOfSgpResidenceList: durationOfSgpResidenceList,
   },
 
   /* Instructions Page */
