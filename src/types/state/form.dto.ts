@@ -1,6 +1,6 @@
 export type Form = {
   step: number;
-  age: number;
+  age: string;
   gender: string;
   education: string;
   countryOfBirth: string;

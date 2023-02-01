@@ -15,7 +15,7 @@ export const FormPage = () => {
       ? JSON.parse(storage)
       : {
           step: 1,
-          age: -1,
+          age: "",
           gender: "",
           education: "",
           countryOfBirth: "Singapore",
