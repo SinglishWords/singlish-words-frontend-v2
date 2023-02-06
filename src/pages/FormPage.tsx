@@ -6,10 +6,12 @@ import { InstructionPage } from "src/pages/InstructionPage";
 import { QuizPage } from "src/pages/QuizPage";
 import { EmailPage } from "src/pages/EmailPage";
 import { Form } from "src/types/state/form.dto";
+import { fivePercentProbability } from "src/utils/logic/probabilityLogic";
 import { currentDateTime } from "src/utils/logic/timeLogic";
+import { Recaptcha } from "src/types/state/recaptcha.dto";
 
 export const FormPage = () => {
-  const checkForStorageData = () => {
+  const checkForFormInStorage = () => {
     const storage = localStorage.getItem("formState");
     return storage !== null
       ? JSON.parse(storage)
@@ -31,17 +33,36 @@ export const FormPage = () => {
         };
   };
 
-  const [form, setForm] = useState<Form>(checkForStorageData());
-  const { step } = form;
-
-  const nextStep = () => {
-    setForm({ ...form, step: step + 1 });
+  const checkForRecaptchaInStorage = () => {
+    const storage = localStorage.getItem("recaptchaState");
+    return storage !== null
+      ? JSON.parse(storage)
+      : {
+          isVerified: false,
+          /* 5% chance of recaptcha rendering to catch bots */
+          showRecaptcha: fivePercentProbability(),
+        };
   };
+  const [form, setForm] = useState<Form>(checkForFormInStorage());
+  const [recaptcha, setRecaptcha] = useState<Recaptcha>(
+    checkForRecaptchaInStorage()
+  );
+
+  /* Save state in localStorage when there is an update in the recaptcha state */
+  useEffect(() => {
+    localStorage.setItem("recaptchaState", JSON.stringify(recaptcha));
+  }, [recaptcha]);
 
   /* Save state in localStorage when there is an update in the form state */
   useEffect(() => {
     localStorage.setItem("formState", JSON.stringify(form));
   }, [form]);
+
+  const { step } = form;
+
+  const nextStep = () => {
+    setForm({ ...form, step: step + 1 });
+  };
 
   switch (step) {
     default:
@@ -53,8 +74,18 @@ export const FormPage = () => {
     case 2:
       return <InstructionPage nextStep={nextStep} />;
     case 3:
-      return <QuizPage form={form} setForm={setForm} nextStep={nextStep} />;
+      return (
+        <QuizPage
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          recaptcha={recaptcha}
+          setRecaptcha={setRecaptcha}
+        />
+      );
     case 4:
-      return <EmailPage form={form} setForm={setForm} />;
+      return (
+        <EmailPage form={form} setForm={setForm} setRecaptcha={setRecaptcha} />
+      );
   }
 };

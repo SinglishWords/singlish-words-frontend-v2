@@ -9,13 +9,14 @@ import {
 } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-// import ReCAPTCHA from "react-google-recaptcha";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 import { Form } from "src/types/state/form.dto";
-// import { Recaptcha } from "src/types/state/recaptcha.dto";
+import { Recaptcha } from "src/types/state/recaptcha.dto";
+import { fivePercentProbability } from "src/utils/logic/probabilityLogic";
 import {
   startTimer,
   endTimer,
@@ -27,10 +28,18 @@ import { useSubmitForm } from "src/hooks/useForm";
 type QuizPageProps = {
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
+  recaptcha: Recaptcha;
+  setRecaptcha: React.Dispatch<React.SetStateAction<Recaptcha>>;
   nextStep: () => void;
 };
 
-export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
+export const QuizPage = ({
+  form,
+  setForm,
+  recaptcha,
+  setRecaptcha,
+  nextStep,
+}: QuizPageProps) => {
   const wordLimit = 20;
   const navigate = useNavigate();
   const { submitForm } = useSubmitForm();
@@ -45,13 +54,6 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const [thirdResponse, setThirdResponse] = useState<string>("");
   const [wordIndex, setWordIndex] = useState<number>(form.data.length);
   const [startTime, setStartTime] = useState<number>(0);
-  // const [recaptcha, setRecaptcha] = useState<Recaptcha>({
-  //   isVerified: false,
-  //   /* 5% chance of recaptcha rendering to catch bots */
-  //   showRecaptcha: Math.random() < 0.05,
-  //   /* Render recaptcha once on Quiz page, at random depending on showRecaptcha boolean */
-  //   recaptchaAlreadyShown: false,
-  // });
 
   /* Pull the data once when the user renders page*/
   useEffect(() => {
@@ -62,10 +64,6 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     cursor back to the first association textfield */
   useEffect(() => {
     setStartTime(startTimer());
-    // setRecaptcha((recaptcha) => ({
-    //   ...recaptcha,
-    //   showRecaptcha: Math.random() < 0.05,
-    // }));
     setFirstResponse("");
     setSecondResponse("");
     setThirdResponse("");
@@ -109,6 +107,12 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
       });
       setForm({ ...form, endTime: currentDateTime(), data: data });
 
+      /* Set recaptcha */
+      setRecaptcha((recaptcha) => ({
+        ...recaptcha,
+        showRecaptcha: fivePercentProbability(),
+      }));
+
       /* Move either to the next word or the next page */
       if (wordIndex < words?.length - 1) {
         nextWord();
@@ -119,13 +123,12 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     }
   };
 
-  // const handleRecaptchaChange = () => {
-  //   setRecaptcha({
-  //     ...recaptcha,
-  //     recaptchaAlreadyShown: true,
-  //     isVerified: true,
-  //   });
-  // };
+  const handleRecaptchaChange = () => {
+    setRecaptcha({
+      ...recaptcha,
+      isVerified: true,
+    });
+  };
 
   return words ? (
     <Stack
@@ -186,15 +189,19 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
         </Stack>
         {/* Recaptcha that randomly appears one time in quiz page .
           Show Recaptcha once at random if it has not been shown. */}
-        {/* {recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown ? (
+        {recaptcha.showRecaptcha && !recaptcha.isVerified ? (
           <Stack sx={{ alignItems: "center" }}>
+            <Typography variant="body2" sx={{ fontSize: 10, mb: 1 }}>
+              Please refresh the page if you do not see reCaptcha and the
+              Continue button is disabled!
+            </Typography>
             <ReCAPTCHA
               // Use smallworldofsinglishwords@gmail.com
               sitekey="6Ldy0tQbAAAAANL-FvKgyzKBeWcGSaER4cd9jta0"
               onChange={handleRecaptchaChange}
             />
           </Stack>
-        ) : null}  */}
+        ) : null}
         <Stack direction="row" sx={{ justifyContent: "space-evenly" }}>
           <PopoverButton
             name={data.quizPage.needHelpButton}
@@ -204,11 +211,7 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
-            // disabled={
-            //   recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown
-            //     ? !recaptcha.isVerified
-            //     : false
-            // }
+            disabled={recaptcha.showRecaptcha ? !recaptcha.isVerified : false}
           />
         </Stack>
       </Stack>

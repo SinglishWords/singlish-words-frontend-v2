@@ -6,14 +6,17 @@ import parse from "html-react-parser";
 import { AppButton } from "src/components/AppButton";
 import { data } from "src/utils/data";
 import { Form } from "src/types/state/form.dto";
+import { fivePercentProbability } from "src/utils/logic/probabilityLogic";
 import { currentDateTime } from "src/utils/logic/timeLogic";
+import { Recaptcha } from "src/types/state/recaptcha.dto";
 
 type EmailPageProps = {
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
+  setRecaptcha: React.Dispatch<React.SetStateAction<Recaptcha>>;
 };
 
-export const EmailPage = ({ form, setForm }: EmailPageProps) => {
+export const EmailPage = ({ form, setForm, setRecaptcha }: EmailPageProps) => {
   const navigate = useNavigate();
 
   const handleHomePageClick = () => {
@@ -27,6 +30,12 @@ export const EmailPage = ({ form, setForm }: EmailPageProps) => {
       startTime: currentDateTime(),
       endTime: "",
       data: [],
+    });
+
+    setRecaptcha({
+      isVerified: false,
+      /* 5% chance of recaptcha rendering to catch bots */
+      showRecaptcha: fivePercentProbability(),
     });
   };
 
