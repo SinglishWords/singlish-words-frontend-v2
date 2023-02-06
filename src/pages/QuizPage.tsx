@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  Checkbox,
   CircularProgress,
   LinearProgress,
   Stack,
@@ -9,7 +10,7 @@ import {
 } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 
 import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
@@ -191,15 +192,23 @@ export const QuizPage = ({
           Show Recaptcha once at random if it has not been shown. */}
         {recaptcha.showRecaptcha && !recaptcha.isVerified ? (
           <Stack sx={{ alignItems: "center" }}>
+            {/* Render issue with reCaptcha observed - https://stackoverflow.com/questions/31776929/google-recaptcha-sometimes-doesnt-get-displayed-rendered*/}
             <Typography variant="body2" sx={{ fontSize: 10, mb: 1 }}>
-              Please refresh the page if you do not see reCaptcha and the
-              Continue button is disabled!
+              {/* Please refresh the page if you see this message but do not see
+              reCaptcha! */}
+              Please tick the box below to continue.
             </Typography>
-            <ReCAPTCHA
-              // Use smallworldofsinglishwords@gmail.com
-              sitekey="6Ldy0tQbAAAAANL-FvKgyzKBeWcGSaER4cd9jta0"
-              onChange={handleRecaptchaChange}
-            />
+            <Stack>
+              <Checkbox
+                checked={recaptcha.isVerified}
+                onClick={handleRecaptchaChange}
+              />
+              {/* <ReCAPTCHA
+                // Use smallworldofsinglishwords@gmail.com
+                sitekey="6Ldy0tQbAAAAANL-FvKgyzKBeWcGSaER4cd9jta0"
+                onChange={handleRecaptchaChange}
+              /> */}
+            </Stack>
           </Stack>
         ) : null}
         <Stack direction="row" sx={{ justifyContent: "space-evenly" }}>
