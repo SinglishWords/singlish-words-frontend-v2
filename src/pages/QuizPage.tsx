@@ -9,13 +9,13 @@ import {
 } from "@mui/material";
 import DOMPurify from "dompurify";
 import parse from "html-react-parser";
-import ReCAPTCHA from "react-google-recaptcha";
+// import ReCAPTCHA from "react-google-recaptcha";
 
 import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 import { Form } from "src/types/state/form.dto";
-import { Recaptcha } from "src/types/state/recaptcha.dto";
+// import { Recaptcha } from "src/types/state/recaptcha.dto";
 import {
   startTimer,
   endTimer,
@@ -45,13 +45,13 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
   const [thirdResponse, setThirdResponse] = useState<string>("");
   const [wordIndex, setWordIndex] = useState<number>(form.data.length);
   const [startTime, setStartTime] = useState<number>(0);
-  const [recaptcha, setRecaptcha] = useState<Recaptcha>({
-    isVerified: false,
-    /* 5% chance of recaptcha rendering to catch bots */
-    showRecaptcha: Math.random() < 0.05,
-    /* Render recaptcha once on Quiz page, at random depending on showRecaptcha boolean */
-    recaptchaAlreadyShown: false,
-  });
+  // const [recaptcha, setRecaptcha] = useState<Recaptcha>({
+  //   isVerified: false,
+  //   /* 5% chance of recaptcha rendering to catch bots */
+  //   showRecaptcha: Math.random() < 0.05,
+  //   /* Render recaptcha once on Quiz page, at random depending on showRecaptcha boolean */
+  //   recaptchaAlreadyShown: false,
+  // });
 
   /* Pull the data once when the user renders page*/
   useEffect(() => {
@@ -62,10 +62,10 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     cursor back to the first association textfield */
   useEffect(() => {
     setStartTime(startTimer());
-    setRecaptcha((recaptcha) => ({
-      ...recaptcha,
-      showRecaptcha: Math.random() < 0.05,
-    }));
+    // setRecaptcha((recaptcha) => ({
+    //   ...recaptcha,
+    //   showRecaptcha: Math.random() < 0.05,
+    // }));
     setFirstResponse("");
     setSecondResponse("");
     setThirdResponse("");
@@ -119,13 +119,13 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
     }
   };
 
-  const handleRecaptchaChange = () => {
-    setRecaptcha({
-      ...recaptcha,
-      recaptchaAlreadyShown: true,
-      isVerified: true,
-    });
-  };
+  // const handleRecaptchaChange = () => {
+  //   setRecaptcha({
+  //     ...recaptcha,
+  //     recaptchaAlreadyShown: true,
+  //     isVerified: true,
+  //   });
+  // };
 
   return words ? (
     <Stack
@@ -186,16 +186,15 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
         </Stack>
         {/* Recaptcha that randomly appears one time in quiz page .
           Show Recaptcha once at random if it has not been shown. */}
-        {recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown ? (
+        {/* {recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown ? (
           <Stack sx={{ alignItems: "center" }}>
             <ReCAPTCHA
-              /* To change site key once actual site is up.
-                Use smallworldofsinglishwords@gmail.com */
+              // Use smallworldofsinglishwords@gmail.com
               sitekey="6Ldy0tQbAAAAANL-FvKgyzKBeWcGSaER4cd9jta0"
               onChange={handleRecaptchaChange}
             />
           </Stack>
-        ) : null}
+        ) : null}  */}
         <Stack direction="row" sx={{ justifyContent: "space-evenly" }}>
           <PopoverButton
             name={data.quizPage.needHelpButton}
@@ -205,11 +204,11 @@ export const QuizPage = ({ form, setForm, nextStep }: QuizPageProps) => {
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
-            disabled={
-              recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown
-                ? !recaptcha.isVerified
-                : false
-            }
+            // disabled={
+            //   recaptcha.showRecaptcha && !recaptcha.recaptchaAlreadyShown
+            //     ? !recaptcha.isVerified
+            //     : false
+            // }
           />
         </Stack>
       </Stack>
