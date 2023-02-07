@@ -16,8 +16,8 @@ import { AppButton } from "src/components/AppButton";
 import { PopoverButton } from "src/components/PopoverButton";
 import { data } from "src/utils/data";
 import { Form } from "src/types/state/form.dto";
-import { Recaptcha } from "src/types/state/recaptcha.dto";
-import { fivePercentProbability } from "src/utils/logic/probabilityLogic";
+import { Validator } from "src/types/state/validator.dto";
+import { setFivePercentProbability } from "src/utils/logic/probabilityLogic";
 import {
   startTimer,
   endTimer,
@@ -29,8 +29,8 @@ import { useSubmitForm } from "src/hooks/useForm";
 type QuizPageProps = {
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
-  recaptcha: Recaptcha;
-  setRecaptcha: React.Dispatch<React.SetStateAction<Recaptcha>>;
+  recaptcha: Validator;
+  setRecaptcha: React.Dispatch<React.SetStateAction<Validator>>;
   nextStep: () => void;
 };
 
@@ -111,7 +111,7 @@ export const QuizPage = ({
       /* Set recaptcha */
       setRecaptcha((recaptcha) => ({
         ...recaptcha,
-        showRecaptcha: fivePercentProbability(),
+        showValidator: setFivePercentProbability(),
       }));
 
       /* Move either to the next word or the next page */
@@ -188,9 +188,9 @@ export const QuizPage = ({
             value={(100 / words?.length) * wordIndex}
           />
         </Stack>
-        {/* Recaptcha that randomly appears one time in quiz page .
-          Show Recaptcha once at random if it has not been shown. */}
-        {recaptcha.showRecaptcha && !recaptcha.isVerified ? (
+        {/* Validator that randomly appears one time in quiz page .
+          Show Validator once at random if it has not been shown. */}
+        {recaptcha.showValidator && !recaptcha.isVerified ? (
           <Stack sx={{ alignItems: "center" }}>
             {/* Render issue with reCaptcha observed - https://stackoverflow.com/questions/31776929/google-recaptcha-sometimes-doesnt-get-displayed-rendered*/}
             <Typography variant="body2" sx={{ fontSize: 10, mb: 1 }}>
@@ -220,7 +220,7 @@ export const QuizPage = ({
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
-            disabled={recaptcha.showRecaptcha ? !recaptcha.isVerified : false}
+            disabled={recaptcha.showValidator ? !recaptcha.isVerified : false}
           />
         </Stack>
       </Stack>

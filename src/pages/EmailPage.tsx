@@ -6,14 +6,14 @@ import parse from "html-react-parser";
 import { AppButton } from "src/components/AppButton";
 import { data } from "src/utils/data";
 import { Form } from "src/types/state/form.dto";
-import { fivePercentProbability } from "src/utils/logic/probabilityLogic";
+import { setFivePercentProbability } from "src/utils/logic/probabilityLogic";
 import { currentDateTime } from "src/utils/logic/timeLogic";
-import { Recaptcha } from "src/types/state/recaptcha.dto";
+import { Validator } from "src/types/state/validator.dto";
 
 type EmailPageProps = {
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
-  setRecaptcha: React.Dispatch<React.SetStateAction<Recaptcha>>;
+  setRecaptcha: React.Dispatch<React.SetStateAction<Validator>>;
 };
 
 export const EmailPage = ({ form, setForm, setRecaptcha }: EmailPageProps) => {
@@ -35,7 +35,7 @@ export const EmailPage = ({ form, setForm, setRecaptcha }: EmailPageProps) => {
     setRecaptcha({
       isVerified: false,
       /* 5% chance of recaptcha rendering to catch bots */
-      showRecaptcha: fivePercentProbability(),
+      showValidator: setFivePercentProbability(),
     });
   };
 
