@@ -39,19 +39,19 @@ export const FormPage = () => {
       ? JSON.parse(storage)
       : {
           isVerified: false,
-          /* 5% chance of recaptcha rendering to catch bots */
+          /* 5% chance of validator rendering to catch bots */
           showValidator: setFivePercentProbability(),
         };
   };
   const [form, setForm] = useState<Form>(checkForFormInStorage());
-  const [recaptcha, setRecaptcha] = useState<Validator>(
+  const [validator, setValidator] = useState<Validator>(
     checkForRecaptchaInStorage()
   );
 
-  /* Save state in localStorage when there is an update in the recaptcha state */
+  /* Save state in localStorage when there is an update in the validator state */
   useEffect(() => {
-    localStorage.setItem("recaptchaState", JSON.stringify(recaptcha));
-  }, [recaptcha]);
+    localStorage.setItem("recaptchaState", JSON.stringify(validator));
+  }, [validator]);
 
   /* Save state in localStorage when there is an update in the form state */
   useEffect(() => {
@@ -79,13 +79,13 @@ export const FormPage = () => {
           form={form}
           setForm={setForm}
           nextStep={nextStep}
-          recaptcha={recaptcha}
-          setRecaptcha={setRecaptcha}
+          validator={validator}
+          setValidator={setValidator}
         />
       );
     case 4:
       return (
-        <EmailPage form={form} setForm={setForm} setRecaptcha={setRecaptcha} />
+        <EmailPage form={form} setForm={setForm} setValidator={setValidator} />
       );
   }
 };

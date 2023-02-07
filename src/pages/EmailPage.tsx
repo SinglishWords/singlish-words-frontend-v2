@@ -13,10 +13,10 @@ import { Validator } from "src/types/state/validator.dto";
 type EmailPageProps = {
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
-  setRecaptcha: React.Dispatch<React.SetStateAction<Validator>>;
+  setValidator: React.Dispatch<React.SetStateAction<Validator>>;
 };
 
-export const EmailPage = ({ form, setForm, setRecaptcha }: EmailPageProps) => {
+export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
   const navigate = useNavigate();
 
   const handleHomePageClick = () => {
@@ -32,9 +32,9 @@ export const EmailPage = ({ form, setForm, setRecaptcha }: EmailPageProps) => {
       data: [],
     });
 
-    setRecaptcha({
+    setValidator({
       isVerified: false,
-      /* 5% chance of recaptcha rendering to catch bots */
+      /* 5% chance of validator rendering to catch bots */
       showValidator: setFivePercentProbability(),
     });
   };

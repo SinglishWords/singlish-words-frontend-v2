@@ -29,16 +29,16 @@ import { useSubmitForm } from "src/hooks/useForm";
 type QuizPageProps = {
   form: Form;
   setForm: React.Dispatch<React.SetStateAction<Form>>;
-  recaptcha: Validator;
-  setRecaptcha: React.Dispatch<React.SetStateAction<Validator>>;
+  validator: Validator;
+  setValidator: React.Dispatch<React.SetStateAction<Validator>>;
   nextStep: () => void;
 };
 
 export const QuizPage = ({
   form,
   setForm,
-  recaptcha,
-  setRecaptcha,
+  validator,
+  setValidator,
   nextStep,
 }: QuizPageProps) => {
   const wordLimit = 20;
@@ -53,6 +53,7 @@ export const QuizPage = ({
   const [firstResponse, setFirstResponse] = useState<string>("");
   const [secondResponse, setSecondResponse] = useState<string>("");
   const [thirdResponse, setThirdResponse] = useState<string>("");
+  const [isRecognisedWord, setIsRecognisedWord] = useState<boolean>(true);
   const [wordIndex, setWordIndex] = useState<number>(form.data.length);
   const [startTime, setStartTime] = useState<number>(0);
 
@@ -74,7 +75,7 @@ export const QuizPage = ({
     }
     if (secondResponseRef.current) secondResponseRef.current.value = "";
     if (thirdResponseRef.current) thirdResponseRef.current.value = "";
-  }, [wordIndex]);
+  }, [wordIndex, isRecognisedWord]);
 
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLDivElement>,
@@ -103,16 +104,19 @@ export const QuizPage = ({
           progress: wordIndex + 1,
           word: words[wordIndex]?.word,
         },
+        isRecognisedWord: isRecognisedWord,
         response: [firstResponse, secondResponse, thirdResponse],
         timeOnPage: Math.round((endTimer() - startTime) / 1000),
       });
       setForm({ ...form, endTime: currentDateTime(), data: data });
 
-      /* Set recaptcha */
-      setRecaptcha((recaptcha) => ({
-        ...recaptcha,
+      /* Set validator */
+      setValidator((validator) => ({
+        ...validator,
         showValidator: setFivePercentProbability(),
       }));
+      /* Set isRecognisedWord */
+      setIsRecognisedWord(true);
 
       /* Move either to the next word or the next page */
       if (wordIndex < words?.length - 1) {
@@ -124,9 +128,9 @@ export const QuizPage = ({
     }
   };
 
-  const handleRecaptchaChange = () => {
-    setRecaptcha({
-      ...recaptcha,
+  const handleValidatorChange = () => {
+    setValidator({
+      ...validator,
       isVerified: true,
     });
   };
@@ -156,6 +160,7 @@ export const QuizPage = ({
               handleKeyPress(event, secondResponseRef, "text")
             }
             onChange={(event) => setFirstResponse(event.target.value)}
+            disabled={!isRecognisedWord}
           />
           {/* Second Association */}
           <TextField
@@ -166,6 +171,7 @@ export const QuizPage = ({
               handleKeyPress(event, thirdResponseRef, "text")
             }
             onChange={(event) => setSecondResponse(event.target.value)}
+            disabled={!isRecognisedWord}
           />
           {/* Third Association */}
           <TextField
@@ -176,7 +182,15 @@ export const QuizPage = ({
               handleKeyPress(event, continueButtonRef, "button")
             }
             onChange={(event) => setThirdResponse(event.target.value)}
+            disabled={!isRecognisedWord}
           />
+          <Stack direction="row" sx={{ justifyContent: "center" }}>
+            <Checkbox
+              checked={!isRecognisedWord}
+              onClick={() => setIsRecognisedWord(!isRecognisedWord)}
+            />
+            <Typography variant="body2">I do not know this word</Typography>
+          </Stack>
         </Stack>
         <Stack>
           <Typography variant="caption" display="block" gutterBottom>
@@ -190,9 +204,9 @@ export const QuizPage = ({
         </Stack>
         {/* Validator that randomly appears one time in quiz page .
           Show Validator once at random if it has not been shown. */}
-        {recaptcha.showValidator && !recaptcha.isVerified ? (
+        {validator.showValidator && !validator.isVerified ? (
           <Stack sx={{ alignItems: "center" }}>
-            {/* Render issue with reCaptcha observed - https://stackoverflow.com/questions/31776929/google-recaptcha-sometimes-doesnt-get-displayed-rendered*/}
+            {/* Render issue with reCaptcha observed - https://stackoverflow.com/questions/31776929/google-validator-sometimes-doesnt-get-displayed-rendered*/}
             <Typography variant="body2" sx={{ fontSize: 10, mb: 1 }}>
               {/* Please refresh the page if you see this message but do not see
               reCaptcha! */}
@@ -200,13 +214,13 @@ export const QuizPage = ({
             </Typography>
             <Stack>
               <Checkbox
-                checked={recaptcha.isVerified}
-                onClick={handleRecaptchaChange}
+                checked={validator.isVerified}
+                onClick={handleValidatorChange}
               />
               {/* <ReCAPTCHA
                 // Use smallworldofsinglishwords@gmail.com
                 sitekey="6Ldy0tQbAAAAANL-FvKgyzKBeWcGSaER4cd9jta0"
-                onChange={handleRecaptchaChange}
+                onChange={handleValidatorChange}
               /> */}
             </Stack>
           </Stack>
@@ -220,7 +234,7 @@ export const QuizPage = ({
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
-            disabled={recaptcha.showValidator ? !recaptcha.isVerified : false}
+            disabled={validator.showValidator ? !validator.isVerified : false}
           />
         </Stack>
       </Stack>
