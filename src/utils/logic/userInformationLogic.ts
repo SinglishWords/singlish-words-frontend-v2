@@ -1,15 +1,19 @@
 import { Form } from "src/types/state/form.dto";
 
 export const checkCompulsoryFieldsForNonSingaporean = (values: Form) => {
-  return (
-    values.age !== "" &&
-    values.gender !== "" &&
-    values.education !== "" &&
-    values.countryOfBirth !== "" &&
-    values.countryOfResidence !== "" &&
-    values.isNative !== "" &&
-    values.durationOfSgpResidence !== ""
-  );
+  /* If durationOfSgpResidence is Never, then the country of birth or country of residence cannot be Singapore */
+  return values.durationOfSgpResidence == "Never"
+    ? !(
+        values.countryOfBirth == "Singapore" ||
+        values.countryOfResidence == "Singapore"
+      )
+    : values.age !== "" &&
+        values.gender !== "" &&
+        values.education !== "" &&
+        values.countryOfBirth !== "" &&
+        values.countryOfResidence !== "" &&
+        values.isNative !== "" &&
+        values.durationOfSgpResidence !== "";
 };
 
 export const checkCountryOfBirthSingapore = (values: Form) => {

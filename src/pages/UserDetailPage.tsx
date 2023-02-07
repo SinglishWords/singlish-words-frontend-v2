@@ -161,13 +161,10 @@ export const UserDetailPage = ({
           helperText={data.userDetailPage.durationOfSgpResidence}
           value={form.durationOfSgpResidence}
           name={"durationOfSgpResidence"}
-          listData={
+          listData={data.userDetailPage.generateDurationOfSgpResidenceList(
+            form.age,
             hasBeenInSingapore
-              ? data.userDetailPage.durationOfSgpResidenceList.filter(
-                  (element) => element !== "Never"
-                )
-              : data.userDetailPage.durationOfSgpResidenceList
-          }
+          )}
           handleChange={handleChange}
         />
 

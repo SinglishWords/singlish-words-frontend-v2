@@ -5,7 +5,7 @@ import { ethicGroupList } from "src/utils/lists/ethicGroupList";
 import { genderList } from "src/utils/lists/genderList";
 import { languagesSpokenList } from "src/utils/lists/languagesSpokenList";
 import { yesNoList } from "src/utils/lists/yesNoList";
-import { durationOfSgpResidenceList } from "src/utils/lists/durationOfSgpResidenceList";
+import { generateDurationOfSgpResidenceList } from "src/utils/lists/durationOfSgpResidenceList";
 
 export const data = {
   /* Introduction Page */
@@ -44,7 +44,7 @@ export const data = {
     ethicGroupList: ethicGroupList,
     yesNoList: yesNoList,
     languagesSpokenList: languagesSpokenList,
-    durationOfSgpResidenceList: durationOfSgpResidenceList,
+    generateDurationOfSgpResidenceList: generateDurationOfSgpResidenceList,
   },
 
   /* Instructions Page */

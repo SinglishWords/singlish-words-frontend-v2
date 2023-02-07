@@ -26,15 +26,10 @@ export const Dropdown = ({
     <FormControl required={required}>
       <InputLabel variant="standard" htmlFor="uncontrolled-native"></InputLabel>
       <NativeSelect value={value} name={name} onChange={handleChange}>
-        <option value={name === "age" ? -1 : ""} />
+        <option value={""} />
         {listData.map((item) => (
           <option key={item} value={item}>
-            {/* If user is of age less than 18 or greater than 81, classify them under Less Than 18/More Than 80*/}
-            {name === "age" && item < 18
-              ? "Less Than 18"
-              : name === "age" && item > 80
-              ? "More Than 80"
-              : item}
+            {item}
           </option>
         ))}
       </NativeSelect>
