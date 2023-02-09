@@ -42,6 +42,7 @@ export const QuizPage = ({
   nextStep,
 }: QuizPageProps) => {
   const wordLimit = 20;
+
   const navigate = useNavigate();
   const { submitForm } = useSubmitForm();
   const { words, refetchWords } = useWords(wordLimit);
@@ -56,6 +57,13 @@ export const QuizPage = ({
   const [isRecognisedWord, setIsRecognisedWord] = useState<boolean>(true);
   const [wordIndex, setWordIndex] = useState<number>(form.data.length);
   const [startTime, setStartTime] = useState<number>(0);
+
+  /* If the word is recognised but the user has yet to give any responses, do not let the user press the Continue button */
+  const isInvalidResponse =
+    firstResponse === "" &&
+    secondResponse === "" &&
+    thirdResponse === "" &&
+    isRecognisedWord;
 
   /* Pull the data once when the user renders page*/
   useEffect(() => {
@@ -234,7 +242,13 @@ export const QuizPage = ({
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
-            disabled={validator.showValidator ? !validator.isVerified : false}
+            /* If the validator is shown, disable the continue button if the user is not verified or the 
+            response is invalid. Otherwise, disable when the response is invalid */
+            disabled={
+              validator.showValidator
+                ? !validator.isVerified || isInvalidResponse
+                : isInvalidResponse
+            }
           />
         </Stack>
       </Stack>

@@ -33,7 +33,7 @@ export const data = {
     birthCountry: `Please select your country of birth`,
     ethnicity: `Please select your ethnic group`,
     residenceCountry: `Please select your current country of residence`,
-    durationOfSgpResidence: `How many years have you lived in Singapore?`,
+    durationOfSgpResidence: `How many years have you lived in Singapore? \n<i><b>[Please ensure that you have selected your age before attempting this question]</b></i>`,
     native: `Are you a native English speaker?`,
     languages: `What other languages do you speak?`,
     continueButton: `continue`,

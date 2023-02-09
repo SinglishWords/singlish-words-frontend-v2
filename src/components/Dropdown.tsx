@@ -4,6 +4,8 @@ import {
   InputLabel,
   NativeSelect,
 } from "@mui/material";
+import DOMPurify from "dompurify";
+import parse from "html-react-parser";
 
 type DropdownProps = {
   required: boolean;
@@ -36,7 +38,7 @@ export const Dropdown = ({
       {/* Select unable to support long input labels. Long input labels overflow. 
       Hence use helper texts instead. https://github.com/mui/material-ui/issues/12255 */}
       <FormHelperText sx={{ fontSize: 15, alignSelf: "start", ml: 0 }}>
-        {helperText}
+        {parse(DOMPurify.sanitize(helperText))}
       </FormHelperText>
     </FormControl>
   );
