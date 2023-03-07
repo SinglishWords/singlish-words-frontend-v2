@@ -112,7 +112,7 @@ export const QuizPage = ({
           progress: wordIndex + 1,
           word: words[wordIndex]?.word,
         },
-        // isRecognisedWord: isRecognisedWord,
+        isRecognisedWord: isRecognisedWord,
         response: [firstResponse, secondResponse, thirdResponse],
         timeOnPage: Math.round((endTimer() - startTime) / 1000),
       });

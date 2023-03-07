@@ -16,11 +16,17 @@ export const Footer = () => {
         justifyContent: "center",
       }}
     >
-      <Stack spacing={2} sx={{ px: { xs: 2, sm: 0 } }}>
+      <Stack
+        spacing={2}
+        sx={{
+          px: { xs: 2, sm: 2 },
+          "& .MuiTypography-root": { textAlign: "center" },
+        }}
+      >
         <Typography variant="body2">
           {parse(DOMPurify.sanitize(data.footer.footerTop))}
         </Typography>
-        <Typography variant="body2" sx={{ textAlign: "center" }}>
+        <Typography variant="body2">
           {parse(DOMPurify.sanitize(data.footer.footerBottom))}
           <Link
             sx={{ cursor: "pointer", "&:hover": { color: "secondary.main" } }}

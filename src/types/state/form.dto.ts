@@ -18,7 +18,7 @@ export type Form = {
       progress: number;
       word: string;
     };
-    // isRecognisedWord: boolean;
+    isRecognisedWord: boolean;
     response: string[];
     timeOnPage: number;
   }[];
