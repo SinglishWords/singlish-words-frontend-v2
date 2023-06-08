@@ -41,7 +41,7 @@ export const QuizPage = ({
   setValidator,
   nextStep,
 }: QuizPageProps) => {
-  const wordLimit = 20;
+  const wordLimit = 50;
 
   const navigate = useNavigate();
   const { submitForm } = useSubmitForm();
