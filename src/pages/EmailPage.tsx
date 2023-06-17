@@ -68,6 +68,14 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
             {parse(DOMPurify.sanitize(data.emailPage.firstParagraph))}
           </Typography>
         </Stack>
+        
+        {/* Participation Code */}
+        {*/
+         
+         
+         
+        */}
+        
 
         {/* Paragraph 2 - Get in touch*/}
         <Stack spacing={3}>
