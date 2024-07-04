@@ -85,6 +85,15 @@ export const data = {
   /* Email Page */
   emailPage: {
     title: `Thank You!`,
+
+    yourAssosciations: `<b>Your associations<b>`,
+
+    numAssociationsParagraphPart1: `Thank you for adding `,
+    numAssociationsParagraphPart2: ` associations to the Small World of Singlish Words. A total of `,
+    numAssociationsParagraphPart3: `  of your associations matched with other people.`,
+
+    projectStatusHeader: `<b>Project Status</b>`,
+
     firstHeader: `<b>What are we trying to do</b>`,
     firstParagraph: `The mental lexicon is the part of long-term memory where all of the words that you know and their meanings are stored. The connections between these words and concepts can be represented as a language network (akin to a “social network” of words) to model the large-scale structure of the mental lexicon.
       
