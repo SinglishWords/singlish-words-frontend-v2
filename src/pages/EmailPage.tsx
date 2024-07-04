@@ -493,7 +493,7 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
         </Stack>
 
         <Typography variant="body1">
-          {parse(DOMPurify.sanitize(`\nYour unique associations are <strong>bold</strong>.`))}
+          {parse(DOMPurify.sanitize(`\nYour matched associations are <strong>bold</strong>.`))}
         </Typography>
       </Stack>
     )
