@@ -52,3 +52,14 @@ ApiService.interceptors.response.use(
     throw transformedError;
   }
 );
+
+
+// New function to fetch data from /answers endpoint
+export const fetchAllAnswers = async () => {
+  try {
+    const response = await ApiService.get("/answers");
+    return response.data;
+  } catch (error) {
+    throw getApiErrorMessage(error);
+  }
+};
