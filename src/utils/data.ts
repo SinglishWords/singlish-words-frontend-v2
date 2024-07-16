@@ -14,13 +14,11 @@ export const data = {
     subtitle: `A Word Association Study`,
     introduction: `Welcome to this study on word associations in Singapore English. Singaporeans have a unique vocabulary, consisting of Singlish words and phrases that originate from various local languages, on top of the Standard English vocabulary. As researchers studying language and memory we are interested in the nature and organization of this unique mental dictionary of Singapore English. 
 
-      You can help us capture this knowledge by playing a simple game of word associations. This game takes no more than half an hour of your time. All you have to do is to respond with the first three words that come to your mind for a list of Singapore English words.
+      You can help us capture this knowledge by playing a simple game of word associations. This game takes no more than 15 minutes of your time. All you have to do is to respond with the first three words that come to your mind for a list of Singapore English words.
       
-      If you are between 18 to 80 years old, and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study. Upon completion of the study, you are eligible to be reimbursed $5 for your time*. 
+      If you are above 18 years old and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study. 
       
       Don’t say bojio!
-      
-      *Please note that, at this time, reimbursements will only be given out digitally through PayNow. If you want to be reimbursed, you will need to have PayNow enabled.
 
       If you proceed, you consent to your demographic and linguistic data to be collected for research purposes. This data is completely anonymous, and never linked to your personal or contact information. Your anonymized data could be shared with other researchers for the purpose of scientific exploration.`,
     continueButton: `I want to participate!`,
