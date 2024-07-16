@@ -151,7 +151,7 @@ export const QuizPage = ({
         pb: { xs: 25, sm: 10 },
       }}
     >
-      <Typography variant="h3" sx={{ alignSelf: "center", py: 6 }}>
+      <Typography variant="h3" sx={{ textAlign: "center", py: 6 }}>
         {words[wordIndex]?.word}
       </Typography>
       <Stack
