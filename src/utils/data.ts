@@ -12,13 +12,13 @@ export const data = {
   homePage: {
     title: `A Small World of Singlish Words:`,
     subtitle: `A Word Association Study`,
-    introduction: `Welcome to this study on word associations in Singapore English. Singaporeans have a unique vocabulary, consisting of Singlish words and phrases that originate from various local languages, on top of the Standard English vocabulary. As researchers studying language and memory we are interested in the nature and organization of this unique mental dictionary of Singapore English. 
+    introduction: `Welcome to this study on word associations in Singapore English. Singaporeans have a unique vocabulary, consisting of Singlish words and phrases that originate from various local languages, on top of the Standard English vocabulary. As researchers studying language and memory, we are interested in the nature and organization of this unique mental dictionary of Singapore English.<br><br> 
 
-      You can help us capture this knowledge by playing a simple game of word associations. This game takes no more than 15 minutes of your time. All you have to do is to respond with the first three words that come to your mind for a list of Singapore English words.
+      You can help us capture this knowledge by playing a simple game of word associations. This game takes no more than 15 minutes of your time. All you have to do is to respond with the first three words that come to your mind for a list of Singapore English words.<br><br>
       
-      If you are above 18 years old and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study. 
+      If you are above 18 years old and consider yourself to be a native speaker of Singapore English, you are eligible to take part in our study.<br><br>
       
-      Don’t say bojio!
+      <i>Don’t say bojio!</i><br><br>
 
       If you proceed, you consent to your demographic and linguistic data to be collected for research purposes. This data is completely anonymous, and never linked to your personal or contact information. Your anonymized data could be shared with other researchers for the purpose of scientific exploration.`,
     continueButton: `I want to participate!`,
