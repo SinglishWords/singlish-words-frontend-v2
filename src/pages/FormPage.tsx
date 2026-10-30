@@ -16,21 +16,21 @@ export const FormPage = () => {
     return storage !== null
       ? JSON.parse(storage)
       : {
-          step: 1,
-          age: "",
-          gender: "",
-          education: "",
-          countryOfBirth: "Singapore",
-          countryOfResidence: "Singapore",
-          durationOfSgpResidence: "",
-          ethnicity: "",
-          isNative: "",
-          languagesSpoken: [],
-          startTime: currentDateTime(),
-          endTime: "",
-          uuid: "swow-" + uuidv4(),
-          data: [],
-        };
+        step: 1,
+        age: "",
+        gender: "",
+        education: "",
+        countryOfBirth: "Singapore",
+        countryOfResidence: "Singapore",
+        durationOfSgpResidence: "",
+        ethnicity: "",
+        isNative: "",
+        languagesSpoken: [],
+        startTime: currentDateTime(),
+        endTime: "",
+        uuid: "swow-" + uuidv4(),
+        data: [],
+      };
   };
 
   const checkForRecaptchaInStorage = () => {
@@ -38,10 +38,10 @@ export const FormPage = () => {
     return storage !== null
       ? JSON.parse(storage)
       : {
-          isVerified: false,
-          /* 5% chance of validator rendering to catch bots */
-          showValidator: setFivePercentProbability(),
-        };
+        isVerified: false,
+        /* 5% chance of validator rendering to catch bots */
+        showValidator: setFivePercentProbability(),
+      };
   };
   const [form, setForm] = useState<Form>(checkForFormInStorage());
   const [validator, setValidator] = useState<Validator>(
@@ -61,7 +61,10 @@ export const FormPage = () => {
   const { step } = form;
 
   const nextStep = () => {
-    setForm({ ...form, step: step + 1 });
+    setForm((previousForm) => ({
+      ...previousForm,
+      step: previousForm.step + 1,
+    }));
   };
 
   switch (step) {

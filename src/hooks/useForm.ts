@@ -7,25 +7,29 @@ import { ApiResponseError } from "src/services/ApiService";
 
 export const useSubmitForm = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const submitForm = async (input: Form) => {
-    try {
-      await ApiService.post<void>(`/answers`, input);
-      enqueueSnackbar("Your responses have been submitted.", {
-        variant: "success",
-      });
-    } catch (e: unknown) {
-      enqueueSnackbar(
-        "Unable to submit responses. " + (e as ApiResponseError).message,
-        {
-          variant: "error",
-        }
-      );
+
+  const mutation = useMutation(
+    async (input: Form) => {
+      await ApiService.post<void>("/answers", input);
+    },
+    {
+      onSuccess: () => {
+        enqueueSnackbar("Your responses have been submitted.", {
+          variant: "success",
+        });
+      },
+      onError: (error: unknown) => {
+        enqueueSnackbar(
+          "Unable to submit responses. " +
+          (error as ApiResponseError).message,
+          { variant: "error" }
+        );
+      },
     }
-  };
-  const { isLoading: isSubmitFormLoading, mutateAsync: submitFormMutation } =
-    useMutation(submitForm);
+  );
+
   return {
-    submitForm: submitFormMutation,
-    isSubmitFormLoading,
+    submitForm: mutation.mutateAsync,
+    isSubmitFormLoading: mutation.isLoading,
   };
 };

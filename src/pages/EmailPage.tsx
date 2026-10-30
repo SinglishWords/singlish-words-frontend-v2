@@ -14,10 +14,6 @@ import { useEffect, useState } from "react";
 import { fetchAllAnswers } from "src/services/ApiService";
 
 
-const PERCENT_DONE = 39;
-const NUM_OF_TOTAL_PPL = 1000;
-const NUM_OF_TOTAL_ASSOCIATIONS = 3000;
-
 const CHIP_COLORS = {
   "0%": "#c2dfff",
   "10%": "#a7cffa",
@@ -32,6 +28,9 @@ type EmailPageProps = {
   setForm: React.Dispatch<React.SetStateAction<Form>>;
   setValidator: React.Dispatch<React.SetStateAction<Validator>>;
 };
+
+const normalizeAssociation = (value: string): string =>
+  value.trim().toLowerCase().replace(/\s+/g, " ");
 
 export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
   const [allAnswers, setAnswers] = useState<Answer[]>([]);
@@ -49,6 +48,25 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
 
     fetchData();
   }, []);
+
+  const totalParticipants = new Set(
+    allAnswers.map((answer) => answer.respondentId)
+  ).size;
+
+  const totalCollectedAssociations = allAnswers.reduce((total, answer) => {
+    const associations = [
+      answer.association1,
+      answer.association2,
+      answer.association3,
+    ];
+
+    return (
+      total +
+      associations.filter((association) => association.trim() !== "").length
+    );
+  }, 0);
+
+  const totalResponsesRecorded = allAnswers.length;
 
   const navigate = useNavigate();
 
@@ -98,16 +116,32 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
     return acc;
   }, {} as { [key: number]: string });
 
-  const recognizedQuestionIdToResponse: { [key: number]: string[] } = recognizedQuestions.reduce((acc, item) => {
-    acc[item.question.id] = item.response.filter(response => response.trim() !== "");
-    return acc;
-  }, {} as { [key: number]: string[] });
+  // const recognizedQuestionIdToResponse: { [key: number]: string[] } = recognizedQuestions.reduce((acc, item) => {
+  //   acc[item.question.id] = item.response.filter(response => response.trim() !== "");
+  //   return acc;
+  // }, {} as { [key: number]: string[] });
+
+  const recognizedQuestionIdToResponse: { [key: number]: string[] } =
+    recognizedQuestions.reduce((acc, item) => {
+      acc[item.question.id] = item.response
+        .map(normalizeAssociation)
+        .filter(response => response !== "");
+
+      return acc;
+    }, {} as { [key: number]: string[] });
 
   const getAssociationsMap = (allAnswers: Answer[], questionIdToWord: { [key: number]: string }) => {
     return allAnswers
       .filter(answer => questionIdToWord.hasOwnProperty(answer.questionId))
       .reduce((acc, answer) => {
-        const associations = [answer.association1, answer.association2, answer.association3].filter(Boolean);
+        const associations = [
+          answer.association1,
+          answer.association2,
+          answer.association3
+        ]
+          .filter((association): association is string => Boolean(association))
+          .map(normalizeAssociation)
+          .filter(association => association !== "");
         if (associations.length > 0) {
           if (!acc[answer.questionId]) {
             acc[answer.questionId] = new Set();
@@ -125,7 +159,14 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
     return allAnswers
       .filter(answer => questionIdToWord.hasOwnProperty(answer.questionId))
       .reduce((acc, answer) => {
-        const associations = [answer.association1, answer.association2, answer.association3].filter(Boolean);
+        const associations = [
+          answer.association1,
+          answer.association2,
+          answer.association3
+        ]
+          .filter((association): association is string => Boolean(association))
+          .map(normalizeAssociation)
+          .filter(association => association !== "");
         if (associations.length > 0) {
           if (!acc[answer.questionId]) {
             acc[answer.questionId] = {};
@@ -562,21 +603,45 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
 
         <Stack spacing={3}>
           <Typography variant="h5">
-            {parse(DOMPurify.sanitize(data.emailPage.projectStatusHeader))}
+            Research at a glance
           </Typography>
-          <Typography variant="body1">
-            {parse(
-              DOMPurify.sanitize(`${PERCENT_DONE}% <strong>complete</strong> `) +
-              DOMPurify.sanitize(`(${NUM_OF_TOTAL_PPL} <strong>people</strong> | `) +
-              DOMPurify.sanitize(`${NUM_OF_TOTAL_ASSOCIATIONS} <strong>associations</strong>)`)
-            )}
-          </Typography>
-          <LinearProgress
-            className="progress"
-            variant="determinate"
-            value={PERCENT_DONE}
-          />
+
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={4}>
+              <Box>
+                <Typography variant="h4">
+                  {totalParticipants.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">
+                  Participants
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <Box>
+                <Typography variant="h4">
+                  {totalCollectedAssociations.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">
+                  Associations collected
+                </Typography>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12} sm={4}>
+              <Box>
+                <Typography variant="h4">
+                  {totalResponsesRecorded.toLocaleString()}
+                </Typography>
+                <Typography variant="body2">
+                  Responses recorded
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
         </Stack>
+
 
         {/* Paragraph 1 - What we are trying to do */}
         <Stack spacing={3}>
