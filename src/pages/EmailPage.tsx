@@ -116,11 +116,6 @@ export const EmailPage = ({ form, setForm, setValidator }: EmailPageProps) => {
     return acc;
   }, {} as { [key: number]: string });
 
-  // const recognizedQuestionIdToResponse: { [key: number]: string[] } = recognizedQuestions.reduce((acc, item) => {
-  //   acc[item.question.id] = item.response.filter(response => response.trim() !== "");
-  //   return acc;
-  // }, {} as { [key: number]: string[] });
-
   const recognizedQuestionIdToResponse: { [key: number]: string[] } =
     recognizedQuestions.reduce((acc, item) => {
       acc[item.question.id] = item.response
