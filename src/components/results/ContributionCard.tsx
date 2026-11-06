@@ -40,17 +40,14 @@ const getFrequency = (association: ShareAssociation): number => {
 };
 
 /**
- * Group the selected associations by cue word and choose the
- * strongest group for the share card.
- *
- * Preference is given to groups containing more of the participant's
- * own associations, followed by groups with stronger overall frequency.
+ * Group the selected cue's associations for display.
+ * resultsLogic has already selected the cue with the most distinct
+ * associations; this function preserves participant-first ordering.
  */
 const selectCloudGroup = (
     associations: ShareAssociation[]
 ): SelectedCloudGroup | null => {
     const groups = new Map<string, ShareAssociation[]>();
-
     associations.forEach(association => {
         const cue = association.cue.trim();
 
@@ -86,7 +83,10 @@ const selectCloudGroup = (
 
             return {
                 cue,
-                associations: sortedAssociations.slice(0, 6),
+                // Rank using the complete distinct-association group, not
+                // the six-word display subset.
+                distinctAssociationCount: sortedAssociations.length,
+                associations: sortedAssociations,
                 participantCount,
                 frequencyScore,
             };
@@ -94,6 +94,12 @@ const selectCloudGroup = (
     );
 
     candidates.sort((a, b) => {
+        // Prefer the most complete cloud first.
+        if (a.distinctAssociationCount !== b.distinctAssociationCount) {
+            return b.distinctAssociationCount - a.distinctAssociationCount;
+        }
+
+        // If equally complete, favour the cue with more participant input.
         if (a.participantCount !== b.participantCount) {
             return b.participantCount - a.participantCount;
         }
@@ -109,7 +115,7 @@ const selectCloudGroup = (
 
     return {
         cue: candidates[0].cue,
-        associations: candidates[0].associations,
+        associations: candidates[0].associations.slice(0, 6),
     };
 };
 
@@ -160,10 +166,10 @@ const WordCloud = ({
                     // Reduce font size for longer associations.
                     const fontSize =
                         association.association.length > 13
-                            ? 13
+                            ? 27
                             : association.association.length > 9
-                                ? 15
-                                : 18;
+                                ? 30
+                                : 33;
 
                     return (
                         <text
@@ -176,7 +182,8 @@ const WordCloud = ({
                             fontSize={fontSize}
                             fontWeight={700}
                             fill={
-                                association.isParticipantAssociation
+                                // association.isParticipantAssociation
+                                0
                                     ? "#EF7C00"
                                     : "#003D7C"
                             }
@@ -193,7 +200,7 @@ const WordCloud = ({
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontFamily="Roboto, Arial, sans-serif"
-                    fontSize={27}
+                    fontSize={46}
                     fontWeight={800}
                     fill="#EF7C00"
                 >
@@ -271,12 +278,12 @@ export const ContributionCard = ({
                             color: "#003D7C",
                         }}
                     >
-                        A Small World of Singlish Words:
+                        A Small World of Singlish Words
                     </Typography>
 
                     <Typography
                         sx={{
-                            fontSize: 11,
+                            fontSize: 9,
                             fontWeight: 700,
                             lineHeight: 1.2,
                             mt: 0.4,
@@ -294,6 +301,16 @@ export const ContributionCard = ({
                     flexShrink: 0,
                 }}
             />
+            <Typography
+                sx={{
+                    fontSize: 16,
+                    fontWeight: 700,
+                    mb: 0.5,
+                    flexShrink: 0,
+                }}
+            >
+                I helped grow the Singlish word map!
+            </Typography>
 
             {/* Participant contribution statistics */}
             <Box
@@ -307,8 +324,8 @@ export const ContributionCard = ({
             >
                 <Typography
                     sx={{
-                        fontSize: 10,
-                        fontWeight: 800,
+                        fontSize: 12,
+                        fontWeight: 700,
                         letterSpacing: 1,
                         mb: 0.75,
                     }}
@@ -431,7 +448,7 @@ export const ContributionCard = ({
                 spacing={2}
                 sx={{ flexShrink: 0 }}
             >
-                <Stack direction="row" alignItems="center" spacing={0.6}>
+                {/* <Stack direction="row" alignItems="center" spacing={0.6}>
                     <Box
                         sx={{
                             width: 8,
@@ -457,7 +474,7 @@ export const ContributionCard = ({
                     <Typography fontSize={9.5} color="#547895">
                         Community associations
                     </Typography>
-                </Stack>
+                </Stack> */}
             </Stack>
 
             {/* Closing message */}

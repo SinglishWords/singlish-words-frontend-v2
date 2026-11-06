@@ -276,14 +276,8 @@ export const buildResultsData = (
             const matchingRespondents = stats.respondentIds.size;
             const totalRespondents = cue.totalRespondents;
 
-            // Only include associations with enough data to be useful
-            // and at least two respondents contributing the association.
-            if (
-                totalRespondents < MIN_RESPONDENTS_FOR_CLASSIFICATION ||
-                matchingRespondents < 2
-            ) {
-                return;
-            }
+            // No minimum respondent threshold applies to the share card.
+            // Every distinct association is eligible, including one-off responses.
 
             const rank = associationRanks.get(normalizedWord) ?? -1;
 
@@ -303,35 +297,127 @@ export const buildResultsData = (
         });
     });
 
+    // Ensure the participant's own submitted words remain eligible for the
+    // share card even if the study-wide fetch has not yet returned their row.
+    participantCues.forEach(participantCue => {
+        const cue = cueStats.get(participantCue.question.id);
+        if (!cue) return;
+
+        const existingWords = new Set(
+            shareCandidates
+                .filter(candidate => candidate.cue === cue.cueWord)
+                .map(candidate => normalize(candidate.association))
+        );
+
+        const ownWords = new Set(
+            participantCue.response
+                .map(response => response.trim())
+                .filter(Boolean)
+                .map(normalize)
+        );
+
+        ownWords.forEach(normalizedWord => {
+            if (existingWords.has(normalizedWord)) return;
+
+            const displayWord =
+                participantCue.response.find(
+                    response => normalize(response) === normalizedWord
+                )?.trim() ?? normalizedWord;
+
+            const totalRespondents = Math.max(cue.totalRespondents, 1);
+
+            shareCandidates.push({
+                cue: cue.cueWord,
+                association: displayWord,
+                category: getCategory(1, totalRespondents, -1),
+                matchingRespondents: 1,
+                totalRespondents,
+                isParticipantAssociation: true,
+            });
+        });
+    });
+
     /**
-     * Select up to six associations for the share card.
-     *
-     * Priority:
-     * 1. Associations contributed by the participant.
-     * 2. Associations with the highest respondent frequency.
-     * 3. Higher raw respondent count as a tie-breaker.
+     * Select the cue with the largest number of distinct associations.
+     * Within that cue, show the participant's own associations first,
+     * followed by associations with the highest respondent frequency.
      */
-    const shareAssociations = shareCandidates
+    const participantHasAnyAssociation = participantCues.some(item =>
+        item.response.some(response => response.trim().length > 0)
+    );
+
+    const associationsByCue = new Map<string, ShareAssociation[]>();
+
+    shareCandidates.forEach(candidate => {
+        const existing = associationsByCue.get(candidate.cue) ?? [];
+        existing.push(candidate);
+        associationsByCue.set(candidate.cue, existing);
+    });
+
+    const rankedCueGroups = Array.from(associationsByCue.entries())
+        .map(([cue, associations]) => ({
+            cue,
+            associations,
+            // Completeness comes first: prefer the cue with more distinct words.
+            distinctAssociationCount: associations.length,
+            // When completeness is tied, favour the cue with more of the
+            // current participant's own distinct contributions.
+            participantAssociationCount: associations.filter(
+                association => association.isParticipantAssociation
+            ).length,
+            // Use community response strength only as a later tie-breaker.
+            totalRespondentMatches: associations.reduce(
+                (sum, association) => sum + association.matchingRespondents,
+                0
+            ),
+        }))
         .sort((a, b) => {
-            if (
-                a.isParticipantAssociation !== b.isParticipantAssociation
-            ) {
-                return a.isParticipantAssociation ? -1 : 1;
+            if (a.distinctAssociationCount !== b.distinctAssociationCount) {
+                return b.distinctAssociationCount - a.distinctAssociationCount;
             }
 
-            const frequencyA =
-                a.matchingRespondents / a.totalRespondents;
-
-            const frequencyB =
-                b.matchingRespondents / b.totalRespondents;
-
-            if (frequencyA !== frequencyB) {
-                return frequencyB - frequencyA;
+            if (a.participantAssociationCount !== b.participantAssociationCount) {
+                return b.participantAssociationCount - a.participantAssociationCount;
             }
 
-            return b.matchingRespondents - a.matchingRespondents;
-        })
-        .slice(0, MAX_SHARE_ASSOCIATIONS);
+            if (a.totalRespondentMatches !== b.totalRespondentMatches) {
+                return b.totalRespondentMatches - a.totalRespondentMatches;
+            }
+
+            return a.cue.localeCompare(b.cue);
+        });
+
+    const selectedCueGroup = participantHasAnyAssociation
+        ? rankedCueGroups[0]
+        : undefined;
+
+    const shareAssociations = selectedCueGroup
+        ? selectedCueGroup.associations
+            .sort((a, b) => {
+                if (
+                    a.isParticipantAssociation !== b.isParticipantAssociation
+                ) {
+                    return a.isParticipantAssociation ? -1 : 1;
+                }
+
+                const frequencyA =
+                    a.totalRespondents > 0
+                        ? a.matchingRespondents / a.totalRespondents
+                        : 0;
+
+                const frequencyB =
+                    b.totalRespondents > 0
+                        ? b.matchingRespondents / b.totalRespondents
+                        : 0;
+
+                if (frequencyA !== frequencyB) {
+                    return frequencyB - frequencyA;
+                }
+
+                return b.matchingRespondents - a.matchingRespondents;
+            })
+            .slice(0, MAX_SHARE_ASSOCIATIONS)
+        : [];
 
     return {
         highlights,

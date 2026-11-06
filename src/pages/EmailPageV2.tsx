@@ -24,12 +24,6 @@ import { fetchAllAnswers } from "src/services/ApiService";
 // import { ShareAssociation } from "src/components/results/ContributionCard";
 import { buildResultsData } from "src/utils/logic/resultsLogic";
 
-/*
- * Props are intentionally kept compatible with EmailPage.
- *
- * This means we can switch between EmailPage and EmailPageV2
- * in FormPage.tsx without changing the parent component's state.
- */
 type EmailPageV2Props = {
     form: Form;
     setForm: React.Dispatch<React.SetStateAction<Form>>;
@@ -184,6 +178,14 @@ export const EmailPageV2 = ({
         () => buildResultsData(form, allAnswers),
         [form, allAnswers]
     );
+
+    const sharedWithOthers = useMemo(() => {
+        return resultsData.highlights.filter(
+            highlight => (highlight.matchingRespondents ?? 0) > 1
+        ).length;
+    }, [resultsData.highlights]);
+
+    const shareAssociationsForCard = resultsData.shareAssociations;
 
     /*
      * Reset the survey state when the participant chooses
@@ -443,10 +445,12 @@ export const EmailPageV2 = ({
                                             label="cue words explored"
                                         />
 
-                                        <StatCard
-                                            value="—"
-                                            label="shared with others"
-                                        />
+                                        {sharedWithOthers > 0 && (
+                                            <StatCard
+                                                value={sharedWithOthers}
+                                                label="associations shared with others"
+                                            />
+                                        )}
                                     </Stack>
 
                                     {answersError && (
@@ -547,7 +551,7 @@ export const EmailPageV2 = ({
                     {/* Shareable contribution card */}
                     <Box id="share-section">
                         <ShareContribution
-                            shareAssociations={resultsData.shareAssociations}
+                            shareAssociations={shareAssociationsForCard}
                             associationsContributed={associationsContributed}
                             cueWordsExplored={cueWordsExplored}
                         />
