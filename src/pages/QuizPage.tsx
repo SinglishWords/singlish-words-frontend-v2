@@ -102,39 +102,53 @@ export const QuizPage = ({
 
   const nextWord = () => setWordIndex(wordIndex + 1);
 
-  const handleClick = () => {
-    /* Update form state */
-    const data = form.data;
-    if (words) {
-      data.push({
-        question: {
-          id: words[wordIndex]?.id,
-          progress: wordIndex + 1,
-          word: words[wordIndex]?.word,
-        },
-        isRecognisedWord: isRecognisedWord,
-        response: [firstResponse, secondResponse, thirdResponse],
-        timeOnPage: Math.round((endTimer() - startTime) / 1000),
-      });
-      setForm({ ...form, endTime: currentDateTime(), data: data });
 
-      /* Set validator */
-      setValidator((validator) => ({
-        ...validator,
-        showValidator: setFivePercentProbability(),
-      }));
-      /* Set isRecognisedWord */
-      setIsRecognisedWord(true);
+  const handleClick = async () => {
+    if (!words) return;
 
-      /* Move either to the next word or the next page */
-      if (wordIndex < words?.length - 1) {
-        nextWord();
-      } else {
-        submitForm(form);
-        nextStep();
-      }
+    const currentAnswer = {
+      question: {
+        id: words[wordIndex]?.id,
+        progress: wordIndex + 1,
+        word: words[wordIndex]?.word,
+      },
+      isRecognisedWord,
+      response: [firstResponse, secondResponse, thirdResponse],
+      timeOnPage: Math.round((endTimer() - startTime) / 1000),
+    };
+
+    // Construct the complete updated form without mutating existing state.
+    const updatedForm = {
+      ...form,
+      endTime: currentDateTime(),
+      data: [...form.data, currentAnswer],
+    };
+
+    setForm(updatedForm);
+
+    setValidator((validator) => ({
+      ...validator,
+      showValidator: setFivePercentProbability(),
+    }));
+
+    setIsRecognisedWord(true);
+
+    if (wordIndex < words.length - 1) {
+      nextWord();
+      return;
+    }
+
+    // Final question: wait for the backend to save every answer.
+    try {
+      await submitForm(updatedForm);
+      console.log("updatedForm: ", updatedForm)
+      nextStep();
+    } catch (error) {
+      // Keep the user on the quiz page if submission fails.
+      console.error("Failed to submit quiz responses:", error);
     }
   };
+
 
   const handleValidatorChange = () => {
     setValidator({
