@@ -88,6 +88,10 @@ export const buildResultsData = (
         const respondentsForCue = new Set<number>();
 
         answersForCue.forEach(answer => {
+            // Only responses from participants who recognize the cue
+            // contribute to association statistics.
+            if (answer.isRecognisedWord !== 1) return;
+
             const associations = getNonEmptyAssociations(answer);
 
             // A respondent counts toward the denominator if they
