@@ -15,3 +15,10 @@ export type GetRandomAssociationRes = {
   forward: GetAssociationRes;
   backward: GetAssociationRes;
 };
+
+export type DirectAssociation = {
+  word: string;
+  count: number;
+};
+
+export type GetDirectAssociationsRes = DirectAssociation[];

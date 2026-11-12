@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UserDetailPage } from "src/pages/UserDetailPage";
 import { InstructionPage } from "src/pages/InstructionPage";
 import { QuizPage } from "src/pages/QuizPage";
-import { EmailPage } from "src/pages/EmailPage";
+import { EmailPageV2 } from "src/pages/EmailPageV2";
 import { Form } from "src/types/state/form.dto";
 import { setFivePercentProbability } from "src/utils/logic/probabilityLogic";
 import { currentDateTime } from "src/utils/logic/timeLogic";
@@ -88,7 +88,7 @@ export const FormPage = () => {
       );
     case 4:
       return (
-        <EmailPage form={form} setForm={setForm} setValidator={setValidator} />
+        <EmailPageV2 form={form} setForm={setForm} setValidator={setValidator} />
       );
   }
 };

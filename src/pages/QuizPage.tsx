@@ -57,13 +57,17 @@ export const QuizPage = ({
   const [isRecognisedWord, setIsRecognisedWord] = useState<boolean>(true);
   const [wordIndex, setWordIndex] = useState<number>(form.data.length);
   const [startTime, setStartTime] = useState<number>(0);
+  const isHandlingClickRef = useRef(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   /* If the word is recognised but the user has yet to give any responses, do not let the user press the Continue button */
-  const isInvalidResponse =
-    firstResponse === "" &&
-    secondResponse === "" &&
-    thirdResponse === "" &&
-    isRecognisedWord;
+  const hasResponse = [
+    firstResponse,
+    secondResponse,
+    thirdResponse,
+  ].some((response) => response.trim().length > 0);
+
+  const isInvalidResponse = !hasResponse && isRecognisedWord;
 
   /* Pull the data once when the user renders page*/
   useEffect(() => {
@@ -85,6 +89,13 @@ export const QuizPage = ({
     if (thirdResponseRef.current) thirdResponseRef.current.value = "";
   }, [wordIndex, isRecognisedWord]);
 
+  useEffect(() => {
+    if (isHandlingClickRef.current) {
+      isHandlingClickRef.current = false;
+      setIsProcessing(false);
+    }
+  }, [wordIndex]);
+
   const handleKeyPress = (
     event: React.KeyboardEvent<HTMLDivElement>,
     ref: React.RefObject<HTMLElement | null>,
@@ -104,48 +115,58 @@ export const QuizPage = ({
 
 
   const handleClick = async () => {
-    if (!words) return;
-
-    const currentAnswer = {
-      question: {
-        id: words[wordIndex]?.id,
-        progress: wordIndex + 1,
-        word: words[wordIndex]?.word,
-      },
-      isRecognisedWord,
-      response: [firstResponse, secondResponse, thirdResponse],
-      timeOnPage: Math.round((endTimer() - startTime) / 1000),
-    };
-
-    // Construct the complete updated form without mutating existing state.
-    const updatedForm = {
-      ...form,
-      endTime: currentDateTime(),
-      data: [...form.data, currentAnswer],
-    };
-
-    setForm(updatedForm);
-
-    setValidator((validator) => ({
-      ...validator,
-      showValidator: setFivePercentProbability(),
-    }));
-
-    setIsRecognisedWord(true);
-
-    if (wordIndex < words.length - 1) {
-      nextWord();
+    if (!words || isHandlingClickRef.current || isInvalidResponse) {
       return;
     }
 
-    // Final question: wait for the backend to save every answer.
+    // Lock immediately to prevent rapid repeated clicks.
+    isHandlingClickRef.current = true;
+    setIsProcessing(true);
+
     try {
+      const currentAnswer = {
+        question: {
+          id: words[wordIndex]?.id,
+          progress: wordIndex + 1,
+          word: words[wordIndex]?.word,
+        },
+        isRecognisedWord,
+        response: [
+          firstResponse.trim(),
+          secondResponse.trim(),
+          thirdResponse.trim(),
+        ],
+        timeOnPage: Math.round((endTimer() - startTime) / 1000),
+      };
+
+      const updatedForm = {
+        ...form,
+        endTime: currentDateTime(),
+        data: [...form.data, currentAnswer],
+      };
+
+      setForm(updatedForm);
+
+      setValidator((validator) => ({
+        ...validator,
+        showValidator: setFivePercentProbability(),
+      }));
+
+      setIsRecognisedWord(true);
+
+      if (wordIndex < words.length - 1) {
+        nextWord();
+        return;
+      }
+
       await submitForm(updatedForm);
-      console.log("updatedForm: ", updatedForm)
       nextStep();
     } catch (error) {
-      // Keep the user on the quiz page if submission fails.
       console.error("Failed to submit quiz responses:", error);
+
+      // Allow retry if submission fails.
+      isHandlingClickRef.current = false;
+      setIsProcessing(false);
     }
   };
 
@@ -256,12 +277,11 @@ export const QuizPage = ({
             name={data.quizPage.continueButton}
             buttonRef={continueButtonRef}
             onClick={handleClick}
-            /* If the validator is shown, disable the continue button if the user is not verified or the 
-            response is invalid. Otherwise, disable when the response is invalid */
             disabled={
-              validator.showValidator
+              isProcessing ||
+              (validator.showValidator
                 ? !validator.isVerified || isInvalidResponse
-                : isInvalidResponse
+                : isInvalidResponse)
             }
           />
         </Stack>
