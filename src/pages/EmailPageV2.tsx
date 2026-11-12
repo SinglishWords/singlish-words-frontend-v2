@@ -20,9 +20,10 @@ import ShareContribution from "src/components/results/ShareContribution";
 import NUSLogo from "src/assets/images/NUS_Logo.png";
 import { useEffect, useMemo, useState } from "react";
 import type { Answer } from "src/types/api/answer.dto";
-import { fetchAllAnswers } from "src/services/ApiService";
-// import { ShareAssociation } from "src/components/results/ContributionCard";
+import { fetchAllAnswers, fetchDirectForwardAssociations, fetchDirectBackwardAssociations, } from "src/services/ApiService";
 import { buildResultsData } from "src/utils/logic/resultsLogic";
+import type { GetDirectAssociationsRes } from "src/types/api/association.dto";
+import { buildShareCloudCandidate } from "src/utils/logic/resultsLogic";
 
 type EmailPageV2Props = {
     form: Form;
@@ -53,6 +54,13 @@ type StatCardProps = {
     value: number | string;
     label: string;
 };
+
+type DirectAssociationsByCue = Record<string,
+    {
+        forward: GetDirectAssociationsRes;
+        backward: GetDirectAssociationsRes;
+    }
+>;
 
 const StatCard = ({ value, label }: StatCardProps) => {
     return (
@@ -111,10 +119,36 @@ export const EmailPageV2 = ({
 }: EmailPageV2Props) => {
     const navigate = useNavigate();
 
+    const participantCueWords = useMemo(() => {
+        const cueWords = form.data
+            .filter(item =>
+                item.question.word.trim().length > 0 &&
+                item.response.some(response => response.trim().length > 0)
+            )
+            .map(item => item.question.word.trim());
+
+        // Deduplicate cues case-insensitively while preserving
+        // the original display form of the first occurrence.
+        const uniqueCueWords = new Map<string, string>();
+
+        cueWords.forEach(word => {
+            const normalizedWord = word.toLowerCase();
+
+            if (!uniqueCueWords.has(normalizedWord)) {
+                uniqueCueWords.set(normalizedWord, word);
+            }
+        });
+
+        return Array.from(uniqueCueWords.values());
+    }, [form.data]);
+
     // All previously submitted answers retrieved from the backend.
     const [allAnswers, setAllAnswers] = useState<Answer[]>([]);
     const [isLoadingAnswers, setIsLoadingAnswers] = useState(true);
     const [answersError, setAnswersError] = useState<string | null>(null);
+    const [directAssociationsByCue, setDirectAssociationsByCue] = useState<DirectAssociationsByCue>({});
+    const [isLoadingDirectAssociations, setIsLoadingDirectAssociations] = useState(true);
+    const [directAssociationsError, setDirectAssociationsError] = useState<string | null>(null);
 
     // Fetch the study-wide answer dataset.
     useEffect(() => {
@@ -150,6 +184,80 @@ export const EmailPageV2 = ({
         };
     }, []);
 
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchAssociations = async () => {
+            if (participantCueWords.length === 0) {
+                setDirectAssociationsByCue({});
+                setIsLoadingDirectAssociations(false);
+                setDirectAssociationsError(null);
+                return;
+            }
+
+            try {
+                setIsLoadingDirectAssociations(true);
+                setDirectAssociationsError(null);
+
+                const results = await Promise.all(
+                    participantCueWords.map(async cueWord => {
+                        const [forward, backward] = await Promise.all([
+                            fetchDirectForwardAssociations(cueWord),
+                            fetchDirectBackwardAssociations(cueWord),
+                        ]);
+
+                        return {
+                            cue: cueWord.toLowerCase(),
+                            forward,
+                            backward,
+                        };
+                    })
+                );
+
+                if (isMounted) {
+                    const associationsByCue: DirectAssociationsByCue = {};
+
+                    results.forEach(result => {
+                        associationsByCue[result.cue] = {
+                            forward: result.forward,
+                            backward: result.backward,
+                        };
+                    });
+
+                    setDirectAssociationsByCue(associationsByCue);
+                }
+            } catch (error) {
+                console.error(
+                    "Error fetching direct associations:",
+                    error
+                );
+
+                if (isMounted) {
+                    setDirectAssociationsError(
+                        "Unable to load association data."
+                    );
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoadingDirectAssociations(false);
+                }
+            }
+        };
+
+        fetchAssociations();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [participantCueWords]);
+
+    useEffect(() => {
+        console.log(
+            "Direct associations by cue:",
+            directAssociationsByCue
+        );
+    }, [directAssociationsByCue]);
+
     // Count every non-empty association submitted by the participant.
     const associationsContributed = useMemo(() => {
         return form.data.reduce((total, item) => {
@@ -178,6 +286,16 @@ export const EmailPageV2 = ({
         () => buildResultsData(form, allAnswers),
         [form, allAnswers]
     );
+
+    const shareCloudCandidate = useMemo(
+        () => buildShareCloudCandidate(
+            form,
+            directAssociationsByCue
+        ),
+        [form, directAssociationsByCue]
+    );
+
+    console.log("[Selected Share Cloud Candidate]", shareCloudCandidate);
 
     const sharedWithOthers = useMemo(() => {
         return resultsData.highlights.filter(
@@ -551,7 +669,7 @@ export const EmailPageV2 = ({
                     {/* Shareable contribution card */}
                     <Box id="share-section">
                         <ShareContribution
-                            shareAssociations={shareAssociationsForCard}
+                            shareCloudCandidate={shareCloudCandidate}
                             associationsContributed={associationsContributed}
                             cueWordsExplored={cueWordsExplored}
                         />

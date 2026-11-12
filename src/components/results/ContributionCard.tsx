@@ -2,209 +2,149 @@
 import {
     Box,
     Stack,
-    Typography,
+    Typography
 } from "@mui/material";
 
 import NUSLogo from "src/assets/images/NUS_Logo.png";
-import type { ShareAssociation } from "src/utils/logic/resultsLogic";
+import type { ShareAssociation, ShareCloudCandidate } from "src/utils/logic/resultsLogic";
 
-// Re-export so existing imports from ContributionCard can be migrated
-// gradually without duplicating the type definition.
-export type { ShareAssociation } from "src/utils/logic/resultsLogic";
 
 const SURVEY_URL = "https://singlishwords.nus.edu.sg/";
 
 type ContributionCardProps = {
     participantName?: string;
-    shareAssociations: ShareAssociation[];
+    shareCloudCandidate: ShareCloudCandidate | null;
     associationsContributed: number;
     cueWordsExplored: number;
     format?: "story" | "linkedin";
 };
 
-type SelectedCloudGroup = {
-    cue: string;
-    associations: ShareAssociation[];
+// Cloud outline, authored for yScale = 1 (LinkedIn).
+const CLOUD_START: [number, number] = [21, 262];
+const CLOUD_CURVES: number[][] = [
+    [-46, 262, -92, 232, -89, 190],
+    [-88, 158, -58, 138, -21, 128],
+    [-53, 105, -45, 62, -2, 44],
+    [42, 24, 96, 34, 123, 52],
+    [158, 14, 228, 10, 294, 36],
+    [335, 6, 411, 16, 430, 52],
+    [484, 22, 563, 42, 568, 84],
+    [625, 94, 654, 132, 616, 164],
+    [662, 202, 621, 262, 554, 262],
+    [435, 272, 192, 272, 21, 262],
+];
+
+// Stretch the outline vertically only; x values stay untouched.
+const buildCloudPath = (yScale: number): string => {
+    const round = (n: number) => Math.round(n * 10) / 10;
+    const [sx, sy] = CLOUD_START;
+    const curves = CLOUD_CURVES.map(
+        curve =>
+            "C " +
+            curve
+                .map((value, i) => (i % 2 === 0 ? value : round(value * yScale)))
+                .join(" ")
+    ).join(" ");
+    return `M ${sx} ${round(sy * yScale)} ${curves} Z`;
 };
 
-/**
- * Calculate the proportion of respondents who supplied an association.
- */
-const getFrequency = (association: ShareAssociation): number => {
-    if (association.totalRespondents <= 0) return 0;
-
-    return (
-        association.matchingRespondents /
-        association.totalRespondents
-    );
-};
-
-/**
- * Group the selected cue's associations for display.
- * resultsLogic has already selected the cue with the most distinct
- * associations; this function preserves participant-first ordering.
- */
-const selectCloudGroup = (
-    associations: ShareAssociation[]
-): SelectedCloudGroup | null => {
-    const groups = new Map<string, ShareAssociation[]>();
-    associations.forEach(association => {
-        const cue = association.cue.trim();
-
-        if (!cue || !association.association.trim()) return;
-
-        const existing = groups.get(cue) ?? [];
-        existing.push(association);
-        groups.set(cue, existing);
-    });
-
-    const candidates = Array.from(groups.entries()).map(
-        ([cue, items]) => {
-            const sortedAssociations = [...items].sort((a, b) => {
-                // Show the participant's own contributions first.
-                if (
-                    a.isParticipantAssociation !==
-                    b.isParticipantAssociation
-                ) {
-                    return a.isParticipantAssociation ? -1 : 1;
-                }
-
-                return getFrequency(b) - getFrequency(a);
-            });
-
-            const participantCount = sortedAssociations.filter(
-                item => item.isParticipantAssociation
-            ).length;
-
-            const frequencyScore = sortedAssociations.reduce(
-                (sum, item) => sum + getFrequency(item),
-                0
-            );
-
-            return {
-                cue,
-                // Rank using the complete distinct-association group, not
-                // the six-word display subset.
-                distinctAssociationCount: sortedAssociations.length,
-                associations: sortedAssociations,
-                participantCount,
-                frequencyScore,
-            };
-        }
-    );
-
-    candidates.sort((a, b) => {
-        // Prefer the most complete cloud first.
-        if (a.distinctAssociationCount !== b.distinctAssociationCount) {
-            return b.distinctAssociationCount - a.distinctAssociationCount;
-        }
-
-        // If equally complete, favour the cue with more participant input.
-        if (a.participantCount !== b.participantCount) {
-            return b.participantCount - a.participantCount;
-        }
-
-        if (a.frequencyScore !== b.frequencyScore) {
-            return b.frequencyScore - a.frequencyScore;
-        }
-
-        return a.cue.localeCompare(b.cue);
-    });
-
-    if (candidates.length === 0) return null;
-
-    return {
-        cue: candidates[0].cue,
-        associations: candidates[0].associations.slice(0, 6),
-    };
-};
-
-/**
- * Display one cue word surrounded by up to six associations.
- *
- * Participant contributions: NUS orange.
- * Other study associations: NUS blue.
- */
 const WordCloud = ({
-    group,
+    candidate,
+    isStory = false,
 }: {
-    group: SelectedCloudGroup | null;
+    candidate: ShareCloudCandidate | null;
+    isStory?: boolean;
 }) => {
-    if (!group || group.associations.length === 0) {
+    if (!candidate || candidate.words.length === 0) {
         return (
-            <Typography
-                color="#647A91"
-                fontSize={13}
-                textAlign="center"
-            >
+            <Typography color="#647A91" fontSize={13} textAlign="center">
                 Your word associations will appear here.
             </Typography>
         );
     }
 
-    const associationPositions = [
-        { x: -155, y: -65 },
-        { x: 155, y: -65 },
-        { x: -165, y: 20 },
-        { x: 165, y: 20 },
-        { x: -95, y: 85 },
-        { x: 95, y: 85 },
+    // Taller cloud for the story card, unchanged for LinkedIn.
+    const yScale = isStory ? 1.9 : 1;
+
+    const positions = [
+        { x: -105, y: -65, size: 38 },
+        { x: 105, y: -75, size: 29 },
+        { x: -195, y: 0, size: 28 },
+        { x: 190, y: -5, size: 36 },
+        { x: -155, y: 65, size: 30 },
+        { x: 15, y: 90, size: 27 },
+        { x: 130, y: 65, size: 33 },
+        { x: 0, y: -92, size: 27 },
+        { x: -5, y: 65, size: 28 },
     ];
 
     return (
         <svg
-            viewBox="0 0 600 300"
+            viewBox={`-62 0 724 ${Math.round(285 * yScale)}`}
             width="100%"
             height="100%"
             role="img"
-            aria-label={`Word associations for ${group.cue}`}
+            aria-label={`Word associations for ${candidate.cue}`}
         >
-            <g transform="translate(300, 150)">
-                {group.associations.map((association, index) => {
-                    const position = associationPositions[index];
+            <defs>
+                <linearGradient id="cloudGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#F7FBFE" />
+                    <stop offset="100%" stopColor="#E6F1FA" />
+                </linearGradient>
+            </defs>
 
-                    // Reduce font size for longer associations.
-                    const fontSize =
-                        association.association.length > 13
-                            ? 27
-                            : association.association.length > 9
-                                ? 30
-                                : 33;
+            <path
+                d={buildCloudPath(yScale)}
+                fill="url(#cloudGradient)"
+                stroke="#DCEAF5"
+                strokeWidth={1.5}
+            />
+
+            <g transform={`translate(300, ${150 * yScale})`}>
+                {candidate.words.slice(0, 9).map((item, index) => {
+                    const position = positions[index];
+
+                    const lengthAdjustment =
+                        item.word.length > 13
+                            ? 0.68
+                            : item.word.length > 10
+                                ? 0.82
+                                : 1;
+
+                    const fontSize = Math.round(position.size * lengthAdjustment);
 
                     return (
                         <text
-                            key={`${group.cue}-${association.association}`}
-                            x={position.x}
-                            y={position.y}
+                            key={`${item.source}-${item.word}`}
+                            x={position.x * 1.3}
+                            y={position.y * yScale}
                             textAnchor="middle"
                             dominantBaseline="middle"
                             fontFamily="Roboto, Arial, sans-serif"
                             fontSize={fontSize}
                             fontWeight={700}
                             fill={
-                                // association.isParticipantAssociation
-                                0
-                                    ? "#EF7C00"
-                                    : "#003D7C"
+                                item.isParticipantAssociation
+                                    ? "#003D7C"
+                                    : "#70797d"
                             }
                         >
-                            {association.association}
+                            {item.word}
                         </text>
                     );
                 })}
 
-                {/* Central cue word */}
                 <text
                     x={0}
-                    y={0}
+                    y={5}
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontFamily="Roboto, Arial, sans-serif"
-                    fontSize={46}
+                    fontSize={60}
                     fontWeight={800}
                     fill="#EF7C00"
                 >
-                    {group.cue}
+                    {candidate.cue}
                 </text>
             </g>
         </svg>
@@ -213,12 +153,11 @@ const WordCloud = ({
 
 export const ContributionCard = ({
     participantName,
-    shareAssociations,
+    shareCloudCandidate,
     associationsContributed,
     cueWordsExplored,
-    format = "linkedin",
+    format,
 }: ContributionCardProps) => {
-    const selectedCloudGroup = selectCloudGroup(shareAssociations);
 
     const isStory = format === "story";
 
@@ -405,30 +344,22 @@ export const ContributionCard = ({
                 }}
             >
                 <Typography
-                    sx={{
-                        fontSize: 14,
-                        fontWeight: 700,
-                        mb: 0.5,
-                        flexShrink: 0,
-                    }}
+                    sx={{ fontSize: 14, fontWeight: 700, mb: 0.5, flexShrink: 0 }}
                 >
-                    A glimpse of your Singlish connections
+                    A glimpse of your Singlish associations
                 </Typography>
 
+                {/* Cloud now provides its own background */}
                 <Box
                     sx={{
                         flex: 1,
                         minHeight: 0,
-                        bgcolor: "#F2F8FD",
-                        borderRadius: "48%",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        px: 1,
-                        overflow: "hidden",
                     }}
                 >
-                    <WordCloud group={selectedCloudGroup} />
+                    <WordCloud candidate={shareCloudCandidate} isStory={isStory} />
                 </Box>
             </Box>
 
@@ -439,43 +370,6 @@ export const ContributionCard = ({
                     flexShrink: 0,
                 }}
             />
-
-            {/* Legend */}
-            <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                spacing={2}
-                sx={{ flexShrink: 0 }}
-            >
-                {/* <Stack direction="row" alignItems="center" spacing={0.6}>
-                    <Box
-                        sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            bgcolor: "#EF7C00",
-                        }}
-                    />
-                    <Typography fontSize={9.5} color="#547895">
-                        Your contribution
-                    </Typography>
-                </Stack>
-
-                <Stack direction="row" alignItems="center" spacing={0.6}>
-                    <Box
-                        sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: "50%",
-                            bgcolor: "#003D7C",
-                        }}
-                    />
-                    <Typography fontSize={9.5} color="#547895">
-                        Community associations
-                    </Typography>
-                </Stack> */}
-            </Stack>
 
             {/* Closing message */}
             <Box

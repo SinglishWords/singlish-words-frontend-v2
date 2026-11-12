@@ -6,6 +6,7 @@ import type {
     HighlightCardData,
 } from "src/components/results/HighlightCard";
 import type { WordAssociationItem } from "src/components/results/WordAssociationCard";
+import type { GetDirectAssociationsRes } from "src/types/api/association.dto";
 
 const MIN_RESPONDENTS_FOR_CLASSIFICATION = 5;
 const COMMON_THRESHOLD = 0.1;
@@ -33,6 +34,33 @@ export type ShareAssociation = {
     isParticipantAssociation: boolean;
 };
 
+export type ShareCloudWord = {
+    word: string;
+    source: "participant" | "cue-backward" | "cue-forward";
+    count?: number;
+    isParticipantAssociation: boolean;
+};
+
+export type ShareCloudCandidate = {
+    cue: string;
+    words: ShareCloudWord[];
+    participantAssociationCount: number;
+};
+
+export type GlobalShareAssociation = {
+    association: string;
+    count: number;
+    isParticipantAssociation: boolean;
+};
+
+export type DirectAssociationsByCue = Record<
+    string,
+    {
+        forward: GetDirectAssociationsRes;
+        backward: GetDirectAssociationsRes;
+    }
+>;
+
 export type ResultsData = {
     highlights: HighlightCardData[];
     wordAssociations: WordAssociationItem[];
@@ -41,6 +69,144 @@ export type ResultsData = {
 
 const normalize = (word: string): string =>
     word.trim().toLocaleLowerCase();
+
+const MAX_CLOUD_WORDS = 10;
+const MAX_PARTICIPANT_ASSOCIATIONS = 3;
+const MAX_ASSOCIATIONS_PER_DIRECTION = 5;
+
+const sortDirectAssociations = (
+    associations: GetDirectAssociationsRes
+) =>
+    [...associations].sort(
+        (a, b) =>
+            b.count - a.count ||
+            a.word.localeCompare(b.word)
+    );
+
+export const buildShareCloudCandidate = (
+    form: Form,
+    directAssociationsByCue: DirectAssociationsByCue
+): ShareCloudCandidate | null => {
+    const candidates: ShareCloudCandidate[] = [];
+
+    form.data.forEach(item => {
+        const cue = item.question.word.trim();
+        if (!cue) return;
+
+        // Keep the participant's distinct responses in their original order.
+        const seenParticipantWords = new Set<string>();
+
+        const participantWords = item.response
+            .map(response => response.trim())
+            .filter(Boolean)
+            .filter(response => {
+                const key = normalize(response);
+
+                if (seenParticipantWords.has(key)) return false;
+
+                seenParticipantWords.add(key);
+                return true;
+            })
+            .slice(0, MAX_PARTICIPANT_ASSOCIATIONS);
+
+        // Only cues with at least one participant response are eligible.
+        if (participantWords.length === 0) return;
+
+        const associations = directAssociationsByCue[normalize(cue)];
+
+        if (!associations) return;
+
+        const words: ShareCloudWord[] = [];
+        const seenWords = new Set<string>([normalize(cue)]);
+
+        const addWord = (word: ShareCloudWord): boolean => {
+            const key = normalize(word.word);
+
+            if (!key || seenWords.has(key)) return false;
+
+            seenWords.add(key);
+            words.push(word);
+            return true;
+        };
+
+        // Participant associations always have priority.
+        participantWords.forEach(word => {
+            addWord({
+                word,
+                source: "participant",
+                isParticipantAssociation: true,
+            });
+        });
+
+        const remainingSlots =
+            MAX_CLOUD_WORDS - 1 - participantWords.length;
+
+        const backwardSlots = Math.ceil(remainingSlots / 2);
+        const forwardSlots = Math.floor(remainingSlots / 2);
+
+        const backward = sortDirectAssociations(
+            associations.backward
+        );
+
+        const forward = sortDirectAssociations(
+            associations.forward
+        );
+
+        const addFromSource = (
+            source: typeof backward,
+            sourceType: "cue-backward" | "cue-forward",
+            limit: number
+        ) => {
+            let added = 0;
+
+            for (const association of source) {
+                if (added >= limit) break;
+
+                const wasAdded = addWord({
+                    word: association.word,
+                    source: sourceType,
+                    count: association.count,
+                    isParticipantAssociation: false,
+                });
+
+                if (wasAdded) added++;
+            }
+        };
+
+        addFromSource(
+            backward,
+            "cue-backward",
+            Math.min(backwardSlots, MAX_ASSOCIATIONS_PER_DIRECTION)
+        );
+
+        addFromSource(
+            forward,
+            "cue-forward",
+            Math.min(forwardSlots, MAX_ASSOCIATIONS_PER_DIRECTION)
+        );
+
+        candidates.push({
+            cue,
+            words,
+            participantAssociationCount: participantWords.length,
+        });
+    });
+
+    // Prefer the fullest unique cloud, then the strongest participant contribution.
+    candidates.sort((a, b) => {
+        const sizeA = a.words.length + 1; // Include the central cue.
+        const sizeB = b.words.length + 1;
+
+        return (
+            sizeB - sizeA ||
+            b.participantAssociationCount -
+            a.participantAssociationCount ||
+            a.cue.localeCompare(b.cue)
+        );
+    });
+
+    return candidates[0] ?? null;
+};
 
 const getNonEmptyAssociations = (answer: Answer): string[] =>
     [

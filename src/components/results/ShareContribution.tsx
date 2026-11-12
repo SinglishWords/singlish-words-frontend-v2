@@ -6,6 +6,8 @@ import {
     Stack,
     Typography,
     Snackbar,
+    ToggleButton,
+    ToggleButtonGroup,
 } from "@mui/material";
 
 import { ContributionCard } from "./ContributionCard";
@@ -14,21 +16,18 @@ import {
     downloadBlob,
 } from "./shareCardUtils";
 
-import {
-    WordAssociationItem,
-} from "./WordAssociationCard";
-import type { ShareAssociation } from "src/utils/logic/resultsLogic";
+import type { ShareCloudCandidate } from "src/utils/logic/resultsLogic";
 
 type ShareContributionProps = {
     participantName?: string;
-    shareAssociations: ShareAssociation[];
+    shareCloudCandidate: ShareCloudCandidate | null;
     associationsContributed: number;
     cueWordsExplored: number;
 };
 
 const ShareContribution = ({
     participantName,
-    shareAssociations,
+    shareCloudCandidate,
     associationsContributed,
     cueWordsExplored,
 }: ShareContributionProps) => {
@@ -36,6 +35,7 @@ const ShareContribution = ({
 
     const [isExporting, setIsExporting] = useState(false);
     const [isCopied, setIsCopied] = useState(false);
+    const [format, setFormat] = useState<"story" | "linkedin">("linkedin");
 
     const SHARE_URL = "https://singlishwords.nus.edu.sg/";
 
@@ -57,7 +57,12 @@ const ShareContribution = ({
 
             const blob = await exportCardAsPng(cardRef.current);
 
-            downloadBlob(blob, "my-singlishwords-contribution.png");
+            downloadBlob(
+                blob,
+                format === "story"
+                    ? "my-singlishwords-instagram-story.png"
+                    : "my-singlishwords-linkedin-post.png"
+            );
         } catch (error) {
             console.error("Failed to export contribution card:", error);
 
@@ -82,6 +87,36 @@ const ShareContribution = ({
                         Show your Singlish word associations and invite others
                         to participate.
                     </Typography>
+                </Box>
+
+                <Box sx={{ textAlign: "center" }}>
+                    <Typography
+                        variant="subtitle1"
+                        fontWeight={700}
+                        sx={{ mb: 1 }}
+                    >
+                        Choose your sharing format
+                    </Typography>
+
+                    <ToggleButtonGroup
+                        value={format}
+                        exclusive
+                        onChange={(_, newFormat) => {
+                            if (newFormat !== null) {
+                                setFormat(newFormat);
+                            }
+                        }}
+                        aria-label="Share card format"
+                        size="small"
+                    >
+                        <ToggleButton value="story">
+                            Instagram Story
+                        </ToggleButton>
+
+                        <ToggleButton value="linkedin">
+                            LinkedIn Post
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                 </Box>
 
                 {/* Responsive card preview */}
@@ -113,9 +148,10 @@ const ShareContribution = ({
                         >
                             <ContributionCard
                                 participantName={participantName}
-                                shareAssociations={shareAssociations}
+                                shareCloudCandidate={shareCloudCandidate}
                                 associationsContributed={associationsContributed}
                                 cueWordsExplored={cueWordsExplored}
+                                format={format}
                             />
                         </Box>
                     </Box>
