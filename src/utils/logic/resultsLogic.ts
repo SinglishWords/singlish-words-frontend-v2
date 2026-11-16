@@ -6,7 +6,6 @@ import type {
     HighlightCardData,
 } from "src/components/results/HighlightCard";
 import type { WordAssociationItem } from "src/components/results/WordAssociationCard";
-import type { GetDirectAssociationsRes } from "src/types/api/association.dto";
 
 const MIN_RESPONDENTS_FOR_CLASSIFICATION = 5;
 const COMMON_THRESHOLD = 0.1;
@@ -36,30 +35,12 @@ export type ShareAssociation = {
 
 export type ShareCloudWord = {
     word: string;
-    source: "participant" | "cue-backward" | "cue-forward";
-    count?: number;
-    isParticipantAssociation: boolean;
+    count: number;
 };
 
 export type ShareCloudCandidate = {
-    cue: string;
     words: ShareCloudWord[];
-    participantAssociationCount: number;
 };
-
-export type GlobalShareAssociation = {
-    association: string;
-    count: number;
-    isParticipantAssociation: boolean;
-};
-
-export type DirectAssociationsByCue = Record<
-    string,
-    {
-        forward: GetDirectAssociationsRes;
-        backward: GetDirectAssociationsRes;
-    }
->;
 
 export type ResultsData = {
     highlights: HighlightCardData[];
@@ -70,142 +51,122 @@ export type ResultsData = {
 const normalize = (word: string): string =>
     word.trim().toLocaleLowerCase();
 
-const MAX_CLOUD_WORDS = 10;
-const MAX_PARTICIPANT_ASSOCIATIONS = 3;
-const MAX_ASSOCIATIONS_PER_DIRECTION = 5;
 
-const sortDirectAssociations = (
-    associations: GetDirectAssociationsRes
-) =>
-    [...associations].sort(
-        (a, b) =>
-            b.count - a.count ||
-            a.word.localeCompare(b.word)
-    );
+const MAX_SHARE_CLOUD_WORDS = 10;
 
+/**
+ * Builds a global word cloud from participant-submitted associations.
+ *
+ * Associations are aggregated across all cue words. Each respondent
+ * contributes at most once to a particular normalized association.
+ *
+ * Selects up to 10 associations using a frequency-stratified approach:
+ * 4 most frequent, 3 middle-frequency, and 3 least frequent.
+ */
 export const buildShareCloudCandidate = (
-    form: Form,
-    directAssociationsByCue: DirectAssociationsByCue
+    allAnswers: Answer[]
 ): ShareCloudCandidate | null => {
-    const candidates: ShareCloudCandidate[] = [];
+    const associationStats = new Map<
+        string,
+        {
+            displayWord: string;
+            respondentIds: Set<number>;
+        }
+    >();
 
-    form.data.forEach(item => {
-        const cue = item.question.word.trim();
-        if (!cue) return;
+    allAnswers.forEach(answer => {
+        const associations = [
+            answer.association1,
+            answer.association2,
+            answer.association3,
+        ];
 
-        // Keep the participant's distinct responses in their original order.
-        const seenParticipantWords = new Set<string>();
+        // Deduplicate associations within this respondent's answer.
+        const seenInAnswer = new Set<string>();
 
-        const participantWords = item.response
-            .map(response => response.trim())
-            .filter(Boolean)
-            .filter(response => {
-                const key = normalize(response);
-
-                if (seenParticipantWords.has(key)) return false;
-
-                seenParticipantWords.add(key);
-                return true;
-            })
-            .slice(0, MAX_PARTICIPANT_ASSOCIATIONS);
-
-        // Only cues with at least one participant response are eligible.
-        if (participantWords.length === 0) return;
-
-        const associations = directAssociationsByCue[normalize(cue)];
-
-        if (!associations) return;
-
-        const words: ShareCloudWord[] = [];
-        const seenWords = new Set<string>([normalize(cue)]);
-
-        const addWord = (word: ShareCloudWord): boolean => {
-            const key = normalize(word.word);
-
-            if (!key || seenWords.has(key)) return false;
-
-            seenWords.add(key);
-            words.push(word);
-            return true;
-        };
-
-        // Participant associations always have priority.
-        participantWords.forEach(word => {
-            addWord({
-                word,
-                source: "participant",
-                isParticipantAssociation: true,
-            });
-        });
-
-        const remainingSlots =
-            MAX_CLOUD_WORDS - 1 - participantWords.length;
-
-        const backwardSlots = Math.ceil(remainingSlots / 2);
-        const forwardSlots = Math.floor(remainingSlots / 2);
-
-        const backward = sortDirectAssociations(
-            associations.backward
-        );
-
-        const forward = sortDirectAssociations(
-            associations.forward
-        );
-
-        const addFromSource = (
-            source: typeof backward,
-            sourceType: "cue-backward" | "cue-forward",
-            limit: number
-        ) => {
-            let added = 0;
-
-            for (const association of source) {
-                if (added >= limit) break;
-
-                const wasAdded = addWord({
-                    word: association.word,
-                    source: sourceType,
-                    count: association.count,
-                    isParticipantAssociation: false,
-                });
-
-                if (wasAdded) added++;
+        associations.forEach(association => {
+            if (
+                typeof association !== "string" ||
+                association.trim().length === 0
+            ) {
+                return;
             }
-        };
 
-        addFromSource(
-            backward,
-            "cue-backward",
-            Math.min(backwardSlots, MAX_ASSOCIATIONS_PER_DIRECTION)
-        );
+            const displayWord = association.trim();
+            const key = normalize(displayWord);
 
-        addFromSource(
-            forward,
-            "cue-forward",
-            Math.min(forwardSlots, MAX_ASSOCIATIONS_PER_DIRECTION)
-        );
+            if (!key || seenInAnswer.has(key)) {
+                return;
+            }
 
-        candidates.push({
-            cue,
-            words,
-            participantAssociationCount: participantWords.length,
+            seenInAnswer.add(key);
+
+            if (!associationStats.has(key)) {
+                associationStats.set(key, {
+                    displayWord,
+                    respondentIds: new Set<number>(),
+                });
+            }
+
+            associationStats
+                .get(key)!
+                .respondentIds.add(answer.respondentId);
         });
     });
 
-    // Prefer the fullest unique cloud, then the strongest participant contribution.
-    candidates.sort((a, b) => {
-        const sizeA = a.words.length + 1; // Include the central cue.
-        const sizeB = b.words.length + 1;
 
-        return (
-            sizeB - sizeA ||
-            b.participantAssociationCount -
-            a.participantAssociationCount ||
-            a.cue.localeCompare(b.cue)
+    const rankedWords: ShareCloudWord[] = Array.from(
+        associationStats.values()
+    )
+        .map(stat => ({
+            word: stat.displayWord,
+            count: stat.respondentIds.size,
+        }))
+        .sort(
+            (a, b) =>
+                b.count - a.count ||
+                a.word.localeCompare(b.word)
         );
-    });
 
-    return candidates[0] ?? null;
+    let words: ShareCloudWord[];
+
+    if (rankedWords.length <= MAX_SHARE_CLOUD_WORDS) {
+        // If there are 10 or fewer associations, display all of them.
+        words = rankedWords;
+    } else {
+        // Select 4 most frequent, 3 middle-frequency, and 3 least frequent.
+        const mostFrequent = rankedWords.slice(0, 4);
+        const leastFrequent = rankedWords.slice(-3);
+
+        // Exclude the top 4 and bottom 3 to get the middle-frequency pool.
+        const middlePool = rankedWords.slice(4, -3);
+
+        // Select three evenly distributed entries from the middle pool.
+        const middleFrequent = [0, 1, 2].map(index => {
+            const position = Math.floor(
+                ((index + 0.5) * middlePool.length) / 3
+            );
+
+            return middlePool[position];
+        });
+
+        // Keep the final list ordered by frequency.
+        words = [
+            ...mostFrequent,
+            ...middleFrequent,
+            ...leastFrequent,
+        ].sort(
+            (a, b) =>
+                b.count - a.count ||
+                a.word.localeCompare(b.word)
+        );
+    }
+
+    if (words.length === 0) {
+        return null;
+    }
+
+    return { words };
 };
 
 const getNonEmptyAssociations = (answer: Answer): string[] =>

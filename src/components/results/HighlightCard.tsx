@@ -261,9 +261,7 @@ export const HighlightCard = ({ item }: HighlightCardProps) => {
                         </Typography>
                     </Stack>
                 </>
-            ) : isDistinctive &&
-                matchingRespondents !== undefined &&
-                totalRespondents !== undefined ? (
+            ) : isDistinctive ? (
                 <Typography
                     sx={{
                         fontSize: 13,
@@ -271,7 +269,7 @@ export const HighlightCard = ({ item }: HighlightCardProps) => {
                         color: "#263F5D",
                     }}
                 >
-                    {matchingRespondents} of {totalRespondents} respondents
+                    You are the first one to provide this association.
                 </Typography>
             ) : null}
 
