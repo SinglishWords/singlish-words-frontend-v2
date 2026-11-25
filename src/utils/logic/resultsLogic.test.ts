@@ -316,50 +316,6 @@ describe("buildResultsData", () => {
         });
     });
 
-    describe("share associations", () => {
-        it("limits share associations to six", () => {
-            const words = [
-                "afraid",
-                "losing",
-                "competitive",
-                "selfish",
-                "anxious",
-                "greedy",
-                "ambitious",
-                "worried",
-            ];
-
-            const answers = words.map((word, index) =>
-                createAnswer({
-                    id: index + 1,
-                    respondentId: index + 1,
-                    association1: word,
-                })
-            );
-
-            const result = buildResultsData(
-                createForm(["afraid"]),
-                answers
-            );
-
-            expect(result.shareAssociations.length).toBeLessThanOrEqual(6);
-        });
-
-        it("returns no share associations when the participant supplied no associations", () => {
-            const result = buildResultsData(
-                createForm([]),
-                [
-                    createAnswer({
-                        respondentId: 1,
-                        association1: "afraid",
-                    }),
-                ]
-            );
-
-            expect(result.shareAssociations).toHaveLength(0);
-        });
-    });
-
 
     describe("classification boundaries", () => {
         it("classifies an association as common at exactly 10% frequency", () => {
@@ -545,133 +501,6 @@ describe("buildResultsData", () => {
     });
 
 
-    describe("share association selection", () => {
-        it("limits the share card to six associations", () => {
-            const words = [
-                "afraid",
-                "losing",
-                "competitive",
-                "selfish",
-                "anxious",
-                "greedy",
-                "ambitious",
-                "worried",
-            ];
-
-            const answers = words.map((word, index) =>
-                createAnswer({
-                    id: index + 1,
-                    respondentId: index + 1,
-                    association1: word,
-                })
-            );
-
-            const result = buildResultsData(
-                createForm(["afraid", "losing"]),
-                answers
-            );
-
-            expect(result.shareAssociations).toHaveLength(6);
-        });
-
-        it("prioritizes the participant's own associations on the share card", () => {
-            const words = [
-                "afraid",
-                "losing",
-                "competitive",
-                "selfish",
-                "anxious",
-                "greedy",
-                "ambitious",
-            ];
-
-            const answers = words.map((word, index) =>
-                createAnswer({
-                    id: index + 1,
-                    respondentId: index + 1,
-                    association1: word,
-                })
-            );
-
-            const result = buildResultsData(
-                createForm(["afraid", "losing"]),
-                answers
-            );
-
-            expect(
-                result.shareAssociations
-                    .slice(0, 2)
-                    .map(item => item.association)
-            ).toEqual(["afraid", "losing"]);
-
-            expect(result.shareAssociations).toHaveLength(6);
-        });
-
-        it("selects the cue with the most distinct associations", () => {
-            const form = createForm(["afraid"]);
-
-            form.data.push({
-                question: {
-                    id: 2,
-                    progress: 2,
-                    word: "shiok",
-                },
-                isRecognisedWord: true,
-                response: ["happy"],
-                timeOnPage: 10,
-            });
-
-            const answers = [
-                createAnswer({
-                    id: 1,
-                    respondentId: 1,
-                    questionId: 1,
-                    association1: "afraid",
-                }),
-                createAnswer({
-                    id: 2,
-                    respondentId: 2,
-                    questionId: 1,
-                    association1: "losing",
-                }),
-
-                createAnswer({
-                    id: 3,
-                    respondentId: 3,
-                    questionId: 2,
-                    association1: "happy",
-                }),
-                createAnswer({
-                    id: 4,
-                    respondentId: 4,
-                    questionId: 2,
-                    association1: "good",
-                }),
-                createAnswer({
-                    id: 5,
-                    respondentId: 5,
-                    questionId: 2,
-                    association1: "excellent",
-                }),
-                createAnswer({
-                    id: 6,
-                    respondentId: 6,
-                    questionId: 2,
-                    association1: "amazing",
-                }),
-            ];
-
-            const result = buildResultsData(form, answers);
-
-            expect(result.shareAssociations.length).toBeGreaterThan(0);
-
-            expect(
-                result.shareAssociations.every(item => item.cue === "shiok")
-            ).toBe(true);
-        });
-    });
-
-
     describe("empty and incomplete data", () => {
         it("handles an empty API response without throwing", () => {
             const result = buildResultsData(
@@ -691,20 +520,6 @@ describe("buildResultsData", () => {
                 .toBeUndefined();
         });
 
-        it("keeps the participant's own association in the share card when their API record is missing", () => {
-            const result = buildResultsData(
-                createForm(["afraid"]),
-                []
-            );
-
-            expect(result.shareAssociations).toHaveLength(1);
-
-            expect(result.shareAssociations[0].association)
-                .toBe("afraid");
-
-            expect(result.shareAssociations[0].isParticipantAssociation)
-                .toBe(true);
-        });
     });
 
 });

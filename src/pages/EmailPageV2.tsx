@@ -21,7 +21,9 @@ import NUSLogo from "src/assets/images/NUS_Logo.png";
 import { useEffect, useMemo, useState } from "react";
 import type { Answer } from "src/types/api/answer.dto";
 import { fetchAllAnswers } from "src/services/ApiService";
-import { buildResultsData, buildShareCloudCandidate } from "src/utils/logic/resultsLogic";
+import { buildResultsData, buildSinglishScore } from "src/utils/logic/resultsLogic";
+import { loadSinglishDictionary } from "src/utils/logic/singlishDictionaryLogic";
+import { SinglishScoreSection } from "src/components/results/SinglishScoreSection";
 
 type EmailPageV2Props = {
     form: Form;
@@ -116,6 +118,9 @@ export const EmailPageV2 = ({
     const [isLoadingAnswers, setIsLoadingAnswers] = useState(true);
     const [answersError, setAnswersError] = useState<string | null>(null);
 
+    const [singlishWords, setSinglishWords] = useState<ReadonlySet<string> | null>(null);
+    const [dictionaryError, setDictionaryError] = useState(false);
+
     // Fetch the study-wide answer dataset.
     useEffect(() => {
         let isMounted = true;
@@ -179,20 +184,41 @@ export const EmailPageV2 = ({
         [form, allAnswers]
     );
 
-    const shareCloudCandidate = useMemo(
-        () => buildShareCloudCandidate(allAnswers),
-        [allAnswers]
-    );
+    useEffect(() => {
+        let isMounted = true;
 
-    console.log("[Selected Share Cloud Candidate]", shareCloudCandidate);
+        loadSinglishDictionary()
+            .then(words => {
+                if (isMounted) setSinglishWords(words);
+            })
+            .catch(error => {
+                console.error("Unable to load the Singlish dictionary:", error);
+                if (isMounted) setDictionaryError(true);
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    const singlishScore = useMemo(() => {
+        // Needs both the study data and the dictionary.
+        if (isLoadingAnswers || answersError || !singlishWords) return null;
+
+        return buildSinglishScore({
+            form,
+            highlights: resultsData.highlights,
+            singlishWords,
+        });
+    }, [isLoadingAnswers, answersError, singlishWords, form, resultsData.highlights]);
+
+    const isScoreUnavailable = Boolean(answersError || dictionaryError);
 
     const sharedWithOthers = useMemo(() => {
         return resultsData.highlights.filter(
             highlight => (highlight.matchingRespondents ?? 0) > 1
         ).length;
     }, [resultsData.highlights]);
-
-    const shareAssociationsForCard = resultsData.shareAssociations;
 
     /*
      * Reset the survey state when the participant chooses
@@ -504,6 +530,12 @@ export const EmailPageV2 = ({
                         </Stack>
                     </Box>
 
+                    {/* Singlish score */}
+                    <SinglishScoreSection
+                        score={singlishScore}
+                        isUnavailable={isScoreUnavailable}
+                    />
+
                     <Box
                         sx={{
                             display: "flex",
@@ -558,7 +590,8 @@ export const EmailPageV2 = ({
                     {/* Shareable contribution card */}
                     <Box id="share-section">
                         <ShareContribution
-                            shareCloudCandidate={shareCloudCandidate}
+                            singlishScore={singlishScore}
+                            isScoreUnavailable={isScoreUnavailable}
                             associationsContributed={associationsContributed}
                             cueWordsExplored={cueWordsExplored}
                         />

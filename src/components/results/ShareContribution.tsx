@@ -16,18 +16,20 @@ import {
     downloadBlob,
 } from "./shareCardUtils";
 
-import type { ShareCloudCandidate } from "src/utils/logic/resultsLogic";
+import type { SinglishScore } from "src/utils/logic/resultsLogic";
 
 type ShareContributionProps = {
     participantName?: string;
-    shareCloudCandidate: ShareCloudCandidate | null;
+    singlishScore: SinglishScore | null
+    isScoreUnavailable?: boolean
     associationsContributed: number;
     cueWordsExplored: number;
 };
 
 const ShareContribution = ({
     participantName,
-    shareCloudCandidate,
+    singlishScore,
+    isScoreUnavailable,
     associationsContributed,
     cueWordsExplored,
 }: ShareContributionProps) => {
@@ -148,7 +150,8 @@ const ShareContribution = ({
                         >
                             <ContributionCard
                                 participantName={participantName}
-                                shareCloudCandidate={shareCloudCandidate}
+                                singlishScore={singlishScore}
+                                isScoreUnavailable={isScoreUnavailable}
                                 associationsContributed={associationsContributed}
                                 cueWordsExplored={cueWordsExplored}
                                 format={format}

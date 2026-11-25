@@ -6,11 +6,11 @@ import type {
     HighlightCardData,
 } from "src/components/results/HighlightCard";
 import type { WordAssociationItem } from "src/components/results/WordAssociationCard";
+import { normalizeForMatch } from "src/utils/logic/singlishDictionaryLogic";
 
 const MIN_RESPONDENTS_FOR_CLASSIFICATION = 5;
 const COMMON_THRESHOLD = 0.1;
 const MAX_COMMON_RANK = 3;
-const MAX_SHARE_ASSOCIATIONS = 6;
 
 type AssociationStats = {
     displayWord: string;
@@ -24,150 +24,14 @@ type CueStats = {
     associations: Map<string, AssociationStats>;
 };
 
-export type ShareAssociation = {
-    cue: string;
-    association: string;
-    category: HighlightCategory;
-    matchingRespondents: number;
-    totalRespondents: number;
-    isParticipantAssociation: boolean;
-};
-
-export type ShareCloudWord = {
-    word: string;
-    count: number;
-};
-
-export type ShareCloudCandidate = {
-    words: ShareCloudWord[];
-};
-
 export type ResultsData = {
     highlights: HighlightCardData[];
     wordAssociations: WordAssociationItem[];
-    shareAssociations: ShareAssociation[];
 };
 
 const normalize = (word: string): string =>
     word.trim().toLocaleLowerCase();
 
-
-const MAX_SHARE_CLOUD_WORDS = 10;
-
-/**
- * Builds a global word cloud from participant-submitted associations.
- *
- * Associations are aggregated across all cue words. Each respondent
- * contributes at most once to a particular normalized association.
- *
- * Selects up to 10 associations using a frequency-stratified approach:
- * 4 most frequent, 3 middle-frequency, and 3 least frequent.
- */
-export const buildShareCloudCandidate = (
-    allAnswers: Answer[]
-): ShareCloudCandidate | null => {
-    const associationStats = new Map<
-        string,
-        {
-            displayWord: string;
-            respondentIds: Set<number>;
-        }
-    >();
-
-    allAnswers.forEach(answer => {
-        const associations = [
-            answer.association1,
-            answer.association2,
-            answer.association3,
-        ];
-
-        // Deduplicate associations within this respondent's answer.
-        const seenInAnswer = new Set<string>();
-
-        associations.forEach(association => {
-            if (
-                typeof association !== "string" ||
-                association.trim().length === 0
-            ) {
-                return;
-            }
-
-            const displayWord = association.trim();
-            const key = normalize(displayWord);
-
-            if (!key || seenInAnswer.has(key)) {
-                return;
-            }
-
-            seenInAnswer.add(key);
-
-            if (!associationStats.has(key)) {
-                associationStats.set(key, {
-                    displayWord,
-                    respondentIds: new Set<number>(),
-                });
-            }
-
-            associationStats
-                .get(key)!
-                .respondentIds.add(answer.respondentId);
-        });
-    });
-
-
-    const rankedWords: ShareCloudWord[] = Array.from(
-        associationStats.values()
-    )
-        .map(stat => ({
-            word: stat.displayWord,
-            count: stat.respondentIds.size,
-        }))
-        .sort(
-            (a, b) =>
-                b.count - a.count ||
-                a.word.localeCompare(b.word)
-        );
-
-    let words: ShareCloudWord[];
-
-    if (rankedWords.length <= MAX_SHARE_CLOUD_WORDS) {
-        // If there are 10 or fewer associations, display all of them.
-        words = rankedWords;
-    } else {
-        // Select 4 most frequent, 3 middle-frequency, and 3 least frequent.
-        const mostFrequent = rankedWords.slice(0, 4);
-        const leastFrequent = rankedWords.slice(-3);
-
-        // Exclude the top 4 and bottom 3 to get the middle-frequency pool.
-        const middlePool = rankedWords.slice(4, -3);
-
-        // Select three evenly distributed entries from the middle pool.
-        const middleFrequent = [0, 1, 2].map(index => {
-            const position = Math.floor(
-                ((index + 0.5) * middlePool.length) / 3
-            );
-
-            return middlePool[position];
-        });
-
-        // Keep the final list ordered by frequency.
-        words = [
-            ...mostFrequent,
-            ...middleFrequent,
-            ...leastFrequent,
-        ].sort(
-            (a, b) =>
-                b.count - a.count ||
-                a.word.localeCompare(b.word)
-        );
-    }
-
-    if (words.length === 0) {
-        return null;
-    }
-
-    return { words };
-};
 
 const getNonEmptyAssociations = (answer: Answer): string[] =>
     [
@@ -292,7 +156,6 @@ export const buildResultsData = (
 
     const highlights: HighlightCardData[] = [];
     const wordAssociations: WordAssociationItem[] = [];
-    const shareCandidates: ShareAssociation[] = [];
 
     participantCues.forEach(participantCue => {
         const cue = cueStats.get(participantCue.question.id);
@@ -320,13 +183,6 @@ export const buildResultsData = (
                 seenResponses.add(response.normalizedWord);
                 return true;
             }
-        );
-
-        // Record the participant's associations for this cue.
-        const participantAssociationSet = new Set(
-            uniqueParticipantResponses.map(
-                response => response.normalizedWord
-            )
         );
 
         // Rank all study associations by the number of respondents.
@@ -396,163 +252,148 @@ export const buildResultsData = (
             associations,
         });
 
-        /**
-         * Build share-card candidates from ALL associations collected
-         * for this cue, not only the participant's own responses.
-         *
-         * This allows the card to show the wider association patterns
-         * while visually distinguishing the participant's contribution.
-         */
-        rankedAssociations.forEach(([normalizedWord, stats]) => {
-            const matchingRespondents = stats.respondentIds.size;
-            const totalRespondents = cue.totalRespondents;
-
-            // No minimum respondent threshold applies to the share card.
-            // Every distinct association is eligible, including one-off responses.
-
-            const rank = associationRanks.get(normalizedWord) ?? -1;
-
-            shareCandidates.push({
-                cue: cue.cueWord,
-                association: stats.displayWord,
-                category: getCategory(
-                    matchingRespondents,
-                    totalRespondents,
-                    rank
-                ),
-                matchingRespondents,
-                totalRespondents,
-                isParticipantAssociation:
-                    participantAssociationSet.has(normalizedWord),
-            });
-        });
     });
-
-    // Ensure the participant's own submitted words remain eligible for the
-    // share card even if the study-wide fetch has not yet returned their row.
-    participantCues.forEach(participantCue => {
-        const cue = cueStats.get(participantCue.question.id);
-        if (!cue) return;
-
-        const existingWords = new Set(
-            shareCandidates
-                .filter(candidate => candidate.cue === cue.cueWord)
-                .map(candidate => normalize(candidate.association))
-        );
-
-        const ownWords = new Set(
-            participantCue.response
-                .map(response => response.trim())
-                .filter(Boolean)
-                .map(normalize)
-        );
-
-        ownWords.forEach(normalizedWord => {
-            if (existingWords.has(normalizedWord)) return;
-
-            const displayWord =
-                participantCue.response.find(
-                    response => normalize(response) === normalizedWord
-                )?.trim() ?? normalizedWord;
-
-            const totalRespondents = Math.max(cue.totalRespondents, 1);
-
-            shareCandidates.push({
-                cue: cue.cueWord,
-                association: displayWord,
-                category: getCategory(1, totalRespondents, -1),
-                matchingRespondents: 1,
-                totalRespondents,
-                isParticipantAssociation: true,
-            });
-        });
-    });
-
-    /**
-     * Select the cue with the largest number of distinct associations.
-     * Within that cue, show the participant's own associations first,
-     * followed by associations with the highest respondent frequency.
-     */
-    const participantHasAnyAssociation = participantCues.some(item =>
-        item.response.some(response => response.trim().length > 0)
-    );
-
-    const associationsByCue = new Map<string, ShareAssociation[]>();
-
-    shareCandidates.forEach(candidate => {
-        const existing = associationsByCue.get(candidate.cue) ?? [];
-        existing.push(candidate);
-        associationsByCue.set(candidate.cue, existing);
-    });
-
-    const rankedCueGroups = Array.from(associationsByCue.entries())
-        .map(([cue, associations]) => ({
-            cue,
-            associations,
-            // Completeness comes first: prefer the cue with more distinct words.
-            distinctAssociationCount: associations.length,
-            // When completeness is tied, favour the cue with more of the
-            // current participant's own distinct contributions.
-            participantAssociationCount: associations.filter(
-                association => association.isParticipantAssociation
-            ).length,
-            // Use community response strength only as a later tie-breaker.
-            totalRespondentMatches: associations.reduce(
-                (sum, association) => sum + association.matchingRespondents,
-                0
-            ),
-        }))
-        .sort((a, b) => {
-            if (a.distinctAssociationCount !== b.distinctAssociationCount) {
-                return b.distinctAssociationCount - a.distinctAssociationCount;
-            }
-
-            if (a.participantAssociationCount !== b.participantAssociationCount) {
-                return b.participantAssociationCount - a.participantAssociationCount;
-            }
-
-            if (a.totalRespondentMatches !== b.totalRespondentMatches) {
-                return b.totalRespondentMatches - a.totalRespondentMatches;
-            }
-
-            return a.cue.localeCompare(b.cue);
-        });
-
-    const selectedCueGroup = participantHasAnyAssociation
-        ? rankedCueGroups[0]
-        : undefined;
-
-    const shareAssociations = selectedCueGroup
-        ? selectedCueGroup.associations
-            .sort((a, b) => {
-                if (
-                    a.isParticipantAssociation !== b.isParticipantAssociation
-                ) {
-                    return a.isParticipantAssociation ? -1 : 1;
-                }
-
-                const frequencyA =
-                    a.totalRespondents > 0
-                        ? a.matchingRespondents / a.totalRespondents
-                        : 0;
-
-                const frequencyB =
-                    b.totalRespondents > 0
-                        ? b.matchingRespondents / b.totalRespondents
-                        : 0;
-
-                if (frequencyA !== frequencyB) {
-                    return frequencyB - frequencyA;
-                }
-
-                return b.matchingRespondents - a.matchingRespondents;
-            })
-            .slice(0, MAX_SHARE_ASSOCIATIONS)
-        : [];
 
     return {
         highlights,
-        wordAssociations,
-        shareAssociations,
+        wordAssociations
     };
+};
+
+/* ---------------- Singlish score ---------------- */
+
+const SCORE_WEIGHTS = {
+    knownCues: 0.3,
+    commonResponses: 0.5,
+    singlishResponses: 0.2,
+} as const;
+
+const MAX_RESPONSES_PER_CUE = 3;
+
+// Applied to the 0-1 weighted score: displayed = 100 * weighted ** exponent.
+// 1 = no transform. Andrew suggested 0.5 if scores turn out too low;
+// confirm against the real score distribution before settling on a value.
+const SCORE_EXPONENT = 0.5;
+
+export type SinglishScoreBand = {
+    min: number;
+    comment: string;
+    emoji: string;
+};
+
+// Highest band first. Thresholds apply to the displayed score.
+export const SINGLISH_SCORE_BANDS: SinglishScoreBand[] = [
+    { min: 80, comment: "Walao eh!", emoji: "😎" },
+    { min: 60, comment: "Swee lah!", emoji: "✨" },
+    { min: 30, comment: "Shag bro", emoji: "😮‍💨" },
+    { min: 0, comment: "Why so cui one?", emoji: "🫠" },
+];
+
+export type SinglishScore = {
+    score: number;         // displayed: transformed and rounded
+    weightedScore: number; // 0-100 weighted average before the exponent
+    band: SinglishScoreBand;
+    factors: {
+        totalCues: number;
+        knownCues: number;
+        possibleResponses: number;
+        commonResponses: number;
+        singlishResponses: number;
+        insufficientDataCues: number;
+    };
+};
+
+/**
+ * Singlish score, 0-100:
+ *   0.3 x known cues / total cues
+ * + 0.5 x common responses / possible responses
+ * + 0.2 x Singlish responses / possible responses
+ * where possible responses = 3 x total cues, then raised to SCORE_EXPONENT.
+ *
+ * "Common" reuses the results-page classification, so cues with too few
+ * respondents ("more-data-needed") never count as common.
+ * A participant with no responses at all scores exactly 0.
+ */
+export const buildSinglishScore = ({
+    form,
+    highlights,
+    singlishWords,
+    exponent = SCORE_EXPONENT,
+}: {
+    form: Form;
+    highlights: HighlightCardData[];
+    singlishWords: ReadonlySet<string>; // normalised with normalizeForMatch
+    exponent?: number;
+}): SinglishScore => {
+    const cues = form.data.filter(
+        item => item.question.word.trim().length > 0
+    );
+    const knownCues = cues.filter(item => item.isRecognisedWord);
+    const knownCueWords = new Set(
+        knownCues.map(item => item.question.word.trim())
+    );
+
+    const totalCues = cues.length;
+    const possibleResponses = totalCues * MAX_RESPONSES_PER_CUE;
+
+    const commonResponses = highlights.filter(
+        item =>
+            item.category === "common" && knownCueWords.has(item.cueWord)
+    ).length;
+
+    const insufficientDataCues = new Set(
+        highlights
+            .filter(
+                item =>
+                    item.category === "more-data-needed" &&
+                    knownCueWords.has(item.cueWord)
+            )
+            .map(item => item.cueWord)
+    ).size;
+
+    let responsesGiven = 0;
+    let singlishResponses = 0;
+
+    knownCues.forEach(item => {
+        const uniqueResponses = new Set(
+            item.response.map(normalizeForMatch).filter(Boolean)
+        );
+
+        responsesGiven += uniqueResponses.size;
+
+        uniqueResponses.forEach(response => {
+            if (singlishWords.has(response)) singlishResponses += 1;
+        });
+    });
+
+    const factors = {
+        totalCues,
+        knownCues: knownCues.length,
+        possibleResponses,
+        commonResponses,
+        singlishResponses,
+        insufficientDataCues,
+    };
+
+    const lowestBand =
+        SINGLISH_SCORE_BANDS[SINGLISH_SCORE_BANDS.length - 1];
+
+    // No responses at all: exactly 0%.
+    if (totalCues === 0 || responsesGiven === 0) {
+        return { score: 0, weightedScore: 0, band: lowestBand, factors };
+    }
+
+    const weighted =
+        SCORE_WEIGHTS.knownCues * (knownCues.length / totalCues) +
+        SCORE_WEIGHTS.commonResponses *
+        (commonResponses / possibleResponses) +
+        SCORE_WEIGHTS.singlishResponses *
+        (singlishResponses / possibleResponses);
+
+    const score = Math.round(100 * Math.pow(weighted, exponent));
+
+    const band =
+        SINGLISH_SCORE_BANDS.find(item => score >= item.min) ?? lowestBand;
+
+    return { score, weightedScore: weighted * 100, band, factors };
 };

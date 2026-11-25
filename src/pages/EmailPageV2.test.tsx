@@ -58,15 +58,17 @@ jest.mock("src/components/results/ResultsExplanation", () => ({
 jest.mock("src/components/results/ShareContribution", () => ({
     __esModule: true,
     default: ({
-        shareAssociations,
         associationsContributed,
         cueWordsExplored,
+        singlishScore,
+        isScoreUnavailable
     }: any) => (
         <div data-testid="share-contribution">
             {JSON.stringify({
-                shareAssociations,
                 associationsContributed,
                 cueWordsExplored,
+                singlishScore,
+                isScoreUnavailable
             })}
         </div>
     ),
@@ -363,22 +365,13 @@ describe("EmailPageV2", () => {
         });
     });
 
-    it("passes the contribution statistics and share associations to ShareContribution", async () => {
+    it("passes the contribution statistics to ShareContribution", async () => {
         renderResultsPage();
 
         await waitFor(() => {
             const shareCard = screen.getByTestId("share-contribution");
-
-            expect(shareCard.textContent).toContain(
-                '"associationsContributed":3'
-            );
-
-            expect(shareCard.textContent).toContain(
-                '"cueWordsExplored":2'
-            );
-
-            expect(shareCard.textContent).toContain("happy");
-            expect(shareCard.textContent).toContain("excited");
+            expect(shareCard.textContent).toContain('"associationsContributed":3');
+            expect(shareCard.textContent).toContain('"cueWordsExplored":2');
         });
     });
 
